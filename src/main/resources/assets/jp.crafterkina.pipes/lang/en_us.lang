@@ -1,1 +1,8 @@
 # English (United States)
+# Items
+item.jp.crafterkina.pipes.merchant_phone.name=Merchant phone
+# Messages
+mes.item.jp.crafterkina.pipes.merchant_phone.register=Registered a contact
+# Tooltips
+tooltip.item.jp.crafterkina.pipes.merchant_phone.0=Right Click to Villager -> Register Villager
+tooltip.item.jp.crafterkina.pipes.merchant_phone.1=Right Click -> Call Villager

@@ -29,5 +29,6 @@ public enum PipesCore {
     @EventHandler
     private void preInit(FMLPreInitializationEvent event){
         CraftManager.INSTANCE.register();
+        proxy.registerItemModels();
     }
 }

@@ -1,16 +1,19 @@
 package jp.crafterkina.pipes.common.item;
 
-import jp.crafterkina.pipes.common.RegistryEntries;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -18,21 +21,33 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 import java.util.UUID;
 
 import static jp.crafterkina.pipes.common.PipesCore.MOD_ID;
+import static jp.crafterkina.pipes.common.RegistryEntries.merchant_phone;
 
 @EventBusSubscriber(modid = MOD_ID)
 public class ItemMerchantPhone extends Item{
     private ItemMerchantPhone(){
         setUnlocalizedName(MOD_ID + ".merchant_phone");
         setCreativeTab(CreativeTabs.MISC);
+        this.addPropertyOverride(new ResourceLocation("registered"), new IItemPropertyGetter(){
+            @SideOnly(Side.CLIENT)
+            public float apply(@Nonnull ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn){
+                return stack.getTagCompound() != null && stack.getTagCompound().hasUniqueId("Merchant") ? 1 : 0;
+            }
+        });
     }
 
     @SubscribeEvent
     protected static void interactOnEntity(PlayerInteractEvent.EntityInteract event){
+        if(event.getWorld().isRemote) return;
         EntityPlayer player = event.getEntityPlayer();
         ItemStack stack = player.getHeldItem(event.getHand());
         Entity target = event.getTarget();
@@ -41,18 +56,13 @@ public class ItemMerchantPhone extends Item{
         if(compound == null) stack.setTagCompound(compound = new NBTTagCompound());
         if(compound.hasUniqueId("Merchant") && !player.isSneaking()) return;
         compound.setUniqueId("Merchant", target.getUniqueID());
-        player.sendMessage(new TextComponentTranslation("mes." + RegistryEntries.merchant_phone.getUnlocalizedName() + ".register"));
+        player.sendMessage(new TextComponentTranslation("mes." + merchant_phone.getUnlocalizedName() + ".register"));
         event.setCanceled(true);
     }
 
     @SubscribeEvent
     protected static void registerItems(RegistryEvent.Register<Item> event){
         event.getRegistry().register(new ItemMerchantPhone().setRegistryName(MOD_ID, "merchant_phone"));
-    }
-
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack){
-        return 32;
     }
 
     @Override
@@ -74,5 +84,17 @@ public class ItemMerchantPhone extends Item{
         ((IMerchant) entity).setCustomer(playerIn);
         playerIn.displayVillagerTradeGui((IMerchant) entity);
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced){
+        for(int i = 0; ; i++){
+            if(!I18n.hasKey("tooltip." + merchant_phone.getUnlocalizedName() + "." + i)) break;
+            tooltip.add(I18n.format("tooltip." + merchant_phone.getUnlocalizedName() + "." + i));
+        }
+        if(advanced){
+            tooltip.add(String.format("Merchant UUID: %s", stack.getTagCompound() == null || !stack.getTagCompound().hasUniqueId("Merchant") ? "Not Registered" : stack.getTagCompound().getUniqueId("Merchant")));
+        }
     }
 }

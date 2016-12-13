@@ -1,1 +1,8 @@
 # Japanese (Japan)
+# Items
+item.jp.crafterkina.pipes.merchant_phone.name=商人の電話
+# Messages
+mes.item.jp.crafterkina.pipes.merchant_phone.register=連絡先を登録しました
+# Tooltips
+tooltip.item.jp.crafterkina.pipes.merchant_phone.0=村人を右クリック → 村人を登録
+tooltip.item.jp.crafterkina.pipes.merchant_phone.1=右クリック → 村人を呼び出す

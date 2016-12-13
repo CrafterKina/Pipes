@@ -1,0 +1,14 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "jp.crafterkina.pipes:items/merchant_phone_off"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "registered": 1
+      },
+      "model": "jp.crafterkina.pipes:item/merchant_phone_on"
+    }
+  ]
+}
