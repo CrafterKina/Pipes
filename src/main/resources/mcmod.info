@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "jp.crafterkina.pipes",
+    "name": "Pipes",
+    "description": "Pipes",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://crafterkina.github.io/Pipes/",
+    "updateUrl": "",
+    "authorList": ["CrafterKina"],
+    "credits": "The Contributors",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
