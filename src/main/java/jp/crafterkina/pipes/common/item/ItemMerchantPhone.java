@@ -3,10 +3,8 @@ package jp.crafterkina.pipes.common.item;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,13 +17,13 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,12 +35,9 @@ public class ItemMerchantPhone extends Item{
     private ItemMerchantPhone(){
         setUnlocalizedName(MOD_ID + ".merchant_phone");
         setCreativeTab(CreativeTabs.MISC);
-        this.addPropertyOverride(new ResourceLocation("registered"), new IItemPropertyGetter(){
-            @SideOnly(Side.CLIENT)
-            public float apply(@Nonnull ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn){
-                return stack.getTagCompound() != null && stack.getTagCompound().hasUniqueId("Merchant") ? 1 : 0;
-            }
-        });
+        if(FMLCommonHandler.instance().getSide() == Side.CLIENT){
+            addPropertyOverride(new ResourceLocation("registered"), (stack, world, entity) -> stack.getTagCompound() != null && stack.getTagCompound().hasUniqueId("Merchant") ? 1 : 0);
+        }
     }
 
     @SubscribeEvent
