@@ -5,8 +5,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 import static jp.crafterkina.pipes.common.PipesCore.MOD_ID;
 
-@ObjectHolder(MOD_ID)
 @SuppressWarnings({"AssignmentToNull", "NullableProblems", "unused"})
 public class RegistryEntries {
-    public static final Item merchant_phone = null;
+    @ObjectHolder(MOD_ID)
+    public static class ITEM{
+        public static final Item merchant_phone = null;
+    }
 }

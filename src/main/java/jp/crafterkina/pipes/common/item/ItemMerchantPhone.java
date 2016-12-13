@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static jp.crafterkina.pipes.common.PipesCore.MOD_ID;
-import static jp.crafterkina.pipes.common.RegistryEntries.merchant_phone;
+import static jp.crafterkina.pipes.common.RegistryEntries.ITEM.merchant_phone;
 
 @EventBusSubscriber(modid = MOD_ID)
 public class ItemMerchantPhone extends Item{

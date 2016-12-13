@@ -5,7 +5,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import static jp.crafterkina.pipes.common.RegistryEntries.merchant_phone;
+import static jp.crafterkina.pipes.common.RegistryEntries.ITEM.merchant_phone;
 
 public enum CraftManager{
     INSTANCE;

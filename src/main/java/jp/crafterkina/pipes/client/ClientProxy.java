@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import static jp.crafterkina.pipes.common.RegistryEntries.merchant_phone;
+import static jp.crafterkina.pipes.common.RegistryEntries.ITEM.merchant_phone;
 
 @EventBusSubscriber(value = Side.CLIENT, modid = PipesCore.MOD_ID)
 @SideOnly(Side.CLIENT)
