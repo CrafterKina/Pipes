@@ -1,6 +1,6 @@
 package jp.crafterkina.pipes.common;
 
-@SuppressWarnings("NullableProblems")
+@SuppressWarnings({"AssignmentToNull","NullableProblems"})
 public class RegistryEntries {
 
 }
