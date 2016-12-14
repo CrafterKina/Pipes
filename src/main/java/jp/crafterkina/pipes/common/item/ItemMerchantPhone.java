@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 
-import static jp.crafterkina.pipes.common.PipesCore.MOD_ID;
+import static jp.crafterkina.pipes.api.PipesConstants.MOD_ID;
 import static jp.crafterkina.pipes.common.RegistryEntries.ITEM.merchant_phone;
 
 @EventBusSubscriber(modid = MOD_ID)
