@@ -15,10 +15,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -30,9 +28,8 @@ import java.util.UUID;
 import static jp.crafterkina.pipes.api.PipesConstants.MOD_ID;
 import static jp.crafterkina.pipes.common.RegistryEntries.ITEM.merchant_phone;
 
-@EventBusSubscriber(modid = MOD_ID)
 public class ItemMerchantPhone extends Item{
-    private ItemMerchantPhone(){
+    public ItemMerchantPhone(){
         setUnlocalizedName(MOD_ID + ".merchant_phone");
         setCreativeTab(CreativeTabs.MISC);
         if(FMLCommonHandler.instance().getSide() == Side.CLIENT){
@@ -53,11 +50,6 @@ public class ItemMerchantPhone extends Item{
         compound.setUniqueId("Merchant", target.getUniqueID());
         player.sendMessage(new TextComponentTranslation("mes." + merchant_phone.getUnlocalizedName() + ".register"));
         event.setCanceled(true);
-    }
-
-    @SubscribeEvent
-    protected static void registerItems(RegistryEvent.Register<Item> event){
-        event.getRegistry().register(new ItemMerchantPhone().setRegistryName(MOD_ID, "merchant_phone"));
     }
 
     @Override

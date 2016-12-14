@@ -2,6 +2,7 @@ package jp.crafterkina.pipes.common;
 
 import jp.crafterkina.pipes.common.recipe.vanilla.CraftManager;
 import lombok.Getter;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.InstanceFactory;
@@ -26,7 +27,7 @@ public enum PipesCore {
 
     @EventHandler
     private void preInit(FMLPreInitializationEvent event){
+        MinecraftForge.EVENT_BUS.register(proxy);
         CraftManager.INSTANCE.register();
-        proxy.registerItemModels();
     }
 }
