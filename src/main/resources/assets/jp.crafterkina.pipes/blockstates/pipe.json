@@ -1,0 +1,86 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "frame": "blocks/planks_oak",
+      "particle": "blocks/planks_oak"
+    },
+    "model": "jp.crafterkina.pipes:pipe_core",
+    "uvlock": true
+  },
+  "variants": {
+    "c_down": {
+      "true": {
+        "submodel": {
+          "ext_d": {
+            "model": "jp.crafterkina.pipes:pipe_ext"
+          }
+        }
+      },
+      "false": {
+      }
+    },
+    "c_up": {
+      "true": {
+        "submodel": {
+          "ext_u": {
+            "model": "jp.crafterkina.pipes:pipe_ext",
+            "x": 180
+          }
+        }
+      },
+      "false": {
+      }
+    },
+    "c_north": {
+      "true": {
+        "submodel": {
+          "ext_n": {
+            "model": "jp.crafterkina.pipes:pipe_ext",
+            "x": 270
+          }
+        }
+      },
+      "false": {
+      }
+    },
+    "c_south": {
+      "true": {
+        "submodel": {
+          "ext_s": {
+            "model": "jp.crafterkina.pipes:pipe_ext",
+            "x": 90
+          }
+        }
+      },
+      "false": {
+      }
+    },
+    "c_west": {
+      "true": {
+        "submodel": {
+          "ext_w": {
+            "model": "jp.crafterkina.pipes:pipe_ext",
+            "x": 270,
+            "y": 270
+          }
+        }
+      },
+      "false": {
+      }
+    },
+    "c_east": {
+      "true": {
+        "submodel": {
+          "ext_e": {
+            "model": "jp.crafterkina.pipes:pipe_ext",
+            "x": 270,
+            "y": 90
+          }
+        }
+      },
+      "false": {
+      }
+    }
+  }
+}

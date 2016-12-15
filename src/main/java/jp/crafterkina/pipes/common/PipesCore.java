@@ -7,6 +7,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.InstanceFactory;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import static jp.crafterkina.pipes.api.PipesConstants.MOD_ID;
@@ -26,8 +27,12 @@ public enum PipesCore {
     }
 
     @EventHandler
-    private void preInit(FMLPreInitializationEvent event){
+    private void construct(FMLConstructionEvent event){
         MinecraftForge.EVENT_BUS.register(proxy);
+    }
+
+    @EventHandler
+    private void preInit(FMLPreInitializationEvent event){
         CraftManager.INSTANCE.register();
     }
 }

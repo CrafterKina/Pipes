@@ -1,0 +1,6 @@
+{
+  "parent": "jp.crafterkina.pipes:block/pipe_core",
+  "textures": {
+    "frame": "blocks/planks_oak"
+  }
+}

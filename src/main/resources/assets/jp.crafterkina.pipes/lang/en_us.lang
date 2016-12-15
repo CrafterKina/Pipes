@@ -1,6 +1,8 @@
 # English (United States)
 # Items
 item.jp.crafterkina.pipes.merchant_phone.name=Merchant phone
+# Blocks
+tile.jp.crafterkina.pipes.pipe.name=Pipe
 # Messages
 mes.item.jp.crafterkina.pipes.merchant_phone.register=Registered a contact
 # Tooltips
