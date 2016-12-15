@@ -15,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -35,10 +36,11 @@ public class ItemMerchantPhone extends Item{
         if(FMLCommonHandler.instance().getSide() == Side.CLIENT){
             addPropertyOverride(new ResourceLocation("registered"), (stack, world, entity) -> stack.getTagCompound() != null && stack.getTagCompound().hasUniqueId("Merchant") ? 1 : 0);
         }
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
-    protected static void interactOnEntity(PlayerInteractEvent.EntityInteract event){
+    protected void interactOnEntity(PlayerInteractEvent.EntityInteract event){
         if(event.getWorld().isRemote) return;
         EntityPlayer player = event.getEntityPlayer();
         ItemStack stack = player.getHeldItem(event.getHand());
