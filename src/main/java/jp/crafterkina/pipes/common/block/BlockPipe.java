@@ -8,6 +8,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
@@ -134,7 +135,8 @@ public class BlockPipe extends BlockContainer{
 
     @Override
     public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing){
-        return world.getBlockState(pos.add(facing.getDirectionVec())).getBlock() == this;
+        BlockPos p = pos.add(facing.getDirectionVec());
+        return world.getBlockState(p).getBlock() == this || world.getTileEntity(p) instanceof IInventory;
     }
 
     @Override
