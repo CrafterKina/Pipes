@@ -21,6 +21,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -136,7 +137,9 @@ public class BlockPipe extends BlockContainer{
     @Override
     public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing){
         BlockPos p = pos.add(facing.getDirectionVec());
-        return world.getBlockState(p).getBlock() == this || world.getTileEntity(p) instanceof IInventory;
+        IBlockState s = world.getBlockState(p);
+        TileEntity te = world.getTileEntity(p);
+        return s.getBlock() == this || te instanceof IInventory || (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite()));
     }
 
     @Override
