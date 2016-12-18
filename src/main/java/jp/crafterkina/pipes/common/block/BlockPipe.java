@@ -3,6 +3,7 @@ package jp.crafterkina.pipes.common.block;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -49,7 +50,7 @@ public class BlockPipe extends BlockContainer{
         IBlockState state = getBlockState().getBaseState();
         for(EnumFacing f : EnumFacing.VALUES){
             state = state.withProperty(CONNECT[f.getIndex()], false);
-            //state.withProperty(GATE[f.getIndex()],false);
+            state = state.withProperty(GATE[f.getIndex()], false);
         }
         setDefaultState(state);
     }
@@ -131,7 +132,14 @@ public class BlockPipe extends BlockContainer{
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos){
-        return state.withProperty(CONNECT[0], canBeConnectedTo(worldIn, pos, EnumFacing.DOWN)).withProperty(CONNECT[1], canBeConnectedTo(worldIn, pos, EnumFacing.UP)).withProperty(CONNECT[2], canBeConnectedTo(worldIn, pos, EnumFacing.NORTH)).withProperty(CONNECT[3], canBeConnectedTo(worldIn, pos, EnumFacing.SOUTH)).withProperty(CONNECT[4], canBeConnectedTo(worldIn, pos, EnumFacing.WEST)).withProperty(CONNECT[5], canBeConnectedTo(worldIn, pos, EnumFacing.EAST));
+        TileEntity te = worldIn.getTileEntity(pos);
+        TileEntityPipe pipe = te instanceof TileEntityPipe ? (TileEntityPipe) te : null;
+        for(EnumFacing face : EnumFacing.VALUES){
+            state = state.withProperty(CONNECT[face.getIndex()], canBeConnectedTo(worldIn, pos, face));
+            if(pipe == null) continue;
+            state = state.withProperty(GATE[face.getIndex()], pipe.hasGate(face));
+        }
+        return state;
     }
 
     @Override
@@ -157,6 +165,6 @@ public class BlockPipe extends BlockContainer{
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState(){
-        return new BlockStateContainer(this, CONNECT[0], CONNECT[1], CONNECT[2], CONNECT[3], CONNECT[4], CONNECT[5]);
+        return new BlockStateContainer(this, Arrays.stream(new IProperty<?>[][]{CONNECT, GATE}).flatMap(Arrays::stream).toArray(IProperty[]::new));
     }
 }

@@ -35,5 +35,6 @@ public enum PipesCore {
     private void preInit(FMLPreInitializationEvent event){
         CraftManager.INSTANCE.register();
         proxy.registerTileEntities();
+        PacketHandler.init();
     }
 }

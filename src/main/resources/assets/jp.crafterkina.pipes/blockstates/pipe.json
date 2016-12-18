@@ -81,6 +81,79 @@
       },
       "false": {
       }
+    },
+    "g_down": {
+      "true": {
+        "submodel": {
+          "gate_d": {
+            "model": "jp.crafterkina.pipes:pipe_gate"
+          }
+        }
+      },
+      "false": {
+      }
+    },
+    "g_up": {
+      "true": {
+        "submodel": {
+          "gate_u": {
+            "model": "jp.crafterkina.pipes:pipe_gate",
+            "x": 180
+          }
+        }
+      },
+      "false": {
+      }
+    },
+    "g_north": {
+      "true": {
+        "submodel": {
+          "gate_n": {
+            "model": "jp.crafterkina.pipes:pipe_gate",
+            "x": 270
+          }
+        }
+      },
+      "false": {
+      }
+    },
+    "g_south": {
+      "true": {
+        "submodel": {
+          "gate_s": {
+            "model": "jp.crafterkina.pipes:pipe_gate",
+            "x": 90
+          }
+        }
+      },
+      "false": {
+      }
+    },
+    "g_west": {
+      "true": {
+        "submodel": {
+          "gate_w": {
+            "model": "jp.crafterkina.pipes:pipe_gate",
+            "x": 270,
+            "y": 270
+          }
+        }
+      },
+      "false": {
+      }
+    },
+    "g_east": {
+      "true": {
+        "submodel": {
+          "gate_e": {
+            "model": "jp.crafterkina.pipes:pipe_gate",
+            "x": 270,
+            "y": 90
+          }
+        }
+      },
+      "false": {
+      }
     }
   }
 }
