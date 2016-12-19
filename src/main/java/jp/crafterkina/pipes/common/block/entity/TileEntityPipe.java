@@ -146,6 +146,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
             p.turned = true;
         });
 
+        getWorld().updateComparatorOutputLevel(pos, getBlockType());
         PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(pos, flowingItems));
     }
 

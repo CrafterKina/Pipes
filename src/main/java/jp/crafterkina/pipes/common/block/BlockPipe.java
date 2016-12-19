@@ -69,6 +69,20 @@ public class BlockPipe extends BlockContainer{
         super.breakBlock(worldIn, pos, state);
     }
 
+    @Override
+    @SuppressWarnings("deprecation")
+    public boolean hasComparatorInputOverride(IBlockState state){
+        return true;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos){
+        TileEntity te = worldIn.getTileEntity(pos);
+        if(!(te instanceof TileEntityPipe)) return 0;
+        TileEntityPipe pipe = (TileEntityPipe) te;
+        return pipe.flowingItems.size();
+    }
 
     @Nullable
     @Override
