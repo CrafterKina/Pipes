@@ -32,6 +32,7 @@ public class TileEntityPipeRenderer extends TileEntitySpecialRenderer<TileEntity
             GlStateManager.translate(vec.xCoord + x + i.item.getVelocity().xCoord * v * 0.5, vec.yCoord + y + i.item.getVelocity().yCoord * v * 0.5, vec.zCoord + z + i.item.getVelocity().zCoord * v * 0.5);
             GlStateManager.enableRescaleNormal();
             GlStateManager.scale(0.125, 0.125, 0.125);
+            GlStateManager.rotate(45, 0, 1, 0);
             bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
             renderItemStack(i.item.getStack());
