@@ -3,6 +3,7 @@ package jp.crafterkina.pipes.util;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import java.util.Objects;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -15,7 +16,7 @@ public enum NBTStreams{
 
     public static <T extends NBTTagCompound> Collector<T, ?, NBTTagList> toNBTList(){
         return Collector.of(NBTTagList::new, NBTTagList::appendTag, (l, r) -> {
-            IntStream.range(0, r.tagCount()).parallel().boxed().map(r::get).forEach(l::appendTag);
+            IntStream.range(0, r.tagCount()).parallel().boxed().map(r::get).filter(Objects::nonNull).forEach(l::appendTag);
             return l;
         }, i -> i);
     }
