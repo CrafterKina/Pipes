@@ -56,7 +56,8 @@ public class BlockPipe extends BlockContainer{
         setDefaultState(state);
     }
 
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state){
+    @Override
+    public void breakBlock(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state){
         TileEntity tileentity = worldIn.getTileEntity(pos);
 
         if(tileentity instanceof TileEntityPipe){
@@ -125,7 +126,7 @@ public class BlockPipe extends BlockContainer{
     @Override
     @SuppressWarnings("deprecation")
     @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side){
+    public boolean shouldSideBeRendered(IBlockState blockState, @Nonnull IBlockAccess blockAccess, @Nonnull BlockPos pos, EnumFacing side){
         return true;
     }
 
