@@ -1,5 +1,6 @@
 package jp.crafterkina.pipes.common;
 
+import jp.crafterkina.pipes.common.capability.CapabilityRegister;
 import jp.crafterkina.pipes.common.recipe.vanilla.CraftManager;
 import lombok.Getter;
 import net.minecraftforge.common.MinecraftForge;
@@ -36,5 +37,6 @@ public enum PipesCore {
         CraftManager.INSTANCE.register();
         proxy.registerTileEntities();
         PacketHandler.init();
+        CapabilityRegister.register();
     }
 }
