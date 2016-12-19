@@ -27,7 +27,6 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,7 +39,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     private final IGate[] DEFAULTS = Arrays.stream(EnumFacing.VALUES).map(
             f -> new DefaultGate(this))
             .toArray(IGate[]::new);
-    Set<FlowingItem> flowingItems = Sets.newConcurrentHashSet();
+    public Set<FlowingItem> flowingItems = Sets.newConcurrentHashSet();
     private IGate[] GATES = Arrays.copyOf(DEFAULTS, DEFAULTS.length);
 
     public boolean hasGate(EnumFacing facing){
@@ -57,14 +56,6 @@ public class TileEntityPipe extends TileEntity implements ITickable{
 
     public void removeGate(EnumFacing facing){
         setGate(facing, DEFAULTS[facing.getIndex()]);
-    }
-
-    public Set<FlowingItem> getFlowingItems(){
-        return Collections.unmodifiableSet(flowingItems);
-    }
-
-    public void setFlowingItems(Set<FlowingItem> items){
-        flowingItems = items;
     }
 
     @Override

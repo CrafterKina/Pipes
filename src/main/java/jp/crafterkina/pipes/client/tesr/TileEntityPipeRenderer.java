@@ -21,7 +21,7 @@ import java.util.Set;
 public class TileEntityPipeRenderer extends TileEntitySpecialRenderer<TileEntityPipe>{
     @Override
     public void renderTileEntityAt(TileEntityPipe te, double x, double y, double z, float partialTicks, int destroyStage){
-        Set<FlowingItem> flowingItem = te.getFlowingItems();
+        Set<FlowingItem> flowingItem = te.flowingItems;
         flowingItem.forEach(i -> {
             //Vec3d vec3d = item.getVelocity().scale(tick).addVector(x, y, z);
             GlStateManager.pushMatrix();

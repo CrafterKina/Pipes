@@ -10,6 +10,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
@@ -54,6 +55,19 @@ public class BlockPipe extends BlockContainer{
         }
         setDefaultState(state);
     }
+
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state){
+        TileEntity tileentity = worldIn.getTileEntity(pos);
+
+        if(tileentity instanceof TileEntityPipe){
+            TileEntityPipe pipe = (TileEntityPipe) tileentity;
+            pipe.flowingItems.parallelStream().map(i -> i.item.getStack()).forEach(i -> InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), i));
+            worldIn.updateComparatorOutputLevel(pos, this);
+        }
+
+        super.breakBlock(worldIn, pos, state);
+    }
+
 
     @Nullable
     @Override

@@ -84,7 +84,7 @@ class MessagePipeFlowHandler implements IMessageHandler<MessagePipeFlow, IMessag
         TileEntity te = Minecraft.getMinecraft().world.getTileEntity(mes.pos);
         if(te instanceof TileEntityPipe){
             TileEntityPipe pipe = (TileEntityPipe) te;
-            pipe.setFlowingItems(mes.flowingItems);
+            pipe.flowingItems = mes.flowingItems;
         }
         return null;
     }
