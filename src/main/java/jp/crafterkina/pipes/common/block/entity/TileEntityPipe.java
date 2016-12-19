@@ -102,13 +102,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
                         IItemFlowHandler handler;
                         over:
                         {
-                            if(te == null) break over;
-
-                            if(te.hasCapability(IItemFlowHandler.CAPABILITY, p.item.getDirectionFace().getOpposite())){
-                                handler = te.getCapability(IItemFlowHandler.CAPABILITY, p.item.getDirectionFace().getOpposite());
-                            }else if(te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, p.item.getDirectionFace().getOpposite())){
-                                handler = new InvFlowWrapper(te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, p.item.getDirectionFace().getOpposite()));
-                            }else break over;
+                            handler = getFlowHandlerFromTileEntity(te, p.item.getDirectionFace().getOpposite());
                             if(handler == null) break over;
 
                             over = handler.flow(p.item);
@@ -153,6 +147,17 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     Vec3d[] connectingDirections(){
         @SuppressWarnings("deprecation") IBlockState state = getBlockType().getActualState(getWorld().getBlockState(getPos()), getWorld(), getPos());
         return Arrays.stream(EnumFacing.VALUES).filter(f -> state.getValue(BlockPipe.CONNECT[f.getIndex()])).map(f -> new Vec3d(f.getDirectionVec())).toArray(Vec3d[]::new);
+    }
+
+    @Nullable
+    private IItemFlowHandler getFlowHandlerFromTileEntity(TileEntity te, EnumFacing facing){
+        IItemFlowHandler result = null;
+        if(te.hasCapability(IItemFlowHandler.CAPABILITY, facing)){
+            result = te.getCapability(IItemFlowHandler.CAPABILITY, facing);
+        }else if(te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing)){
+            result = new InvFlowWrapper(te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing));
+        }
+        return result;
     }
 
     private FlowItem turn(FlowItem item){
