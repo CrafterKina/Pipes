@@ -26,7 +26,7 @@ public class CommonProxy{
 
     @SafeVarargs
     private static <T extends IForgeRegistryEntry<T>> void register(RegistryEvent.Register<T> event, Pair<T, String>... targets){
-        Arrays.stream(targets).forEach(p -> event.getRegistry().register(p.getLeft().setRegistryName(getResourceLocation(p.getRight()))));
+        Arrays.stream(targets).map(t -> t.getLeft().setRegistryName(getResourceLocation(t.getRight()))).forEach(event.getRegistry()::register);
     }
 
     @SafeVarargs
