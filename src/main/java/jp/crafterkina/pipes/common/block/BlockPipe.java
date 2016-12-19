@@ -1,5 +1,6 @@
 package jp.crafterkina.pipes.common.block;
 
+import jp.crafterkina.pipes.api.pipe.IItemFlowHandler;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -9,7 +10,6 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -162,7 +162,7 @@ public class BlockPipe extends BlockContainer{
         BlockPos p = pos.add(facing.getDirectionVec());
         IBlockState s = world.getBlockState(p);
         TileEntity te = world.getTileEntity(p);
-        return s.getBlock() == this || te instanceof IInventory || (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite()));
+        return s.getBlock() == this || (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())) || (te != null && te.hasCapability(IItemFlowHandler.CAPABILITY, facing.getOpposite()));
     }
 
     @Override
