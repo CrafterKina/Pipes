@@ -8,6 +8,7 @@ import jp.crafterkina.pipes.common.PacketHandler;
 import jp.crafterkina.pipes.common.gate.DefaultGate;
 import jp.crafterkina.pipes.common.network.MessagePipeFlow;
 import jp.crafterkina.pipes.common.pipe.FlowingItem;
+import jp.crafterkina.pipes.util.NBTStreams;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,11 +18,9 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,8 +34,6 @@ import java.util.stream.Collectors;
  * Created by Kina on 2016/12/14.
  */
 public class TileEntityPipe extends TileEntity implements IItemFlowable, ITickable{
-    @SideOnly(Side.CLIENT)
-    public Set<Pair<ItemStack, Vec3d>> clientItems = Collections.emptySet();
     private IItemHandler[] FACES = Arrays.stream(EnumFacing.VALUES).map(f -> new FaceInsertion(new Vec3d(f.getDirectionVec()), this)).toArray(FaceInsertion[]::new);
     private IGate[] DEFAULTS = Arrays.stream(EnumFacing.VALUES).map(
             f -> new DefaultGate(new Random(), this))
@@ -70,13 +67,14 @@ public class TileEntityPipe extends TileEntity implements IItemFlowable, ITickab
 
     @Override
     public void readFromNBT(NBTTagCompound compound){
+        flowingItems.addAll(NBTStreams.nbtListStream(compound.getTagList("flowingItems", Constants.NBT.TAG_COMPOUND)).map(FlowingItem::new).collect(Collectors.toSet()));
         super.readFromNBT(compound);
     }
 
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound){
-
+        compound.setTag("flowingItems", flowingItems.parallelStream().parallel().map(FlowingItem::serializeNBT).collect(NBTStreams.toNBTList()));
         return super.writeToNBT(compound);
     }
 
