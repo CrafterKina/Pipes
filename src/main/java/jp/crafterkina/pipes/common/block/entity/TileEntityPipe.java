@@ -141,7 +141,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         }
         // Turn
         flowingItems.parallelStream().filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> !i.turned).forEach(p -> {
-            p.item = getGate(p.item.getDirectionFace().getOpposite()).turn(p.item);
+            p.item = turn(p.item);
             p.tick = world.getTotalWorldTime();
             p.turned = true;
         });
@@ -152,6 +152,18 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     Vec3d[] connectingDirections(){
         @SuppressWarnings("deprecation") IBlockState state = getBlockType().getActualState(getWorld().getBlockState(getPos()), getWorld(), getPos());
         return Arrays.stream(EnumFacing.VALUES).filter(f -> state.getValue(BlockPipe.CONNECT[f.getIndex()])).map(f -> new Vec3d(f.getDirectionVec())).toArray(Vec3d[]::new);
+    }
+
+    private FlowItem turn(FlowItem item){
+        Vec3d[] ds = Arrays.stream(connectingDirections()).filter(d -> item.getVelocity().scale(-1).dotProduct(d) / Math.sqrt(item.getVelocity().scale(-1).lengthSquared() * d.lengthSquared()) != 1).toArray(Vec3d[]::new);
+        switch(ds.length){
+            case 0:
+                return item;
+            case 1:
+                return new FlowItem(item.getStack(), ds[0].scale(item.getSpeed()));
+            default:
+                return new FlowItem(item.getStack(), ds[getWorld().rand.nextInt(ds.length)].scale(item.getSpeed()));
+        }
     }
 }
 
@@ -221,18 +233,5 @@ class DefaultGate implements IGate{
 
     DefaultGate(TileEntityPipe pipe){
         this.pipe = pipe;
-    }
-
-    @Override
-    public FlowItem turn(FlowItem item){
-        Vec3d[] ds = Arrays.stream(pipe.connectingDirections()).filter(d -> item.getVelocity().scale(-1).dotProduct(d) / Math.sqrt(item.getVelocity().scale(-1).lengthSquared() * d.lengthSquared()) != 1).toArray(Vec3d[]::new);
-        switch(ds.length){
-            case 0:
-                return item;
-            case 1:
-                return new FlowItem(item.getStack(), ds[0].scale(item.getSpeed()));
-            default:
-                return new FlowItem(item.getStack(), ds[pipe.getWorld().rand.nextInt(ds.length)].scale(item.getSpeed()));
-        }
     }
 }
