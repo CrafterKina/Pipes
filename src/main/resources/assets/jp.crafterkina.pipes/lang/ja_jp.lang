@@ -3,6 +3,8 @@
 item.jp.crafterkina.pipes.merchant_phone.name=商人の電話
 # Blocks
 tile.jp.crafterkina.pipes.pipe.name=パイプ
+# Strategies
+strategy.jp.crafterkina.pipes.accelerator=加速 x%.3g
 # Messages
 mes.item.jp.crafterkina.pipes.merchant_phone.register=連絡先を登録しました
 # Tooltips

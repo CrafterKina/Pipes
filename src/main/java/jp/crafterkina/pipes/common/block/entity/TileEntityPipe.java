@@ -10,10 +10,14 @@ import jp.crafterkina.pipes.common.block.BlockPipe;
 import jp.crafterkina.pipes.common.capability.wrapper.InvFlowWrapper;
 import jp.crafterkina.pipes.common.network.MessagePipeFlow;
 import jp.crafterkina.pipes.common.pipe.FlowingItem;
+import jp.crafterkina.pipes.common.pipe.strategy.StrategyDefault;
 import jp.crafterkina.pipes.util.NBTStreams;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -29,22 +33,22 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
  * Created by Kina on 2016/12/14.
  */
 public class TileEntityPipe extends TileEntity implements ITickable{
-    private final IItemFlowHandler[] faceFlows = Arrays.stream(EnumFacing.VALUES).map(f -> new PipeFlowHandler(this)).toArray(IItemFlowHandler[]::new);
+    private final IItemFlowHandler[] faceFlows = Arrays.stream(EnumFacing.VALUES).map(f -> new PipeFlowHandler()).toArray(IItemFlowHandler[]::new);
     private final IItemHandler[] faceInsertions = Arrays.stream(EnumFacing.VALUES).map(f -> new FaceInsertion(new Vec3d(f.getDirectionVec()), faceFlows[f.getIndex()])).toArray(IItemHandler[]::new);
-    private final IStrategy DEFAULT_STRATEGY = new DefaultStrategy(this::getWorld);
+    private final IStrategy.IStrategyHandler processorHandler = new StrategyHandler();
+    private final IStrategy DEFAULT_STRATEGY = new StrategyDefault(this::getWorld);
     private final IGate[] DEFAULTS = Arrays.stream(EnumFacing.VALUES).map(
-            f -> new DefaultGate(this))
+            f -> new DefaultGate())
             .toArray(IGate[]::new);
     public Set<FlowingItem> flowingItems = Sets.newConcurrentHashSet();
     private IStrategy strategy = DEFAULT_STRATEGY;
-    private ItemStack processor = null;
+    private ItemStack processor = ItemStack.EMPTY;
     private IGate[] GATES = Arrays.copyOf(DEFAULTS, DEFAULTS.length);
 
     public boolean hasGate(EnumFacing facing){
@@ -64,18 +68,21 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     }
 
     public boolean hasProcessor(){
-        return strategy != DEFAULT_STRATEGY;
+        return !processor.isEmpty();
     }
 
-    public void setProcessor(ItemStack processor){
+    private boolean setProcessor(@Nonnull ItemStack processor){
         this.processor = processor;
-        strategy = processor.getItem() instanceof IStrategy.StrategySupplier ? ((IStrategy.StrategySupplier) processor.getItem()).getStrategy(processor) : DEFAULT_STRATEGY;
+        strategy = processor.getItem() instanceof IStrategy.StrategySupplier ? ((IStrategy.StrategySupplier) processor.getItem()).getStrategy(this, processor) : DEFAULT_STRATEGY;
+        if(hasWorld())
+            world.notifyBlockUpdate(pos, world.getBlockState(pos), getBlockType().getActualState(world.getBlockState(pos), world, pos), 8);
+        return true;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound){
         flowingItems.addAll(NBTStreams.nbtListStream(compound.getTagList("flowingItems", Constants.NBT.TAG_COMPOUND)).map(FlowingItem::new).collect(Collectors.toSet()));
-        setProcessor(compound.hasKey("processor", Constants.NBT.TAG_COMPOUND) ? new ItemStack(compound.getCompoundTag("processor")) : null);
+        setProcessor(compound.hasKey("processor", Constants.NBT.TAG_COMPOUND) ? new ItemStack(compound.getCompoundTag("processor")) : ItemStack.EMPTY);
         super.readFromNBT(compound);
     }
 
@@ -83,8 +90,20 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound){
         compound.setTag("flowingItems", flowingItems.parallelStream().parallel().map(FlowingItem::serializeNBT).collect(NBTStreams.toNBTList()));
-        if(processor != null) compound.setTag("processor", processor.serializeNBT());
+        if(hasProcessor()) compound.setTag("processor", processor.serializeNBT());
         return super.writeToNBT(compound);
+    }
+
+    @Nullable
+    public SPacketUpdateTileEntity getUpdatePacket(){
+        NBTTagCompound nbtTagCompound = new NBTTagCompound();
+        writeToNBT(nbtTagCompound);
+        return new SPacketUpdateTileEntity(pos, 1, nbtTagCompound);
+    }
+
+    @Nonnull
+    public NBTTagCompound getUpdateTag(){
+        return serializeNBT();
     }
 
     @SuppressWarnings("unchecked")
@@ -95,17 +114,20 @@ public class TileEntityPipe extends TileEntity implements ITickable{
             return (T) faceInsertions[facing.getIndex()];
         if(capability == IItemFlowHandler.CAPABILITY && facing != null)
             return (T) faceFlows[facing.getIndex()];
+        if(capability == IStrategy.IStrategyHandler.CAPABILITY)
+            return (T) processorHandler;
         return super.getCapability(capability, facing);
     }
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing){
-        return (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) || (capability == IItemFlowHandler.CAPABILITY && facing != null) || super.hasCapability(capability, facing);
+        return (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) || (capability == IItemFlowHandler.CAPABILITY && facing != null) || capability == IStrategy.IStrategyHandler.CAPABILITY || super.hasCapability(capability, facing);
     }
 
     @Override
     public void update(){
         if(world == null) return;
+
         // Extract
         {
 
@@ -116,16 +138,15 @@ public class TileEntityPipe extends TileEntity implements ITickable{
                     .peek(p -> {
                         BlockPos pos = this.pos.add(p.item.getDirection().xCoord, p.item.getDirection().yCoord, p.item.getDirection().zCoord);
                         TileEntity te = world.getTileEntity(pos);
-                        FlowItem over = p.item;
-                        IItemFlowHandler handler;
-                        over:
-                        {
-                            handler = getFlowHandlerFromTileEntity(te, p.item.getDirectionFace().getOpposite());
-                            if(handler == null) break over;
-
-                            over = handler.flow(p.item);
-                            if(over.getStack().isEmpty()) return;
+                        FlowItem over;
+                        IItemFlowHandler handler = getFlowHandlerFromTileEntity(te, p.item.getDirectionFace().getOpposite());
+                        if(handler == null){
+                            Block.spawnAsEntity(getWorld(), getPos(), p.item.getStack());
+                            return;
                         }
+
+                        over = handler.flow(p.item);
+                        if(over.getStack().isEmpty()) return;
                         overs.add(over);
                     })
                     .collect(Collectors.toSet())
@@ -135,7 +156,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
                 remove.addAll(
                         flowingItems.parallelStream()
                                 .filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> !i.turned)
-                                .peek(p -> overs.add(p.item)).collect(Collectors.toSet())
+                                .peek(p -> Block.spawnAsEntity(getWorld(), getPos(), p.item.getStack())).collect(Collectors.toSet())
                 );
             flowingItems.removeAll(remove);
             flowingItems.addAll(overs.parallelStream().map(strategy::onFilledInventoryInsertion).filter(f -> !f.getStack().isEmpty()).map(f -> new FlowingItem(f, world.getTotalWorldTime(), false)).collect(Collectors.toSet()));
@@ -151,6 +172,11 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         getWorld().updateComparatorOutputLevel(pos, getBlockType());
         PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(pos, flowingItems));
         strategy.tick();
+    }
+
+    @Override
+    protected void setWorldCreate(World worldIn){
+        setWorld(worldIn);
     }
 
     private Vec3d[] connectingDirections(){
@@ -181,6 +207,45 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     // Split to IStrategy?
     public int getComparatorPower(){
         return Math.min(flowingItems.size(), 15);
+    }
+
+    public void dropItems(){
+        flowingItems.parallelStream().map(i -> i.item.getStack()).forEach(i -> InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), i));
+        if(processor != null) InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), processor);
+    }
+
+    /* Internal Classes */
+
+    class PipeFlowHandler implements IItemFlowHandler{
+        @Override
+        public FlowItem flow(FlowItem item){
+            TileEntityPipe.this.flowingItems.add(new FlowingItem(item, TileEntityPipe.this.getWorld().getTotalWorldTime(), false));
+            PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(TileEntityPipe.this.getPos(), TileEntityPipe.this.flowingItems));
+            return FlowItem.EMPTY;
+        }
+
+        @Override
+        public int insertableMaximumStackSizeAtOnce(){
+            return 1;
+        }
+    }
+
+    private class DefaultGate implements IGate{
+    }
+
+    class StrategyHandler implements IStrategy.IStrategyHandler{
+        @Override
+        public boolean attach(@Nonnull ItemStack stack){
+            return !hasProcessor() && TileEntityPipe.this.setProcessor(stack.splitStack(1).copy());
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack remove(){
+            ItemStack result = TileEntityPipe.this.processor;
+            TileEntityPipe.this.setProcessor(ItemStack.EMPTY);
+            return result;
+        }
     }
 }
 
@@ -222,77 +287,5 @@ class FaceInsertion implements IItemHandler{
     @Override
     public int getSlotLimit(int slot){
         return 64;
-    }
-}
-
-class PipeFlowHandler implements IItemFlowHandler{
-    private TileEntityPipe pipe;
-
-    PipeFlowHandler(TileEntityPipe pipe){
-        this.pipe = pipe;
-    }
-
-    @Override
-    public FlowItem flow(FlowItem item){
-        pipe.flowingItems.add(new FlowingItem(item, pipe.getWorld().getTotalWorldTime(), false));
-        PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(pipe.getPos(), pipe.flowingItems));
-        return FlowItem.EMPTY;
-    }
-
-    @Override
-    public int insertableMaximumStackSizeAtOnce(){
-        return 1;
-    }
-}
-
-class DefaultGate implements IGate{
-    private final TileEntityPipe pipe;
-
-    DefaultGate(TileEntityPipe pipe){
-        this.pipe = pipe;
-    }
-}
-
-class DefaultStrategy implements IStrategy{
-    private Supplier<World> world;
-
-    DefaultStrategy(Supplier<World> world){
-        this.world = world;
-    }
-
-    @Override
-    public FlowItem turn(FlowItem item, Vec3d... connecting){
-        if(world.get() == null){
-            return item;
-        }
-        Vec3d[] ds = Arrays.stream(connecting).filter(d -> item.getVelocity().scale(-1).dotProduct(d) / Math.sqrt(item.getVelocity().scale(-1).lengthSquared() * d.lengthSquared()) != 1).toArray(Vec3d[]::new);
-        switch(ds.length){
-            case 0:
-                return item;
-            case 1:
-                return new FlowItem(item.getStack(), ds[0].scale(item.getSpeed()));
-            default:
-                return new FlowItem(item.getStack(), ds[world.get().rand.nextInt(ds.length)].scale(item.getSpeed()));
-        }
-    }
-
-    @Override
-    public FlowItem onFilledInventoryInsertion(FlowItem item){
-        return new FlowItem(item.getStack(), item.getVelocity().scale(-1));
-    }
-
-    @Override
-    public IStrategy onRedstonePowered(int level){
-        return this;
-    }
-
-    @Override
-    public int redstonePower(EnumFacing side){
-        return 0;
-    }
-
-    @Override
-    public void tick(){
-        // no-op
     }
 }

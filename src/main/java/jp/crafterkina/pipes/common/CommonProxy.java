@@ -4,6 +4,7 @@ import jp.crafterkina.pipes.common.block.BlockPipe;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.item.ItemMerchantPhone;
 import jp.crafterkina.pipes.common.item.ItemPipe;
+import jp.crafterkina.pipes.common.pipe.strategy.StrategyAcceleration;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -38,7 +39,8 @@ public class CommonProxy{
     protected void registerItems(RegistryEvent.Register<Item> event){
         register(event,
                 of(new ItemMerchantPhone(), "merchant_phone"),
-                of(new ItemPipe(), "pipe")
+                of(new ItemPipe(), "pipe"),
+                of(new StrategyAcceleration.ItemAccelerateProcessor(), "strategy_acceleration")
         );
     }
 

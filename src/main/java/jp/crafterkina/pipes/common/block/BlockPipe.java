@@ -1,6 +1,7 @@
 package jp.crafterkina.pipes.common.block;
 
 import jp.crafterkina.pipes.api.pipe.IItemFlowHandler;
+import jp.crafterkina.pipes.api.pipe.IStrategy;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -11,11 +12,13 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -59,13 +62,28 @@ public class BlockPipe extends BlockContainer{
         setDefaultState(state);
     }
 
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
+        if(playerIn.getHeldItem(hand).isEmpty()){
+            TileEntity te = worldIn.getTileEntity(pos);
+            if(te == null || !te.hasCapability(IStrategy.IStrategyHandler.CAPABILITY, facing)) return false;
+            IStrategy.IStrategyHandler handler = te.getCapability(IStrategy.IStrategyHandler.CAPABILITY, facing);
+            assert handler != null;
+            ItemStack removed = handler.remove();
+            Block.spawnAsEntity(worldIn, pos, removed);
+            worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), getActualState(worldIn.getBlockState(pos), worldIn, pos), 8);
+        }
+        return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+    }
+
     @Override
     public void breakBlock(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state){
         TileEntity tileentity = worldIn.getTileEntity(pos);
 
         if(tileentity instanceof TileEntityPipe){
             TileEntityPipe pipe = (TileEntityPipe) tileentity;
-            pipe.flowingItems.parallelStream().map(i -> i.item.getStack()).forEach(i -> InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), i));
+            pipe.dropItems();
             worldIn.updateComparatorOutputLevel(pos, this);
         }
 
