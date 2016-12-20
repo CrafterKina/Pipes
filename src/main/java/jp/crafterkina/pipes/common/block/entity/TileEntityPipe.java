@@ -153,7 +153,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         strategy.tick();
     }
 
-    Vec3d[] connectingDirections(){
+    private Vec3d[] connectingDirections(){
         @SuppressWarnings("deprecation") IBlockState state = getBlockType().getActualState(getWorld().getBlockState(getPos()), getWorld(), getPos());
         return Arrays.stream(EnumFacing.VALUES).filter(f -> state.getValue(BlockPipe.CONNECT[f.getIndex()])).map(f -> new Vec3d(f.getDirectionVec())).toArray(Vec3d[]::new);
     }
