@@ -1,6 +1,5 @@
 package jp.crafterkina.pipes.api.pipe;
 
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
@@ -11,7 +10,7 @@ public interface IItemFlowHandler{
     @CapabilityInject(IItemFlowHandler.class)
     Capability<IItemFlowHandler> CAPABILITY = null;
 
-    ItemStack flow(FlowItem item);
+    FlowItem flow(FlowItem item);
 
     int insertableMaximumStackSizeAtOnce();
 }

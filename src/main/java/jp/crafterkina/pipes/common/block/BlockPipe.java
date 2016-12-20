@@ -2,6 +2,7 @@ package jp.crafterkina.pipes.common.block;
 
 import jp.crafterkina.pipes.api.pipe.IItemFlowHandler;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -39,6 +40,7 @@ import static jp.crafterkina.pipes.api.PipesConstants.MOD_ID;
 public class BlockPipe extends BlockContainer{
     public static final PropertyBool[] CONNECT = Arrays.stream(EnumFacing.VALUES).map(f -> PropertyBool.create("c_" + f.getName())).toArray(PropertyBool[]::new);
     public static final PropertyBool[] GATE = Arrays.stream(EnumFacing.VALUES).map(f -> PropertyBool.create("g_" + f.getName())).toArray(PropertyBool[]::new);
+    public static final PropertyBool PROCESSOR = PropertyBool.create("processor");
     private static final AxisAlignedBB CORE = new AxisAlignedBB(5.5 / 16d, 5.5 / 16d, 5.5 / 16d, 10.5 / 16d, 10.5 / 16d, 10.5 / 16d);
     private static final AxisAlignedBB[] PIPE = {new AxisAlignedBB(6 / 16d, 0d, 6 / 16d, 10 / 16d, 5.5 / 16d, 10 / 16d), new AxisAlignedBB(6 / 16d, 10.5 / 16d, 6 / 16d, 10 / 16d, 1d, 10 / 16d), new AxisAlignedBB(6 / 16d, 6 / 16d, 0d, 10 / 16d, 10 / 16d, 5.5 / 16d), new AxisAlignedBB(6 / 16d, 6 / 16d, 10.5 / 16d, 10 / 16d, 10 / 16d, 1d), new AxisAlignedBB(0d, 6 / 16d, 6 / 16d, 5.5 / 16d, 10 / 16d, 10 / 16d), new AxisAlignedBB(10.5 / 16d, 6 / 16d, 6 / 16d, 1d, 6 / 16d, 6 / 16d)};
 
@@ -53,6 +55,7 @@ public class BlockPipe extends BlockContainer{
             state = state.withProperty(CONNECT[f.getIndex()], false);
             state = state.withProperty(GATE[f.getIndex()], false);
         }
+        state = state.withProperty(PROCESSOR, false);
         setDefaultState(state);
     }
 
@@ -81,7 +84,25 @@ public class BlockPipe extends BlockContainer{
         TileEntity te = worldIn.getTileEntity(pos);
         if(!(te instanceof TileEntityPipe)) return 0;
         TileEntityPipe pipe = (TileEntityPipe) te;
-        return pipe.flowingItems.size();
+        return pipe.getComparatorPower();
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public int getWeakPower(IBlockState blockState, IBlockAccess worldIn, BlockPos pos, EnumFacing side){
+        TileEntity te = worldIn.getTileEntity(pos);
+        if(!(te instanceof TileEntityPipe)) return 0;
+        TileEntityPipe pipe = (TileEntityPipe) te;
+        return pipe.getWeakPower(side);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
+        TileEntity te = worldIn.getTileEntity(pos);
+        if(!(te instanceof TileEntityPipe)) return;
+        TileEntityPipe pipe = (TileEntityPipe) te;
+        pipe.onRedstonePowered(worldIn.isBlockIndirectlyGettingPowered(pos));
     }
 
     @Nullable
@@ -168,6 +189,8 @@ public class BlockPipe extends BlockContainer{
             if(pipe == null) continue;
             state = state.withProperty(GATE[face.getIndex()], pipe.hasGate(face));
         }
+        if(pipe == null) return state;
+        state = state.withProperty(PROCESSOR, pipe.hasProcessor());
         return state;
     }
 
@@ -194,6 +217,6 @@ public class BlockPipe extends BlockContainer{
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState(){
-        return new BlockStateContainer(this, Arrays.stream(new IProperty<?>[][]{CONNECT, GATE}).flatMap(Arrays::stream).toArray(IProperty[]::new));
+        return new BlockStateContainer(this, Arrays.stream(new IProperty<?>[][]{CONNECT, GATE, {PROCESSOR}}).flatMap(Arrays::stream).toArray(IProperty[]::new));
     }
 }

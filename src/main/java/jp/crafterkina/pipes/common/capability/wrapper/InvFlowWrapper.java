@@ -17,13 +17,13 @@ public class InvFlowWrapper implements IItemFlowHandler{
 
 
     @Override
-    public ItemStack flow(FlowItem item){
+    public FlowItem flow(FlowItem item){
         ItemStack stack = item.getStack();
         for(int i = 0; i < handler.getSlots(); i++){
             stack = handler.insertItem(i, stack, false);
-            if(stack.isEmpty()) return ItemStack.EMPTY;
+            if(stack.isEmpty()) return FlowItem.EMPTY;
         }
-        return stack;
+        return new FlowItem(stack, item.getVelocity());
     }
 
     @Override

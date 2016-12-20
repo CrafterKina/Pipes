@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import jp.crafterkina.pipes.api.pipe.FlowItem;
 import jp.crafterkina.pipes.api.pipe.IGate;
 import jp.crafterkina.pipes.api.pipe.IItemFlowHandler;
+import jp.crafterkina.pipes.api.pipe.IStrategy;
 import jp.crafterkina.pipes.common.PacketHandler;
 import jp.crafterkina.pipes.common.block.BlockPipe;
 import jp.crafterkina.pipes.common.capability.wrapper.InvFlowWrapper;
@@ -11,7 +12,6 @@ import jp.crafterkina.pipes.common.network.MessagePipeFlow;
 import jp.crafterkina.pipes.common.pipe.FlowingItem;
 import jp.crafterkina.pipes.util.NBTStreams;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -19,6 +19,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -28,6 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -36,10 +38,12 @@ import java.util.stream.Collectors;
 public class TileEntityPipe extends TileEntity implements ITickable{
     private final IItemFlowHandler[] faceFlows = Arrays.stream(EnumFacing.VALUES).map(f -> new PipeFlowHandler(this)).toArray(IItemFlowHandler[]::new);
     private final IItemHandler[] faceInsertions = Arrays.stream(EnumFacing.VALUES).map(f -> new FaceInsertion(new Vec3d(f.getDirectionVec()), faceFlows[f.getIndex()])).toArray(IItemHandler[]::new);
+    private final IStrategy DEFAULT_STRATEGY = new DefaultStrategy(this::getWorld);
     private final IGate[] DEFAULTS = Arrays.stream(EnumFacing.VALUES).map(
             f -> new DefaultGate(this))
             .toArray(IGate[]::new);
     public Set<FlowingItem> flowingItems = Sets.newConcurrentHashSet();
+    private IStrategy strategy = DEFAULT_STRATEGY;
     private IGate[] GATES = Arrays.copyOf(DEFAULTS, DEFAULTS.length);
 
     public boolean hasGate(EnumFacing facing){
@@ -56,6 +60,18 @@ public class TileEntityPipe extends TileEntity implements ITickable{
 
     public void removeGate(EnumFacing facing){
         setGate(facing, DEFAULTS[facing.getIndex()]);
+    }
+
+    public boolean hasProcessor(){
+        return strategy != DEFAULT_STRATEGY;
+    }
+
+    public IStrategy getProcessor(){
+        return strategy;
+    }
+
+    public void setProcessor(IStrategy processor){
+        strategy = processor != null ? processor : DEFAULT_STRATEGY;
     }
 
     @Override
@@ -89,16 +105,18 @@ public class TileEntityPipe extends TileEntity implements ITickable{
 
     @Override
     public void update(){
+        if(world == null) return;
         // Extract
         {
 
             Set<FlowingItem> remove = Sets.newHashSet();
+            Set<FlowItem> overs = Sets.newHashSet();
             remove.addAll(flowingItems.parallelStream()
                     .filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> i.turned)
                     .peek(p -> {
                         BlockPos pos = this.pos.add(p.item.getDirection().xCoord, p.item.getDirection().yCoord, p.item.getDirection().zCoord);
                         TileEntity te = world.getTileEntity(pos);
-                        ItemStack over = p.item.getStack();
+                        FlowItem over = p.item;
                         IItemFlowHandler handler;
                         over:
                         {
@@ -106,14 +124,9 @@ public class TileEntityPipe extends TileEntity implements ITickable{
                             if(handler == null) break over;
 
                             over = handler.flow(p.item);
-                            if(over.isEmpty()) return;
+                            if(over.getStack().isEmpty()) return;
                         }
-                        EntityItem entityItem = new EntityItem(world);
-                        entityItem.setPosition(this.pos.getX() + 0.5, this.pos.getY() - 0.5, this.pos.getZ() + 0.5);
-                        entityItem.setEntityItemStack(over);
-                        Vec3d d = p.item.getVelocity();
-                        entityItem.addVelocity(d.xCoord, d.yCoord, d.zCoord);
-                        world.spawnEntity(entityItem);
+                        overs.add(over);
                     })
                     .collect(Collectors.toSet())
             );
@@ -122,26 +135,22 @@ public class TileEntityPipe extends TileEntity implements ITickable{
                 remove.addAll(
                         flowingItems.parallelStream()
                                 .filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> !i.turned)
-                                .peek(p -> {
-                                    ItemStack stack = p.item.getStack();
-                                    EntityItem entityItem = new EntityItem(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack);
-                                    Vec3d d = p.item.getVelocity();
-                                    entityItem.addVelocity(d.xCoord, d.yCoord, d.zCoord);
-                                    world.spawnEntity(entityItem);
-                                }).collect(Collectors.toSet())
+                                .peek(p -> overs.add(p.item)).collect(Collectors.toSet())
                 );
             flowingItems.removeAll(remove);
+            flowingItems.addAll(overs.parallelStream().map(strategy::onFilledInventoryInsertion).filter(f -> !f.getStack().isEmpty()).map(f -> new FlowingItem(f, world.getTotalWorldTime(), false)).collect(Collectors.toSet()));
 
         }
         // Turn
         flowingItems.parallelStream().filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> !i.turned).forEach(p -> {
-            p.item = turn(p.item);
+            p.item = strategy.turn(p.item, connectingDirections());
             p.tick = world.getTotalWorldTime();
             p.turned = true;
         });
 
         getWorld().updateComparatorOutputLevel(pos, getBlockType());
         PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(pos, flowingItems));
+        strategy.tick();
     }
 
     Vec3d[] connectingDirections(){
@@ -160,16 +169,17 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         return result;
     }
 
-    private FlowItem turn(FlowItem item){
-        Vec3d[] ds = Arrays.stream(connectingDirections()).filter(d -> item.getVelocity().scale(-1).dotProduct(d) / Math.sqrt(item.getVelocity().scale(-1).lengthSquared() * d.lengthSquared()) != 1).toArray(Vec3d[]::new);
-        switch(ds.length){
-            case 0:
-                return item;
-            case 1:
-                return new FlowItem(item.getStack(), ds[0].scale(item.getSpeed()));
-            default:
-                return new FlowItem(item.getStack(), ds[getWorld().rand.nextInt(ds.length)].scale(item.getSpeed()));
-        }
+    public void onRedstonePowered(int level){
+        strategy.onRedstonePowered(level);
+    }
+
+    public int getWeakPower(EnumFacing side){
+        return strategy.redstonePower(side);
+    }
+
+    // Split to IStrategy?
+    public int getComparatorPower(){
+        return Math.min(flowingItems.size(), 15);
     }
 }
 
@@ -222,10 +232,10 @@ class PipeFlowHandler implements IItemFlowHandler{
     }
 
     @Override
-    public ItemStack flow(FlowItem item){
+    public FlowItem flow(FlowItem item){
         pipe.flowingItems.add(new FlowingItem(item, pipe.getWorld().getTotalWorldTime(), false));
         PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(pipe.getPos(), pipe.flowingItems));
-        return ItemStack.EMPTY;
+        return FlowItem.EMPTY;
     }
 
     @Override
@@ -239,5 +249,49 @@ class DefaultGate implements IGate{
 
     DefaultGate(TileEntityPipe pipe){
         this.pipe = pipe;
+    }
+}
+
+class DefaultStrategy implements IStrategy{
+    private Supplier<World> world;
+
+    DefaultStrategy(Supplier<World> world){
+        this.world = world;
+    }
+
+    @Override
+    public FlowItem turn(FlowItem item, Vec3d... connecting){
+        if(world.get() == null){
+            return item;
+        }
+        Vec3d[] ds = Arrays.stream(connecting).filter(d -> item.getVelocity().scale(-1).dotProduct(d) / Math.sqrt(item.getVelocity().scale(-1).lengthSquared() * d.lengthSquared()) != 1).toArray(Vec3d[]::new);
+        switch(ds.length){
+            case 0:
+                return item;
+            case 1:
+                return new FlowItem(item.getStack(), ds[0].scale(item.getSpeed()));
+            default:
+                return new FlowItem(item.getStack(), ds[world.get().rand.nextInt(ds.length)].scale(item.getSpeed()));
+        }
+    }
+
+    @Override
+    public FlowItem onFilledInventoryInsertion(FlowItem item){
+        return new FlowItem(item.getStack(), item.getVelocity().scale(-1));
+    }
+
+    @Override
+    public IStrategy onRedstonePowered(int level){
+        return this;
+    }
+
+    @Override
+    public int redstonePower(EnumFacing side){
+        return 0;
+    }
+
+    @Override
+    public void tick(){
+        // no-op
     }
 }

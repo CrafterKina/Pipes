@@ -16,6 +16,8 @@ import java.util.Objects;
  */
 @Immutable
 public final class FlowItem{
+    public static final FlowItem EMPTY = new FlowItem(ItemStack.EMPTY, Vec3d.ZERO);
+
     private final ItemStack stack;
     private final Vec3d velocity;
     private EnumFacing to;

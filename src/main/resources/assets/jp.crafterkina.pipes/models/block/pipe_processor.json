@@ -1,0 +1,37 @@
+{
+  "ambientocclusion": false,
+  "elements": [
+    {
+      "from": [
+        7.5,
+        7.5,
+        7.5
+      ],
+      "to": [
+        8.5,
+        8.5,
+        8.5
+      ],
+      "faces": {
+        "up": {
+          "texture": "#processor"
+        },
+        "down": {
+          "texture": "#processor"
+        },
+        "west": {
+          "texture": "#processor"
+        },
+        "east": {
+          "texture": "#processor"
+        },
+        "north": {
+          "texture": "#processor"
+        },
+        "south": {
+          "texture": "#processor"
+        }
+      }
+    }
+  ]
+}
