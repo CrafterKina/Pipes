@@ -161,6 +161,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     @Nullable
     private IItemFlowHandler getFlowHandlerFromTileEntity(TileEntity te, EnumFacing facing){
         IItemFlowHandler result = null;
+        if(te == null) return null;
         if(te.hasCapability(IItemFlowHandler.CAPABILITY, facing)){
             result = te.getCapability(IItemFlowHandler.CAPABILITY, facing);
         }else if(te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing)){
