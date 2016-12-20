@@ -2,6 +2,7 @@ package jp.crafterkina.pipes.common.pipe.strategy;
 
 import jp.crafterkina.pipes.api.pipe.FlowItem;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -53,5 +54,15 @@ public class StrategyDefault implements IStrategy{
     @Override
     public void tick(){
         // no-op
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT(){
+        return new NBTTagCompound();
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt){
+
     }
 }

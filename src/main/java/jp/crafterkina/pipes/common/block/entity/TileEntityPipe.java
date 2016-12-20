@@ -170,7 +170,8 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         });
 
         getWorld().updateComparatorOutputLevel(pos, getBlockType());
-        PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(pos, flowingItems));
+        if(!getWorld().isRemote)
+            PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(pos, flowingItems));
         strategy.tick();
     }
 

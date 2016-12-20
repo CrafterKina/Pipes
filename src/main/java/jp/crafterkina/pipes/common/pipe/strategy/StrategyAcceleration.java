@@ -3,7 +3,6 @@ package jp.crafterkina.pipes.common.pipe.strategy;
 import jp.crafterkina.pipes.api.pipe.FlowItem;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
 import jp.crafterkina.pipes.common.item.ItemProcessor;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -11,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -64,8 +64,9 @@ public class StrategyAcceleration extends StrategyDefault{
 
         @Override
         @Nonnull
+        @SuppressWarnings("deprecation")
         public String getItemStackDisplayName(@Nonnull ItemStack stack){
-            return I18n.format(getUnlocalizedNameInefficiently(stack), acceleration(stack));
+            return I18n.translateToLocalFormatted(getUnlocalizedNameInefficiently(stack), acceleration(stack));
         }
 
         private double acceleration(ItemStack stack){
