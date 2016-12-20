@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "jp.crafterkina.pipes:items/processor_pentagon",
+    "layer1": "jp.crafterkina.pipes:items/processor_pentagon_panel"
+  }
+}

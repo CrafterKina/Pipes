@@ -57,4 +57,10 @@ public class CommonProxy{
                 TileEntityPipe.class
         );
     }
+
+    protected void registerBlockColors(){
+    }
+
+    protected void registerItemColors(){
+    }
 }

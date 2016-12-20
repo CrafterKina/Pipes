@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.InstanceFactory;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import static jp.crafterkina.pipes.api.PipesConstants.MOD_ID;
@@ -38,5 +39,11 @@ public enum PipesCore {
         proxy.registerTileEntities();
         PacketHandler.init();
         CapabilityRegister.register();
+    }
+
+    @EventHandler
+    private void postInit(FMLPostInitializationEvent event){
+        proxy.registerBlockColors();
+        proxy.registerItemColors();
     }
 }

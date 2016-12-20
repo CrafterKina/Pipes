@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "jp.crafterkina.pipes:items/processor_chipped_arrow",
+    "layer1": "jp.crafterkina.pipes:items/processor_chipped_arrow_panel"
+  }
+}

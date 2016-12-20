@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -39,6 +40,16 @@ public class StrategyAcceleration extends StrategyDefault{
             setUnlocalizedName("accelerator");
         }
 
+        public static int getColor(ItemStack stack, int layer){
+            if(layer == 1) return Color.WHITE.getRGB();
+            float[] hsb = Color.RGBtoHSB(0, 255, 255, null);
+            NBTTagCompound compound = stack.getTagCompound();
+            if(compound == null || !compound.hasKey("acceleration", Constants.NBT.TAG_DOUBLE))
+                return Color.WHITE.getRGB();
+            hsb[0] -= 0.1d * (compound.getDouble("acceleration") - 1d);
+            return Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+        }
+
         @Override
         public IStrategy getStrategy(TileEntity entity, ItemStack stack){
             return new StrategyAcceleration(entity::getWorld, acceleration(stack));
@@ -46,9 +57,8 @@ public class StrategyAcceleration extends StrategyDefault{
 
         @Override
         public void getSubItems(@Nonnull Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems){
-            super.getSubItems(itemIn, tab, subItems);
             for(int i = 1; i <= 6; i++){
-                for(int j = 1; 4 > j; j++){
+                for(int j = 0; 4 > j; j++){
                     double l = i + j / 4d;
                     ItemStack stack = new ItemStack(this);
                     NBTTagCompound compound = Optional.ofNullable(stack.getTagCompound()).orElseGet(() -> {
