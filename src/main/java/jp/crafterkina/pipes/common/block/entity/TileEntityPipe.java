@@ -44,6 +44,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
             .toArray(IGate[]::new);
     public Set<FlowingItem> flowingItems = Sets.newConcurrentHashSet();
     private IStrategy strategy = DEFAULT_STRATEGY;
+    private ItemStack processor = null;
     private IGate[] GATES = Arrays.copyOf(DEFAULTS, DEFAULTS.length);
 
     public boolean hasGate(EnumFacing facing){
@@ -66,17 +67,15 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         return strategy != DEFAULT_STRATEGY;
     }
 
-    public IStrategy getProcessor(){
-        return strategy;
-    }
-
-    public void setProcessor(IStrategy processor){
-        strategy = processor != null ? processor : DEFAULT_STRATEGY;
+    public void setProcessor(ItemStack processor){
+        this.processor = processor;
+        strategy = processor.getItem() instanceof IStrategy.StrategySupplier ? ((IStrategy.StrategySupplier) processor.getItem()).getStrategy(processor) : DEFAULT_STRATEGY;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound){
         flowingItems.addAll(NBTStreams.nbtListStream(compound.getTagList("flowingItems", Constants.NBT.TAG_COMPOUND)).map(FlowingItem::new).collect(Collectors.toSet()));
+        setProcessor(compound.hasKey("processor", Constants.NBT.TAG_COMPOUND) ? new ItemStack(compound.getCompoundTag("processor")) : null);
         super.readFromNBT(compound);
     }
 
@@ -84,6 +83,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound){
         compound.setTag("flowingItems", flowingItems.parallelStream().parallel().map(FlowingItem::serializeNBT).collect(NBTStreams.toNBTList()));
+        if(processor != null) compound.setTag("processor", processor.serializeNBT());
         return super.writeToNBT(compound);
     }
 
