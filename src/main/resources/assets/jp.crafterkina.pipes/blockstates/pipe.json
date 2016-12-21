@@ -154,19 +154,6 @@
       },
       "false": {
       }
-    },
-    "processor": {
-      "true": {
-        "textures": {
-          "processor": "blocks/iron_block"
-        },
-        "submodel": {
-          "processor": {
-            "model": "jp.crafterkina.pipes:pipe_processor"
-          }
-        }
-      },
-      "false": {}
     }
   }
 }

@@ -22,11 +22,12 @@ public class TileEntityPipeRenderer extends TileEntitySpecialRenderer<TileEntity
     @Override
     public void renderTileEntityAt(TileEntityPipe te, double x, double y, double z, float partialTicks, int destroyStage){
         Set<FlowingItem> flowingItem = te.flowingItems;
+        float time = te.getWorld().getTotalWorldTime() + partialTicks;
         flowingItem.forEach(i -> {
             //Vec3d vec3d = item.getVelocity().scale(tick).addVector(x, y, z);
             GlStateManager.pushMatrix();
 
-            float v = te.getWorld().getTotalWorldTime() - i.tick + partialTicks;
+            float v = time - i.tick;
             Vec3d vec = new Vec3d(0.5, 0.5, 0.5).add(!i.turned ? i.item.getDirection().scale(-1).scale(0.5) : Vec3d.ZERO);
 
             GlStateManager.translate(vec.xCoord + x + i.item.getVelocity().xCoord * v * 0.5, vec.yCoord + y + i.item.getVelocity().yCoord * v * 0.5, vec.zCoord + z + i.item.getVelocity().zCoord * v * 0.5);
@@ -40,6 +41,15 @@ public class TileEntityPipeRenderer extends TileEntitySpecialRenderer<TileEntity
             GlStateManager.disableRescaleNormal();
             GlStateManager.popMatrix();
         });
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
+        GlStateManager.enableRescaleNormal();
+        GlStateManager.scale(0.25, 0.25, 0.25);
+        GlStateManager.rotate(time * 5, 1, 1, -1);
+        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        renderItemStack(te.getProcessorStack());
+        GlStateManager.disableRescaleNormal();
+        GlStateManager.popMatrix();
     }
 
     private void renderItemStack(ItemStack stack){

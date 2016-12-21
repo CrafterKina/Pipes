@@ -72,6 +72,10 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         return !processor.isEmpty();
     }
 
+    public ItemStack getProcessorStack(){
+        return processor.copy();
+    }
+
     private boolean setProcessor(@Nonnull ItemStack processor){
         this.processor = processor;
         strategy = processor.getItem() instanceof IStrategy.StrategySupplier ? ((IStrategy.StrategySupplier) processor.getItem()).getStrategy(this, processor) : DEFAULT_STRATEGY;

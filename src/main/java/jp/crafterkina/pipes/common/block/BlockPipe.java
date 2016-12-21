@@ -43,7 +43,7 @@ import static jp.crafterkina.pipes.api.PipesConstants.MOD_ID;
 public class BlockPipe extends BlockContainer{
     public static final PropertyBool[] CONNECT = Arrays.stream(EnumFacing.VALUES).map(f -> PropertyBool.create("c_" + f.getName())).toArray(PropertyBool[]::new);
     public static final PropertyBool[] GATE = Arrays.stream(EnumFacing.VALUES).map(f -> PropertyBool.create("g_" + f.getName())).toArray(PropertyBool[]::new);
-    public static final PropertyBool PROCESSOR = PropertyBool.create("processor");
+    //    public static final PropertyBool PROCESSOR = PropertyBool.create("processor");
     private static final AxisAlignedBB CORE = new AxisAlignedBB(5.5 / 16d, 5.5 / 16d, 5.5 / 16d, 10.5 / 16d, 10.5 / 16d, 10.5 / 16d);
     private static final AxisAlignedBB[] PIPE = {new AxisAlignedBB(6 / 16d, 0d, 6 / 16d, 10 / 16d, 5.5 / 16d, 10 / 16d), new AxisAlignedBB(6 / 16d, 10.5 / 16d, 6 / 16d, 10 / 16d, 1d, 10 / 16d), new AxisAlignedBB(6 / 16d, 6 / 16d, 0d, 10 / 16d, 10 / 16d, 5.5 / 16d), new AxisAlignedBB(6 / 16d, 6 / 16d, 10.5 / 16d, 10 / 16d, 10 / 16d, 1d), new AxisAlignedBB(0d, 6 / 16d, 6 / 16d, 5.5 / 16d, 10 / 16d, 10 / 16d), new AxisAlignedBB(10.5 / 16d, 6 / 16d, 6 / 16d, 1d, 6 / 16d, 6 / 16d)};
 
@@ -58,7 +58,7 @@ public class BlockPipe extends BlockContainer{
             state = state.withProperty(CONNECT[f.getIndex()], false);
             state = state.withProperty(GATE[f.getIndex()], false);
         }
-        state = state.withProperty(PROCESSOR, false);
+//        state = state.withProperty(PROCESSOR, false);
         setDefaultState(state);
     }
 
@@ -210,8 +210,8 @@ public class BlockPipe extends BlockContainer{
             if(pipe == null) continue;
             state = state.withProperty(GATE[face.getIndex()], pipe.hasGate(face));
         }
-        if(pipe == null) return state;
-        state = state.withProperty(PROCESSOR, pipe.hasProcessor());
+//        if(pipe == null) return state;
+//        state = state.withProperty(PROCESSOR, pipe.hasProcessor());
         return state;
     }
 
@@ -238,6 +238,6 @@ public class BlockPipe extends BlockContainer{
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState(){
-        return new BlockStateContainer(this, Arrays.stream(new IProperty<?>[][]{CONNECT, GATE, {PROCESSOR}}).flatMap(Arrays::stream).toArray(IProperty[]::new));
+        return new BlockStateContainer(this, Arrays.stream(new IProperty<?>[][]{CONNECT, GATE/*, {PROCESSOR}*/}).flatMap(Arrays::stream).toArray(IProperty[]::new));
     }
 }
