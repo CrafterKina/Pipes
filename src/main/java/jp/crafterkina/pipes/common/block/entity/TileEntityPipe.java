@@ -26,6 +26,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -74,8 +75,6 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     private boolean setProcessor(@Nonnull ItemStack processor){
         this.processor = processor;
         strategy = processor.getItem() instanceof IStrategy.StrategySupplier ? ((IStrategy.StrategySupplier) processor.getItem()).getStrategy(this, processor) : DEFAULT_STRATEGY;
-        if(hasWorld())
-            world.notifyBlockUpdate(pos, world.getBlockState(pos), getBlockType().getActualState(world.getBlockState(pos), world, pos), 8);
         return true;
     }
 
@@ -170,6 +169,8 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         });
 
         getWorld().updateComparatorOutputLevel(pos, getBlockType());
+        if(FMLCommonHandler.instance().getSide().isClient())
+            world.notifyBlockUpdate(pos, world.getBlockState(pos), getBlockType().getActualState(world.getBlockState(pos), world, pos), 8);
         if(!getWorld().isRemote)
             PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(pos, flowingItems));
         strategy.tick();
