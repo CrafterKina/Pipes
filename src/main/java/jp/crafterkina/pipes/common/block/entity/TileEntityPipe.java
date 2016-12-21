@@ -215,6 +215,11 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         if(processor != null) InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), processor);
     }
 
+    //TODO Split to Handler
+    public double getBaseSpeed(){
+        return 1 / 40d;
+    }
+
     /* Internal Classes */
 
     class PipeFlowHandler implements IItemFlowHandler{
@@ -248,45 +253,45 @@ public class TileEntityPipe extends TileEntity implements ITickable{
             return result;
         }
     }
-}
 
-class FaceInsertion implements IItemHandler{
-    private final Vec3d facing;
-    private final IItemFlowHandler pipe;
+    class FaceInsertion implements IItemHandler{
+        private final Vec3d facing;
+        private final IItemFlowHandler pipe;
 
-    FaceInsertion(Vec3d facing, IItemFlowHandler pipe){
-        this.facing = facing.lengthSquared() == 1 ? facing : facing.normalize();
-        this.pipe = pipe;
-    }
+        FaceInsertion(Vec3d facing, IItemFlowHandler pipe){
+            this.facing = facing.lengthSquared() == 1 ? facing : facing.normalize();
+            this.pipe = pipe;
+        }
 
-    @Override
-    public int getSlots(){
-        return 1;
-    }
+        @Override
+        public int getSlots(){
+            return 1;
+        }
 
-    @Nonnull
-    @Override
-    public ItemStack getStackInSlot(int slot){
-        return ItemStack.EMPTY;
-    }
+        @Nonnull
+        @Override
+        public ItemStack getStackInSlot(int slot){
+            return ItemStack.EMPTY;
+        }
 
-    @Nonnull
-    @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate){
-        ItemStack stack1 = (stack = simulate ? stack.copy() : stack).splitStack(Math.min(stack.getCount(), pipe.insertableMaximumStackSizeAtOnce()));
-        if(simulate) return stack;
-        pipe.flow(new FlowItem(stack1, facing.scale(-1).scale(1 / 40d)));
-        return stack;
-    }
+        @Nonnull
+        @Override
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate){
+            ItemStack stack1 = (stack = simulate ? stack.copy() : stack).splitStack(Math.min(stack.getCount(), pipe.insertableMaximumStackSizeAtOnce()));
+            if(simulate) return stack;
+            pipe.flow(new FlowItem(stack1, facing.scale(-1).scale(TileEntityPipe.this.getBaseSpeed())));
+            return stack;
+        }
 
-    @Nonnull
-    @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate){
-        return ItemStack.EMPTY;
-    }
+        @Nonnull
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate){
+            return ItemStack.EMPTY;
+        }
 
-    @Override
-    public int getSlotLimit(int slot){
-        return 64;
+        @Override
+        public int getSlotLimit(int slot){
+            return 64;
+        }
     }
 }
