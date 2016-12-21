@@ -1,13 +1,17 @@
 package jp.crafterkina.pipes.client.tesr;
 
+import jp.crafterkina.pipes.api.render.SpecialRendererSupplier;
+import jp.crafterkina.pipes.client.tesr.processor.DefaultProcessorRenderer;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.pipe.FlowingItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -19,6 +23,9 @@ import java.util.Set;
  */
 @SideOnly(Side.CLIENT)
 public class TileEntityPipeRenderer extends TileEntitySpecialRenderer<TileEntityPipe>{
+    @SideOnly(Side.CLIENT)
+    private final TileEntitySpecialRenderer<TileEntity> DEFAULT_PROCESSOR_RENDER = new DefaultProcessorRenderer(TileEntityPipe::getProcessorStack);
+
     @Override
     public void renderTileEntityAt(TileEntityPipe te, double x, double y, double z, float partialTicks, int destroyStage){
         Set<FlowingItem> flowingItem = te.flowingItems;
@@ -41,15 +48,17 @@ public class TileEntityPipeRenderer extends TileEntitySpecialRenderer<TileEntity
             GlStateManager.disableRescaleNormal();
             GlStateManager.popMatrix();
         });
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.scale(0.25, 0.25, 0.25);
-        GlStateManager.rotate(time * 5, 1, 1, -1);
-        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        renderItemStack(te.getProcessorStack());
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.popMatrix();
+        renderProcessor(rendererDispatcher, te, x, y, z, partialTicks, destroyStage);
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void renderProcessor(TileEntityRendererDispatcher dispatcher, TileEntityPipe te, double x, double y, double z, float partialTicks, int destroyStage){
+        TileEntitySpecialRenderer<TileEntity> render;
+        if(te.getStrategy() instanceof SpecialRendererSupplier)
+            render = ((SpecialRendererSupplier) te.getStrategy()).getSpecialRenderer();
+        else render = DEFAULT_PROCESSOR_RENDER;
+        render.setRendererDispatcher(dispatcher);
+        render.renderTileEntityAt(te, x, y, z, partialTicks, destroyStage);
     }
 
     private void renderItemStack(ItemStack stack){

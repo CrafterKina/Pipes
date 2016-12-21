@@ -52,6 +52,10 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     private ItemStack processor = ItemStack.EMPTY;
     private IGate[] GATES = Arrays.copyOf(DEFAULTS, DEFAULTS.length);
 
+    public static ItemStack getProcessorStack(TileEntityPipe pipe){
+        return pipe.processor.copy();
+    }
+
     public boolean hasGate(EnumFacing facing){
         return getGate(facing) != DEFAULTS[facing.getIndex()];
     }
@@ -72,14 +76,14 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         return !processor.isEmpty();
     }
 
-    public ItemStack getProcessorStack(){
-        return processor.copy();
-    }
-
     private boolean setProcessor(@Nonnull ItemStack processor){
         this.processor = processor;
         strategy = processor.getItem() instanceof IStrategy.StrategySupplier ? ((IStrategy.StrategySupplier) processor.getItem()).getStrategy(this, processor) : DEFAULT_STRATEGY;
         return true;
+    }
+
+    public IStrategy getStrategy(){
+        return strategy;
     }
 
     @Override
@@ -231,7 +235,8 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         @Override
         public FlowItem flow(FlowItem item){
             TileEntityPipe.this.flowingItems.add(new FlowingItem(item, TileEntityPipe.this.getWorld().getTotalWorldTime(), false));
-            PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(TileEntityPipe.this.getPos(), TileEntityPipe.this.flowingItems));
+            if(!getWorld().isRemote)
+                PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(TileEntityPipe.this.getPos(), TileEntityPipe.this.flowingItems));
             return FlowItem.EMPTY;
         }
 

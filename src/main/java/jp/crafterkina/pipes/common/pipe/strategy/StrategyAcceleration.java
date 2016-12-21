@@ -2,7 +2,10 @@ package jp.crafterkina.pipes.common.pipe.strategy;
 
 import jp.crafterkina.pipes.api.pipe.FlowItem;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
+import jp.crafterkina.pipes.api.render.SpecialRendererSupplier;
+import jp.crafterkina.pipes.client.tesr.processor.AccelerationProcessorRenderer;
 import jp.crafterkina.pipes.common.item.ItemProcessor;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -13,6 +16,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -22,17 +28,28 @@ import java.util.function.Supplier;
 /**
  * Created by Kina on 2016/12/20.
  */
-public class StrategyAcceleration extends StrategyDefault{
+public class StrategyAcceleration extends StrategyDefault implements SpecialRendererSupplier{
     private final double acceleration;
+    @SideOnly(Side.CLIENT)
+    private AccelerationProcessorRenderer render;
 
-    public StrategyAcceleration(Supplier<World> world, double acceleration){
+    StrategyAcceleration(Supplier<World> world, ItemStack stack, double acceleration){
         super(world);
         this.acceleration = acceleration;
+        if(FMLCommonHandler.instance().getSide().isClient()){
+            this.render = new AccelerationProcessorRenderer(stack, acceleration);
+        }
     }
 
     @Override
     public FlowItem turn(FlowItem item, Vec3d... connecting){
         return super.turn(new FlowItem(item.getStack(), item.getVelocity().scale(acceleration)), connecting);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public TileEntitySpecialRenderer<TileEntity> getSpecialRenderer(){
+        return render;
     }
 
     public static class ItemAccelerateProcessor extends ItemProcessor{
@@ -52,7 +69,7 @@ public class StrategyAcceleration extends StrategyDefault{
 
         @Override
         public IStrategy getStrategy(TileEntity entity, ItemStack stack){
-            return new StrategyAcceleration(entity::getWorld, acceleration(stack));
+            return new StrategyAcceleration(entity::getWorld, stack, acceleration(stack));
         }
 
         @Override
