@@ -3,6 +3,7 @@ package jp.crafterkina.pipes.client;
 import jp.crafterkina.pipes.client.tesr.TileEntityPipeRenderer;
 import jp.crafterkina.pipes.common.CommonProxy;
 import jp.crafterkina.pipes.common.RegistryEntries;
+import jp.crafterkina.pipes.common.block.BlockPipe;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyAcceleration;
 import net.minecraft.block.Block;
@@ -46,7 +47,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     protected void registerBlockColors(){
-
+        FMLClientHandler.instance().getClient().getBlockColors().registerBlockColorHandler(BlockPipe::getColor, RegistryEntries.BLOCK.pipe);
     }
 
     @Override

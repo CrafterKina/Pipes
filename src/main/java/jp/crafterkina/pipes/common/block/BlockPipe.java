@@ -62,6 +62,9 @@ public class BlockPipe extends BlockContainer{
         setDefaultState(state);
     }
 
+    public static int getColor(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex){
+        return 0x9F844D;
+    }
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){

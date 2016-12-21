@@ -2,8 +2,8 @@
   "forge_marker": 1,
   "defaults": {
     "textures": {
-      "frame": "blocks/planks_oak",
-      "particle": "blocks/planks_oak"
+      "frame": "jp.crafterkina.pipes:blocks/pipe_frame",
+      "particle": "jp.crafterkina.pipes:blocks/pipe_frame"
     },
     "model": "jp.crafterkina.pipes:pipe_core",
     "uvlock": true
