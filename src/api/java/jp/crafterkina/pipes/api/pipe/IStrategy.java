@@ -4,7 +4,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -65,6 +67,18 @@ public interface IStrategy extends INBTSerializable<NBTTagCompound>{
      * @since 1.0
      */
     void tick();
+
+    /**
+     * Rotate this strategy.
+     *
+     * @param axis The axis to rotate around
+     * @return rotated strategy
+     * @implSpec The default implementation is not rotate, just return this.
+     * @see net.minecraft.block.Block#rotateBlock(World, BlockPos, EnumFacing)
+     */
+    default IStrategy rotate(EnumFacing axis){
+        return this;
+    }
 
     /**
      * Capability to handle strategy.

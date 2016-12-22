@@ -210,6 +210,12 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         return 1 / 40d;
     }
 
+    public boolean rotateProcessor(EnumFacing axis){
+        IStrategy cache = this.strategy;
+        strategy = strategy.rotate(axis);
+        return cache != strategy;
+    }
+
     /* Internal Classes */
 
     class PipeFlowHandler implements IItemFlowHandler{
