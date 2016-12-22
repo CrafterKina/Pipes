@@ -34,6 +34,7 @@ import java.awt.*;
  */
 public class StrategyExtraction extends StrategyDefault implements SpecialRendererSupplier{
     private final TileEntityPipe te;
+    private final ItemStack stack;
     private final EnumFacing from;
     private final int cycle;
     private final int amount;
@@ -44,6 +45,7 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
     StrategyExtraction(TileEntityPipe te, ItemStack stack, EnumFacing from, int cycle, int amount, double speed){
         super(te::getWorld);
         this.te = te;
+        this.stack = stack;
         this.from = from;
         this.cycle = cycle;
         this.amount = amount;
@@ -76,6 +78,11 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
         IItemFlowHandler flower = te.getCapability(IItemFlowHandler.CAPABILITY, from);
         assert flower != null;
         flower.flow(new FlowItem(stack, from.getOpposite(), speed * te.getBaseSpeed()));
+    }
+
+    @Override
+    public IStrategy rotate(EnumFacing axis){
+        return new StrategyExtraction(te, stack, axis, cycle, amount, speed);
     }
 
     @Override
