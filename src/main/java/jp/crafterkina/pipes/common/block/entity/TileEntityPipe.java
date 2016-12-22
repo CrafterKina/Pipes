@@ -114,6 +114,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     @Override
     public void update(){
         if(world == null) return;
+        Vec3d[] connectingDirections = connectingDirections();
 
         // Extract
         {
@@ -145,12 +146,13 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         }
         // Turn
         flowingItems.parallelStream().filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> !i.turned).forEach(p -> {
-            p.item = strategy.turn(p.item, connectingDirections());
+            p.item = strategy.turn(p.item, connectingDirections);
             p.tick = world.getTotalWorldTime();
             p.turned = true;
         });
 
         flowingItems.removeAll(flowingItems.parallelStream().filter(i -> i.item.getStack().isEmpty()).collect(Collectors.toSet()));
+        flowingItems.removeAll(flowingItems.parallelStream().filter(i -> Arrays.stream(connectingDirections).noneMatch(d -> i.item.getVelocity().scale(!i.turned ? -1 : 1).dotProduct(d) / Math.sqrt(i.item.getVelocity().scale(!i.turned ? -1 : 1).lengthSquared() * d.lengthSquared()) == 1)).peek(i -> Block.spawnAsEntity(getWorld(), getPos(), i.item.getStack())).collect(Collectors.toSet()));
 
         getWorld().updateComparatorOutputLevel(pos, getBlockType());
         if(FMLCommonHandler.instance().getSide().isClient())
