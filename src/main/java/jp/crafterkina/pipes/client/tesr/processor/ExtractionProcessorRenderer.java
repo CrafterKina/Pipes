@@ -19,7 +19,6 @@ public class ExtractionProcessorRenderer extends TileEntitySpecialRenderer<TileE
     public ExtractionProcessorRenderer(ItemStack stack, EnumFacing facing){
         this.stack = stack;
         this.facing = facing.rotateAround(EnumFacing.Axis.Y).rotateAround(EnumFacing.Axis.Y).rotateAround(EnumFacing.Axis.Y);
-        System.out.println(facing + "," + this.facing);
     }
 
     @Override

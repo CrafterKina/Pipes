@@ -6,6 +6,7 @@ tile.jp.crafterkina.pipes.pipe.name=パイプ
 # Strategies
 strategy.jp.crafterkina.pipes.accelerator=加速 x%.3g
 strategy.jp.crafterkina.pipes.extraction=抽出
+strategy.jp.crafterkina.pipes.oneway=一方通行
 # Messages
 mes.item.jp.crafterkina.pipes.merchant_phone.register=連絡先を登録しました
 # Tooltips
