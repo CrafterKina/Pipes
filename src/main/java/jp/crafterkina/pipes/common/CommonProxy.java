@@ -6,6 +6,7 @@ import jp.crafterkina.pipes.common.item.ItemMerchantPhone;
 import jp.crafterkina.pipes.common.item.ItemPipe;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyAcceleration;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyExtraction;
+import jp.crafterkina.pipes.common.pipe.strategy.StrategyOneway;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -42,7 +43,8 @@ public class CommonProxy{
                 of(new ItemMerchantPhone(), "merchant_phone"),
                 of(new ItemPipe(), "pipe"),
                 of(new StrategyAcceleration.ItemAccelerateProcessor(), "strategy_acceleration"),
-                of(new StrategyExtraction.ItemExtractionProcessor(), "strategy_extraction")
+                of(new StrategyExtraction.ItemExtractionProcessor(), "strategy_extraction"),
+                of(new StrategyOneway.ItemOnewayProcessor(), "strategy_oneway")
         );
     }
 
