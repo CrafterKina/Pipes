@@ -5,6 +5,7 @@ item.jp.crafterkina.pipes.merchant_phone.name=Merchant phone
 tile.jp.crafterkina.pipes.pipe.name=Pipe
 # Strategies
 strategy.jp.crafterkina.pipes.accelerator=Accelerator x%.3g
+strategy.jp.crafterkina.pipes.extraction=Extractor
 # Messages
 mes.item.jp.crafterkina.pipes.merchant_phone.register=Registered a contact
 # Tooltips

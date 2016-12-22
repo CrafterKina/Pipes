@@ -6,6 +6,7 @@ import jp.crafterkina.pipes.common.RegistryEntries;
 import jp.crafterkina.pipes.common.block.BlockPipe;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyAcceleration;
+import jp.crafterkina.pipes.common.pipe.strategy.StrategyExtraction;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -37,6 +38,7 @@ public class ClientProxy extends CommonProxy {
         ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.merchant_phone, 0, new ModelResourceLocation(getResourceLocation("merchant_phone"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.pipe, 0, new ModelResourceLocation(getResourceLocation("pipe"), "inventory"));
         ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.strategy_acceleration, 0, new ModelResourceLocation(getResourceLocation("processor_chipped_arrow"), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.strategy_extraction, 0, new ModelResourceLocation(getResourceLocation("processor_hopper"), "inventory"));
     }
 
     @Override
@@ -53,5 +55,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     protected void registerItemColors(){
         FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(StrategyAcceleration.ItemAccelerateProcessor::getColor, RegistryEntries.ITEM.strategy_acceleration);
+        FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(StrategyExtraction.ItemExtractionProcessor::getColor, RegistryEntries.ITEM.strategy_extraction);
     }
 }

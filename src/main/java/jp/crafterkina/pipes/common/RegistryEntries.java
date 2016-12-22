@@ -13,6 +13,7 @@ public class RegistryEntries {
         public static final Item merchant_phone = null;
         public static final Item pipe = null;
         public static final Item strategy_acceleration = null;
+        public static final Item strategy_extraction = null;
     }
 
     @ObjectHolder(MOD_ID)

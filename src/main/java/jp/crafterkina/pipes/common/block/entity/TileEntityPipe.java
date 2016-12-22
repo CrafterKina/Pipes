@@ -79,6 +79,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     private boolean setProcessor(@Nonnull ItemStack processor){
         this.processor = processor;
         strategy = processor.getItem() instanceof IStrategy.StrategySupplier ? ((IStrategy.StrategySupplier) processor.getItem()).getStrategy(this, processor) : DEFAULT_STRATEGY;
+        strategy = strategy == null ? DEFAULT_STRATEGY : strategy;
         return true;
     }
 
@@ -189,7 +190,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         setWorld(worldIn);
     }
 
-    private Vec3d[] connectingDirections(){
+    public Vec3d[] connectingDirections(){
         @SuppressWarnings("deprecation") IBlockState state = getBlockType().getActualState(getWorld().getBlockState(getPos()), getWorld(), getPos());
         return Arrays.stream(EnumFacing.VALUES).filter(f -> state.getValue(BlockPipe.CONNECT[f.getIndex()])).map(f -> new Vec3d(f.getDirectionVec())).toArray(Vec3d[]::new);
     }
