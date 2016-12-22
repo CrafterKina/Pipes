@@ -44,6 +44,7 @@ public class ItemMerchantPhone extends Item{
         if(event.getWorld().isRemote) return;
         EntityPlayer player = event.getEntityPlayer();
         ItemStack stack = player.getHeldItem(event.getHand());
+        if(stack.getItem() != this) return;
         Entity target = event.getTarget();
         if(!(target instanceof IMerchant)) return;
         NBTTagCompound compound = stack.getTagCompound();
