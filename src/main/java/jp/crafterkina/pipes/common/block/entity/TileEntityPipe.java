@@ -139,12 +139,6 @@ public class TileEntityPipe extends TileEntity implements ITickable{
                     .collect(Collectors.toSet())
             );
 
-            if(connectingDirections().length == 1)
-                remove.addAll(
-                        flowingItems.parallelStream()
-                                .filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> !i.turned)
-                                .peek(p -> Block.spawnAsEntity(getWorld(), getPos(), p.item.getStack())).collect(Collectors.toSet())
-                );
             flowingItems.removeAll(remove);
             flowingItems.addAll(overs.parallelStream().map(strategy::onFilledInventoryInsertion).filter(f -> !f.getStack().isEmpty()).map(f -> new FlowingItem(f, world.getTotalWorldTime(), false)).collect(Collectors.toSet()));
 
@@ -155,6 +149,8 @@ public class TileEntityPipe extends TileEntity implements ITickable{
             p.tick = world.getTotalWorldTime();
             p.turned = true;
         });
+
+        flowingItems.removeAll(flowingItems.parallelStream().filter(i -> i.item.getStack().isEmpty()).collect(Collectors.toSet()));
 
         getWorld().updateComparatorOutputLevel(pos, getBlockType());
         if(FMLCommonHandler.instance().getSide().isClient())
