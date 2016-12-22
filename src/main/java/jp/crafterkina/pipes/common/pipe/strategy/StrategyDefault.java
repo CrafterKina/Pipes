@@ -2,7 +2,6 @@ package jp.crafterkina.pipes.common.pipe.strategy;
 
 import jp.crafterkina.pipes.api.pipe.FlowItem;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -33,15 +32,5 @@ public class StrategyDefault implements IStrategy{
             default:
                 return new FlowItem(item.getStack(), ds[world.get().rand.nextInt(ds.length)].scale(item.getSpeed()));
         }
-    }
-
-    @Override
-    public NBTTagCompound serializeNBT(){
-        return new NBTTagCompound();
-    }
-
-    @Override
-    public void deserializeNBT(NBTTagCompound nbt){
-
     }
 }
