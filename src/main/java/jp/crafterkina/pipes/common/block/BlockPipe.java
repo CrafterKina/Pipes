@@ -6,7 +6,6 @@ import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -42,11 +41,10 @@ import static jp.crafterkina.pipes.api.PipesConstants.MOD_ID;
  */
 public class BlockPipe extends BlockContainer{
     public static final PropertyBool[] CONNECT = Arrays.stream(EnumFacing.VALUES).map(f -> PropertyBool.create("c_" + f.getName())).toArray(PropertyBool[]::new);
-    public static final PropertyBool[] GATE = Arrays.stream(EnumFacing.VALUES).map(f -> PropertyBool.create("g_" + f.getName())).toArray(PropertyBool[]::new);
-    //    public static final PropertyBool PROCESSOR = PropertyBool.create("processor");
     private static final AxisAlignedBB CORE = new AxisAlignedBB(5.5 / 16d, 5.5 / 16d, 5.5 / 16d, 10.5 / 16d, 10.5 / 16d, 10.5 / 16d);
     private static final AxisAlignedBB[] PIPE = {new AxisAlignedBB(6 / 16d, 0d, 6 / 16d, 10 / 16d, 5.5 / 16d, 10 / 16d), new AxisAlignedBB(6 / 16d, 10.5 / 16d, 6 / 16d, 10 / 16d, 1d, 10 / 16d), new AxisAlignedBB(6 / 16d, 6 / 16d, 0d, 10 / 16d, 10 / 16d, 5.5 / 16d), new AxisAlignedBB(6 / 16d, 6 / 16d, 10.5 / 16d, 10 / 16d, 10 / 16d, 1d), new AxisAlignedBB(0d, 6 / 16d, 6 / 16d, 5.5 / 16d, 10 / 16d, 10 / 16d), new AxisAlignedBB(10.5 / 16d, 6 / 16d, 6 / 16d, 1d, 6 / 16d, 6 / 16d)};
 
+    @SuppressWarnings("deprecation")
     public BlockPipe(){
         super(Material.GLASS);
         setUnlocalizedName(MOD_ID + ".pipe");
@@ -56,9 +54,7 @@ public class BlockPipe extends BlockContainer{
         IBlockState state = getBlockState().getBaseState();
         for(EnumFacing f : EnumFacing.VALUES){
             state = state.withProperty(CONNECT[f.getIndex()], false);
-            state = state.withProperty(GATE[f.getIndex()], false);
         }
-//        state = state.withProperty(PROCESSOR, false);
         setDefaultState(state);
     }
 
@@ -67,6 +63,7 @@ public class BlockPipe extends BlockContainer{
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
         if(playerIn.getHeldItem(hand).isEmpty()){
             TileEntity te = worldIn.getTileEntity(pos);
@@ -134,27 +131,28 @@ public class BlockPipe extends BlockContainer{
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
+    @Deprecated
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
         return CORE;
     }
 
     @Nullable
     @Override
-    @SuppressWarnings("deprecation")
+    @Deprecated
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos){
         return CORE;
     }
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
+    @Deprecated
     public AxisAlignedBB getSelectedBoundingBox(IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos){
         return CORE;
     }
 
     @Override
     @SuppressWarnings("deprecation")
+    @Deprecated
     public void addCollisionBoxToList(IBlockState stateIn, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn){
         addCollisionBoxToList(pos, entityBox, collidingBoxes, CORE);
         Arrays.stream(EnumFacing.VALUES).filter(f -> worldIn.getBlockState(pos).getBlock().getActualState(stateIn, worldIn, pos).getValue(CONNECT[f.getIndex()])).forEach(f -> addCollisionBoxToList(pos, entityBox, collidingBoxes, PIPE[f.getIndex()]));
@@ -163,24 +161,25 @@ public class BlockPipe extends BlockContainer{
     @Nullable
     @Override
     @SuppressWarnings("deprecation")
+    @Deprecated
     public RayTraceResult collisionRayTrace(IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end){
         return Arrays.stream(EnumFacing.VALUES).filter(f -> worldIn.getBlockState(pos).getBlock().getActualState(state, worldIn, pos).getValue(CONNECT[f.getIndex()])).map(f -> rayTrace(pos, start, end, PIPE[f.getIndex()])).filter(Objects::nonNull).filter(r -> r.typeOfHit != RayTraceResult.Type.MISS).findFirst().orElseGet(() -> rayTrace(pos, start, end, CORE));
     }
 
     @Override
-    @SuppressWarnings("deprecation")
+    @Deprecated
     public boolean isOpaqueCube(IBlockState state){
         return false;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
+    @Deprecated
     public boolean isFullCube(IBlockState state){
         return false;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
+    @Deprecated
     @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockState blockState, @Nonnull IBlockAccess blockAccess, @Nonnull BlockPos pos, EnumFacing side){
         return true;
@@ -199,19 +198,16 @@ public class BlockPipe extends BlockContainer{
         return EnumBlockRenderType.MODEL;
     }
 
+    @SuppressWarnings("DeprecatedIsStillUsed")
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
+    @Deprecated
     public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos){
         TileEntity te = worldIn.getTileEntity(pos);
         TileEntityPipe pipe = te instanceof TileEntityPipe ? (TileEntityPipe) te : null;
         for(EnumFacing face : EnumFacing.VALUES){
             state = state.withProperty(CONNECT[face.getIndex()], canBeConnectedTo(worldIn, pos, face));
-            if(pipe == null) continue;
-            state = state.withProperty(GATE[face.getIndex()], pipe.hasGate(face));
         }
-//        if(pipe == null) return state;
-//        state = state.withProperty(PROCESSOR, pipe.hasProcessor());
         return state;
     }
 
@@ -230,7 +226,7 @@ public class BlockPipe extends BlockContainer{
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
+    @Deprecated
     public IBlockState getStateFromMeta(int meta){
         return getDefaultState();
     }
@@ -238,6 +234,6 @@ public class BlockPipe extends BlockContainer{
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState(){
-        return new BlockStateContainer(this, Arrays.stream(new IProperty<?>[][]{CONNECT, GATE/*, {PROCESSOR}*/}).flatMap(Arrays::stream).toArray(IProperty[]::new));
+        return new BlockStateContainer(this, CONNECT);
     }
 }

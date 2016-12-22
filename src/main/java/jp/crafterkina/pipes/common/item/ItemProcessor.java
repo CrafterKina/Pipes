@@ -38,6 +38,7 @@ public abstract class ItemProcessor extends Item implements IStrategy.StrategySu
         Block.spawnAsEntity(worldIn, pos, removed);
         ItemStack held = attachItem(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
         if(handler.attach(held)){
+            //noinspection deprecation
             worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), te.getBlockType().getActualState(worldIn.getBlockState(pos), worldIn, pos), 8);
             return EnumActionResult.SUCCESS;
         }else return EnumActionResult.PASS;

@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * Created by Kina on 2016/12/20.
  */
 public class StrategyDefault implements IStrategy{
-    protected Supplier<World> world;
+    Supplier<World> world;
 
     public StrategyDefault(Supplier<World> world){
         this.world = world;

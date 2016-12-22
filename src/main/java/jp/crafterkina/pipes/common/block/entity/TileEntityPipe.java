@@ -2,7 +2,6 @@ package jp.crafterkina.pipes.common.block.entity;
 
 import com.google.common.collect.Sets;
 import jp.crafterkina.pipes.api.pipe.FlowItem;
-import jp.crafterkina.pipes.api.pipe.IGate;
 import jp.crafterkina.pipes.api.pipe.IItemFlowHandler;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
 import jp.crafterkina.pipes.common.PacketHandler;
@@ -44,35 +43,15 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     private final IItemHandler[] faceInsertions = Arrays.stream(EnumFacing.VALUES).map(f -> new FaceInsertion(new Vec3d(f.getDirectionVec()), faceFlows[f.getIndex()])).toArray(IItemHandler[]::new);
     private final IStrategy.IStrategyHandler processorHandler = new StrategyHandler();
     private final IStrategy DEFAULT_STRATEGY = new StrategyDefault(this::getWorld);
-    private final IGate[] DEFAULTS = Arrays.stream(EnumFacing.VALUES).map(
-            f -> new DefaultGate())
-            .toArray(IGate[]::new);
     public Set<FlowingItem> flowingItems = Sets.newConcurrentHashSet();
     private IStrategy strategy = DEFAULT_STRATEGY;
     private ItemStack processor = ItemStack.EMPTY;
-    private IGate[] GATES = Arrays.copyOf(DEFAULTS, DEFAULTS.length);
 
     public static ItemStack getProcessorStack(TileEntityPipe pipe){
         return pipe.processor.copy();
     }
 
-    public boolean hasGate(EnumFacing facing){
-        return getGate(facing) != DEFAULTS[facing.getIndex()];
-    }
-
-    public IGate getGate(EnumFacing facing){
-        return GATES[facing.getIndex()];
-    }
-
-    public void setGate(EnumFacing facing, IGate gate){
-        GATES[facing.getIndex()] = gate;
-    }
-
-    public void removeGate(EnumFacing facing){
-        setGate(facing, DEFAULTS[facing.getIndex()]);
-    }
-
-    public boolean hasProcessor(){
+    private boolean hasProcessor(){
         return !processor.isEmpty();
     }
 
@@ -179,6 +158,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
 
         getWorld().updateComparatorOutputLevel(pos, getBlockType());
         if(FMLCommonHandler.instance().getSide().isClient())
+            //noinspection deprecation
             world.notifyBlockUpdate(pos, world.getBlockState(pos), getBlockType().getActualState(world.getBlockState(pos), world, pos), 8);
         if(!getWorld().isRemote)
             PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(pos, flowingItems));
@@ -190,7 +170,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         setWorld(worldIn);
     }
 
-    public Vec3d[] connectingDirections(){
+    private Vec3d[] connectingDirections(){
         @SuppressWarnings("deprecation") IBlockState state = getBlockType().getActualState(getWorld().getBlockState(getPos()), getWorld(), getPos());
         return Arrays.stream(EnumFacing.VALUES).filter(f -> state.getValue(BlockPipe.CONNECT[f.getIndex()])).map(f -> new Vec3d(f.getDirectionVec())).toArray(Vec3d[]::new);
     }
@@ -245,9 +225,6 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         public int insertableMaximumStackSizeAtOnce(){
             return 1;
         }
-    }
-
-    private class DefaultGate implements IGate{
     }
 
     class StrategyHandler implements IStrategy.IStrategyHandler{
