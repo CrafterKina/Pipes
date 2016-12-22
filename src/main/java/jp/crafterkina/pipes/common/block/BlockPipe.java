@@ -220,6 +220,20 @@ public class BlockPipe extends BlockContainer{
     }
 
     @Override
+    public boolean rotateBlock(World world, @Nonnull BlockPos pos, EnumFacing axis){
+        TileEntity te = world.getTileEntity(pos);
+        if(!(te instanceof TileEntityPipe)) return false;
+        TileEntityPipe pipe = (TileEntityPipe) te;
+        return pipe.rotateProcessor(axis);
+    }
+
+    @Nullable
+    @Override
+    public EnumFacing[] getValidRotations(World world, @Nonnull BlockPos pos){
+        return EnumFacing.VALUES;
+    }
+
+    @Override
     public int getMetaFromState(IBlockState state){
         return 0;
     }
