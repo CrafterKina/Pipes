@@ -282,6 +282,22 @@ public class BlockPipe extends BlockContainer{
         return true;
     }
 
+    @Nonnull
+    @Override
+    public ItemStack getPickBlock(@Nonnull IBlockState state, RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, EntityPlayer player){
+        ItemStack stack = new ItemStack(this);
+        TileEntity te = world.getTileEntity(pos);
+        if(!(te instanceof TileEntityPipe)) return stack;
+        TileEntityPipe pipe = (TileEntityPipe) te;
+        NBTTagCompound compound = new NBTTagCompound();
+
+        stack.setTagCompound(compound);
+        compound.setBoolean("covered", pipe.covered());
+        compound.setInteger("color", pipe.coverColor);
+
+        return stack;
+    }
+
     @Override
     public int getMetaFromState(IBlockState state){
         return 0;
