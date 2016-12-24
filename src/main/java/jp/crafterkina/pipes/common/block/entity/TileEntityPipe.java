@@ -44,6 +44,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     private final IStrategy.IStrategyHandler processorHandler = new StrategyHandler();
     private final IStrategy DEFAULT_STRATEGY = new StrategyDefault(this::getWorld);
     public Set<FlowingItem> flowingItems = Sets.newConcurrentHashSet();
+    public int coverColor = -1;
     private IStrategy strategy = DEFAULT_STRATEGY;
     private ItemStack processor = ItemStack.EMPTY;
 
@@ -66,10 +67,15 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         return strategy;
     }
 
+    public boolean covered(){
+        return coverColor != -1;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound compound){
         flowingItems.addAll(NBTStreams.nbtListStream(compound.getTagList("flowingItems", Constants.NBT.TAG_COMPOUND)).map(FlowingItem::new).collect(Collectors.toSet()));
         setProcessor(compound.hasKey("processor", Constants.NBT.TAG_COMPOUND) ? new ItemStack(compound.getCompoundTag("processor")) : ItemStack.EMPTY);
+        coverColor = compound.hasKey("CoverColor", Constants.NBT.TAG_INT) ? compound.getInteger("CoverColor") : -1;
         super.readFromNBT(compound);
     }
 
@@ -78,6 +84,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     public NBTTagCompound writeToNBT(NBTTagCompound compound){
         compound.setTag("flowingItems", flowingItems.parallelStream().parallel().map(FlowingItem::serializeNBT).collect(NBTStreams.toNBTList()));
         if(hasProcessor()) compound.setTag("processor", processor.serializeNBT());
+        compound.setInteger("CoverColor", coverColor);
         return super.writeToNBT(compound);
     }
 

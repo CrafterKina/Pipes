@@ -6,18 +6,21 @@ import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -41,6 +44,7 @@ import static jp.crafterkina.pipes.api.PipesConstants.MOD_ID;
  */
 public class BlockPipe extends BlockContainer{
     public static final PropertyBool[] CONNECT = Arrays.stream(EnumFacing.VALUES).map(f -> PropertyBool.create("c_" + f.getName())).toArray(PropertyBool[]::new);
+    public static final PropertyBool COVERED = PropertyBool.create("covered");
     private static final AxisAlignedBB CORE = new AxisAlignedBB(5.5 / 16d, 5.5 / 16d, 5.5 / 16d, 10.5 / 16d, 10.5 / 16d, 10.5 / 16d);
     private static final AxisAlignedBB[] PIPE = {new AxisAlignedBB(6 / 16d, 0d, 6 / 16d, 10 / 16d, 5.5 / 16d, 10 / 16d), new AxisAlignedBB(6 / 16d, 10.5 / 16d, 6 / 16d, 10 / 16d, 1d, 10 / 16d), new AxisAlignedBB(6 / 16d, 6 / 16d, 0d, 10 / 16d, 10 / 16d, 5.5 / 16d), new AxisAlignedBB(6 / 16d, 6 / 16d, 10.5 / 16d, 10 / 16d, 10 / 16d, 1d), new AxisAlignedBB(0d, 6 / 16d, 6 / 16d, 5.5 / 16d, 10 / 16d, 10 / 16d), new AxisAlignedBB(10.5 / 16d, 6 / 16d, 6 / 16d, 1d, 6 / 16d, 6 / 16d)};
 
@@ -55,11 +59,48 @@ public class BlockPipe extends BlockContainer{
         for(EnumFacing f : EnumFacing.VALUES){
             state = state.withProperty(CONNECT[f.getIndex()], false);
         }
+        state = state.withProperty(COVERED, false);
         setDefaultState(state);
     }
 
     public static int getColor(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex){
-        return 0x9F844D;
+        if(worldIn == null || pos == null) return 0xFFFFFF;
+        TileEntity te = worldIn.getTileEntity(pos);
+        if(!(te instanceof TileEntityPipe)) return 0xFFFFFF;
+        TileEntityPipe pipe = (TileEntityPipe) te;
+        return tintIndex == 0 ? 0x9F844D : pipe.coverColor;
+    }
+
+    @Override
+    public void getSubBlocks(@Nonnull Item itemIn, @Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems){
+        ItemStack stack = new ItemStack(itemIn);
+        NBTTagCompound compound = new NBTTagCompound();
+        {
+            stack.setTagCompound(compound);
+            compound.setBoolean("covered", false);
+            subItems.add(stack);
+        }
+        for(EnumDyeColor color : EnumDyeColor.values()){
+            stack = new ItemStack(itemIn);
+            compound = new NBTTagCompound();
+            {
+                stack.setTagCompound(compound);
+                compound.setBoolean("covered", true);
+                compound.setInteger("color", ItemDye.DYE_COLORS[color.getDyeDamage()]);
+            }
+            subItems.add(stack);
+        }
+    }
+
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack){
+        NBTTagCompound compound = stack.getTagCompound();
+        if(compound == null) compound = new NBTTagCompound();
+        TileEntity te = worldIn.getTileEntity(pos);
+        if(!(te instanceof TileEntityPipe)) return;
+        TileEntityPipe pipe = (TileEntityPipe) te;
+        pipe.coverColor = compound.getBoolean("covered") ? compound.getInteger("color") : -1;
+        worldIn.notifyBlockUpdate(pos, state, state, 8);
     }
 
     @Override
@@ -208,6 +249,8 @@ public class BlockPipe extends BlockContainer{
         for(EnumFacing face : EnumFacing.VALUES){
             state = state.withProperty(CONNECT[face.getIndex()], canBeConnectedTo(worldIn, pos, face));
         }
+        if(pipe == null) return state;
+        state = state.withProperty(COVERED, pipe.covered());
         return state;
     }
 
@@ -248,6 +291,6 @@ public class BlockPipe extends BlockContainer{
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState(){
-        return new BlockStateContainer(this, CONNECT);
+        return new BlockStateContainer(this, Arrays.stream(new IProperty<?>[][]{CONNECT, {COVERED}}).flatMap(Arrays::stream).toArray(IProperty[]::new));
     }
 }

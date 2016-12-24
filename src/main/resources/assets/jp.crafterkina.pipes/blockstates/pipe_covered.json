@@ -1,0 +1,125 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "frame": "jp.crafterkina.pipes:blocks/pipe_frame",
+      "core_cover": "jp.crafterkina.pipes:blocks/wool_cover_core",
+      "ext_cover": "jp.crafterkina.pipes:blocks/wool_cover",
+      "particle": "jp.crafterkina.pipes:blocks/pipe_frame"
+    },
+    "model": "jp.crafterkina.pipes:pipe_core",
+    "uvlock": true
+  },
+  "variants": {
+    "c_down": {
+      "true": {
+        "submodel": {
+          "ext_d": {
+            "model": "jp.crafterkina.pipes:pipe_covered_ext"
+          }
+        }
+      },
+      "false": {
+        "submodel": {
+          "cov_d": {
+            "model": "jp.crafterkina.pipes:pipe_core_cover"
+          }
+        }
+      }
+    },
+    "c_up": {
+      "true": {
+        "submodel": {
+          "ext_u": {
+            "model": "jp.crafterkina.pipes:pipe_covered_ext",
+            "x": 180
+          }
+        }
+      },
+      "false": {
+        "submodel": {
+          "cov_u": {
+            "model": "jp.crafterkina.pipes:pipe_core_cover",
+            "x": 180
+          }
+        }
+      }
+    },
+    "c_north": {
+      "true": {
+        "submodel": {
+          "ext_n": {
+            "model": "jp.crafterkina.pipes:pipe_covered_ext",
+            "x": 270
+          }
+        }
+      },
+      "false": {
+        "submodel": {
+          "cov_n": {
+            "model": "jp.crafterkina.pipes:pipe_core_cover",
+            "x": 270
+          }
+        }
+      }
+    },
+    "c_south": {
+      "true": {
+        "submodel": {
+          "ext_s": {
+            "model": "jp.crafterkina.pipes:pipe_covered_ext",
+            "x": 90
+          }
+        }
+      },
+      "false": {
+        "submodel": {
+          "cov_s": {
+            "model": "jp.crafterkina.pipes:pipe_core_cover",
+            "x": 90
+          }
+        }
+      }
+    },
+    "c_west": {
+      "true": {
+        "submodel": {
+          "ext_w": {
+            "model": "jp.crafterkina.pipes:pipe_covered_ext",
+            "x": 270,
+            "y": 270
+          }
+        }
+      },
+      "false": {
+        "submodel": {
+          "cov_w": {
+            "model": "jp.crafterkina.pipes:pipe_core_cover",
+            "x": 270,
+            "y": 270
+          }
+        }
+      }
+    },
+    "c_east": {
+      "true": {
+        "submodel": {
+          "ext_e": {
+            "model": "jp.crafterkina.pipes:pipe_covered_ext",
+            "x": 270,
+            "y": 90
+          }
+        }
+      },
+      "false": {
+        "submodel": {
+          "cov_e": {
+            "model": "jp.crafterkina.pipes:pipe_core_cover",
+            "x": 270,
+            "y": 90
+          }
+        }
+      }
+    }
+  }
+}

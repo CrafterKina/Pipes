@@ -1,0 +1,7 @@
+{
+  "parent": "jp.crafterkina.pipes:block/pipe_covered_ext",
+  "textures": {
+    "frame": "jp.crafterkina.pipes:blocks/pipe_frame",
+    "ext_cover": "jp.crafterkina.pipes:blocks/wool_cover"
+  }
+}
