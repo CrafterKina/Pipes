@@ -65,20 +65,7 @@ public final class FlowItem{
 
     public EnumFacing getDirectionFace(){
         if(to != null) return to;
-
-        EnumFacing result = EnumFacing.NORTH;
-        double length = Double.MIN_VALUE;
-
-        for(EnumFacing f : EnumFacing.VALUES){
-            double len = new Vec3d(result.getDirectionVec()).dotProduct(velocity);
-
-            if(len > length){
-                length = len;
-                result = f;
-            }
-        }
-
-        return to = result;
+        return to = EnumFacing.getFacingFromVector((float) velocity.xCoord, (float) velocity.yCoord, (float) velocity.zCoord);
     }
 
     @Override
