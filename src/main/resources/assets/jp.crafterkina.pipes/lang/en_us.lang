@@ -4,9 +4,9 @@ item.jp.crafterkina.pipes.merchant_phone.name=Merchant phone
 # Blocks
 tile.jp.crafterkina.pipes.pipe.name=Pipe
 # Strategies
-strategy.jp.crafterkina.pipes.accelerator=Accelerator x%.3g
-strategy.jp.crafterkina.pipes.extraction=Extractor
-strategy.jp.crafterkina.pipes.oneway=One-way
+strategy.jp.crafterkina.pipes.accelerator.name=Accelerator x%.3g
+strategy.jp.crafterkina.pipes.extraction.name=Extractor
+strategy.jp.crafterkina.pipes.oneway.name=One-way
 # Messages
 mes.item.jp.crafterkina.pipes.merchant_phone.register=Registered a contact
 # Tooltips

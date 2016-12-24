@@ -93,7 +93,7 @@ public class StrategyAcceleration extends StrategyDefault implements SpecialRend
         @Nonnull
         @SuppressWarnings("deprecation")
         public String getItemStackDisplayName(@Nonnull ItemStack stack){
-            return I18n.translateToLocalFormatted(getUnlocalizedNameInefficiently(stack), acceleration(stack));
+            return I18n.translateToLocalFormatted(getUnlocalizedNameInefficiently(stack) + ".name", acceleration(stack)).trim();
         }
 
         private double acceleration(ItemStack stack){
