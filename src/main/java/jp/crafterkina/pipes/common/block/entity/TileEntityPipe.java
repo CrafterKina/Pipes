@@ -71,6 +71,12 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         return coverColor != -1;
     }
 
+    public boolean recolor(int color){
+        if(!covered()) return false;
+        coverColor = color;
+        return true;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound compound){
         flowingItems.addAll(NBTStreams.nbtListStream(compound.getTagList("flowingItems", Constants.NBT.TAG_COMPOUND)).map(FlowingItem::new).collect(Collectors.toSet()));
