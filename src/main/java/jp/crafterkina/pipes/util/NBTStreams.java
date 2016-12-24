@@ -22,6 +22,6 @@ public enum NBTStreams{
     }
 
     public static Stream<NBTTagCompound> nbtListStream(NBTTagList list){
-        return IntStream.range(0, list.tagCount()).mapToObj(list::getCompoundTagAt);
+        return list.hasNoTags() ? Stream.empty() : IntStream.range(0, list.tagCount()).filter(i -> Objects.nonNull(list.get(i))).mapToObj(list::getCompoundTagAt);
     }
 }
