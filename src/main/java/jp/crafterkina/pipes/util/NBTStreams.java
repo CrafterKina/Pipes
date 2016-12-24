@@ -16,12 +16,12 @@ public enum NBTStreams{
 
     public static <T extends NBTTagCompound> Collector<T, ?, NBTTagList> toNBTList(){
         return Collector.of(NBTTagList::new, NBTTagList::appendTag, (l, r) -> {
-            IntStream.range(0, r.tagCount()).parallel().boxed().map(r::get).filter(Objects::nonNull).forEach(l::appendTag);
+            IntStream.range(0, r.tagCount()).mapToObj(r::get).filter(Objects::nonNull).forEach(l::appendTag);
             return l;
         }, i -> i);
     }
 
     public static Stream<NBTTagCompound> nbtListStream(NBTTagList list){
-        return list.hasNoTags() ? Stream.empty() : IntStream.range(0, list.tagCount()).filter(i -> Objects.nonNull(list.get(i))).mapToObj(list::getCompoundTagAt);
+        return list.hasNoTags() ? Stream.empty() : IntStream.range(0, list.tagCount()).mapToObj(list::getCompoundTagAt).filter(Objects::nonNull);
     }
 }

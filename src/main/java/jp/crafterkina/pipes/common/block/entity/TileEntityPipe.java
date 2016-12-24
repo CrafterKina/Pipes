@@ -29,6 +29,7 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -85,7 +86,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound){
-        compound.setTag("flowingItems", flowingItems.parallelStream().parallel().map(FlowingItem::serializeNBT).collect(NBTStreams.toNBTList()));
+        compound.setTag("flowingItems", flowingItems.stream().filter(Objects::nonNull).map(FlowingItem::serializeNBT).filter(Objects::nonNull).collect(NBTStreams.toNBTList()));
         if(hasProcessor()) compound.setTag("processor", processor.serializeNBT());
         compound.setInteger("CoverColor", coverColor);
         return super.writeToNBT(compound);
