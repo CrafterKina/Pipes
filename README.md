@@ -4,13 +4,10 @@
 
 A Minecraft Mod.
 
-Branch name is usually Minecraft version, if no that is unstable.  
-In Progress.
-
 ## License
 ###The License of Codes
 
-Codes are licensed under a Mozilla Public License 2.0.  
+Codes are licensed under the Mozilla Public License 2.0.  
 You can check the detail by the LICENSE of this repository.
 
 ###The License of Resources
