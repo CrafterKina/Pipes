@@ -282,10 +282,7 @@ public class BlockPipe extends BlockContainer{
         TileEntity te = world.getTileEntity(pos);
         if(!(te instanceof TileEntityPipe)) return false;
         TileEntityPipe pipe = (TileEntityPipe) te;
-        if(pipe.covered()){
-            return false;
-        }
-        pipe.coverColor = ItemDye.DYE_COLORS[color.getDyeDamage()];
+        pipe.recolor(ItemDye.DYE_COLORS[color.getDyeDamage()]);
         return true;
     }
 
