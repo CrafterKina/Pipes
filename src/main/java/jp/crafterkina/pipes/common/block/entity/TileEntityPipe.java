@@ -23,7 +23,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -126,11 +125,12 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     public void update(){
         if(world == null) return;
         Vec3d[] connectingDirections = connectingDirections();
+        boolean updateFlag;
+        Set<FlowingItem> remove = Sets.newHashSet();
 
         // Extract
         {
 
-            Set<FlowingItem> remove = Sets.newHashSet();
             Set<FlowItem> overs = Sets.newHashSet();
             remove.addAll(flowingItems.parallelStream()
                     .filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> i.turned)
@@ -153,25 +153,25 @@ public class TileEntityPipe extends TileEntity implements ITickable{
 
             flowingItems.removeAll(remove);
             flowingItems.addAll(overs.parallelStream().map(strategy::onFilledInventoryInsertion).filter(f -> !f.getStack().isEmpty()).map(f -> new FlowingItem(f, world.getTotalWorldTime(), false)).collect(Collectors.toSet()));
-
+            updateFlag = !overs.isEmpty();
         }
         // Turn
-        flowingItems.parallelStream().filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> !i.turned).forEach(p -> {
+        updateFlag |= flowingItems.parallelStream().filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> !i.turned).peek(p -> {
             p.item = strategy.turn(p.item, connectingDirections);
             p.tick = world.getTotalWorldTime();
             p.turned = true;
-        });
+        }).count() > 0;
 
-        flowingItems.removeAll(flowingItems.parallelStream().filter(i -> i.item.getStack().isEmpty()).collect(Collectors.toSet()));
-        flowingItems.removeAll(flowingItems.parallelStream().filter(i -> Arrays.stream(connectingDirections).noneMatch(d -> i.item.getVelocity().scale(!i.turned ? -1 : 1).dotProduct(d) / Math.sqrt(i.item.getVelocity().scale(!i.turned ? -1 : 1).lengthSquared() * d.lengthSquared()) == 1)).peek(i -> Block.spawnAsEntity(getWorld(), getPos(), i.item.getStack())).collect(Collectors.toSet()));
 
-        getWorld().updateComparatorOutputLevel(pos, getBlockType());
-        if(FMLCommonHandler.instance().getSide().isClient())
-            //noinspection deprecation
-            world.notifyBlockUpdate(pos, world.getBlockState(pos), getBlockType().getActualState(world.getBlockState(pos), world, pos), 8);
-        if(!getWorld().isRemote)
-            PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(pos, flowingItems));
+        remove.addAll(flowingItems.parallelStream().filter(i -> i.item.getStack().isEmpty()).collect(Collectors.toSet()));
+        remove.addAll(flowingItems.parallelStream().filter(i -> Arrays.stream(connectingDirections).noneMatch(d -> i.item.getVelocity().scale(!i.turned ? -1 : 1).dotProduct(d) / Math.sqrt(i.item.getVelocity().scale(!i.turned ? -1 : 1).lengthSquared() * d.lengthSquared()) == 1)).peek(i -> Block.spawnAsEntity(getWorld(), getPos(), i.item.getStack())).collect(Collectors.toSet()));
+        flowingItems.removeAll(remove);
+
+        updateFlag |= !remove.isEmpty();
+
         strategy.tick();
+        if(updateFlag && !getWorld().isRemote)
+            PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(TileEntityPipe.this.getPos(), TileEntityPipe.this.flowingItems));
     }
 
     @Override
@@ -205,7 +205,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
 
     // Split to IStrategy?
     public int getComparatorPower(){
-        return Math.min(flowingItems.size(), 15);
+        return 0;
     }
 
     public void dropItems(){
