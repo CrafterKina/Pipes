@@ -1,6 +1,5 @@
 package jp.crafterkina.pipes.common.block;
 
-import jp.crafterkina.pipes.api.pipe.IItemFlowHandler;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import net.minecraft.block.Block;
@@ -29,7 +28,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -256,10 +254,8 @@ public class BlockPipe extends BlockContainer{
 
     @Override
     public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing){
-        BlockPos p = pos.add(facing.getDirectionVec());
-        IBlockState s = world.getBlockState(p);
-        TileEntity te = world.getTileEntity(p);
-        return s.getBlock() == this || (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())) || (te != null && te.hasCapability(IItemFlowHandler.CAPABILITY, facing.getOpposite()));
+        TileEntity te = world.getTileEntity(pos);
+        return te instanceof TileEntityPipe && ((TileEntityPipe) te).canBeConnectedTo(facing);
     }
 
     @Override

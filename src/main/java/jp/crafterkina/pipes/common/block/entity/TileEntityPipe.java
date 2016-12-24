@@ -5,14 +5,12 @@ import jp.crafterkina.pipes.api.pipe.FlowItem;
 import jp.crafterkina.pipes.api.pipe.IItemFlowHandler;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
 import jp.crafterkina.pipes.common.PacketHandler;
-import jp.crafterkina.pipes.common.block.BlockPipe;
 import jp.crafterkina.pipes.common.capability.wrapper.InvFlowWrapper;
 import jp.crafterkina.pipes.common.network.MessagePipeFlow;
 import jp.crafterkina.pipes.common.pipe.FlowingItem;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyDefault;
 import jp.crafterkina.pipes.util.NBTStreams;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,7 +37,7 @@ import java.util.stream.Collectors;
  * Created by Kina on 2016/12/14.
  */
 public class TileEntityPipe extends TileEntity implements ITickable{
-    private final IItemFlowHandler[] faceFlows = Arrays.stream(EnumFacing.VALUES).map(f -> new PipeFlowHandler()).toArray(IItemFlowHandler[]::new);
+    private final IItemFlowHandler[] faceFlows = Arrays.stream(EnumFacing.VALUES).map(f -> new PipeFlowHandler(f)).toArray(IItemFlowHandler[]::new);
     private final IItemHandler[] faceInsertions = Arrays.stream(EnumFacing.VALUES).map(f -> new FaceInsertion(new Vec3d(f.getDirectionVec()), faceFlows[f.getIndex()])).toArray(IItemHandler[]::new);
     private final IStrategy.IStrategyHandler processorHandler = new StrategyHandler();
     private final IStrategy DEFAULT_STRATEGY = new StrategyDefault(this::getWorld);
@@ -180,8 +178,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     }
 
     private Vec3d[] connectingDirections(){
-        @SuppressWarnings("deprecation") IBlockState state = getBlockType().getActualState(getWorld().getBlockState(getPos()), getWorld(), getPos());
-        return Arrays.stream(EnumFacing.VALUES).filter(f -> state.getValue(BlockPipe.CONNECT[f.getIndex()])).map(f -> new Vec3d(f.getDirectionVec())).toArray(Vec3d[]::new);
+        return Arrays.stream(EnumFacing.VALUES).filter(this::canBeConnectedTo).map(f -> new Vec3d(f.getDirectionVec())).toArray(Vec3d[]::new);
     }
 
     @Nullable
@@ -225,9 +222,21 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         return cache != strategy;
     }
 
+    public boolean canBeConnectedTo(EnumFacing facing){
+        BlockPos p = pos.add(facing.getDirectionVec());
+        TileEntity te = world.getTileEntity(p);
+        return !(covered() && te instanceof TileEntityPipe && ((TileEntityPipe) te).covered() && ((TileEntityPipe) te).coverColor != coverColor) && te != null && (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite()) || te.hasCapability(IItemFlowHandler.CAPABILITY, facing.getOpposite()));
+    }
+
     /* Internal Classes */
 
     class PipeFlowHandler implements IItemFlowHandler{
+        private final EnumFacing facing;
+
+        PipeFlowHandler(EnumFacing facing){
+            this.facing = facing;
+        }
+
         @Override
         public FlowItem flow(FlowItem item){
             TileEntityPipe.this.flowingItems.add(new FlowingItem(item, TileEntityPipe.this.getWorld().getTotalWorldTime(), false));
