@@ -276,6 +276,19 @@ public class BlockPipe extends BlockContainer{
         return EnumFacing.VALUES;
     }
 
+
+    @Override
+    public boolean recolorBlock(World world, @Nonnull BlockPos pos, EnumFacing side, @Nonnull EnumDyeColor color){
+        TileEntity te = world.getTileEntity(pos);
+        if(!(te instanceof TileEntityPipe)) return false;
+        TileEntityPipe pipe = (TileEntityPipe) te;
+        if(pipe.coverColor == -1){
+            return false;
+        }
+        pipe.coverColor = ItemDye.DYE_COLORS[color.getDyeDamage()];
+        return true;
+    }
+
     @Override
     public int getMetaFromState(IBlockState state){
         return 0;
