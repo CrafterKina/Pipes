@@ -48,7 +48,7 @@ public class CoverPipeRecipe implements IRecipe{
     @Nonnull
     @Override
     public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv){
-        ItemStack result = inv.getStackInRowAndColumn(1, 1).copy();
+        ItemStack result = inv.getStackInRowAndColumn(1, 1).copy().splitStack(1);
         int color = ItemDye.DYE_COLORS[EnumDyeColor.byMetadata(inv.getStackInSlot(1).getItemDamage()).getDyeDamage()];
         NBTTagCompound compound = result.getTagCompound();
         if(compound == null) return ItemStack.EMPTY;
