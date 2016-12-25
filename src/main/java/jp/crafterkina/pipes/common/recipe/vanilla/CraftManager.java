@@ -21,6 +21,10 @@ public enum CraftManager{
     public void register(){
         GameRegistry.addRecipe(new ItemStack(merchant_phone), "IRI", "IGI", "IEI", 'G', Items.EMERALD, 'R', Blocks.REDSTONE_TORCH, 'E', Items.ENDER_PEARL, 'I', Items.IRON_INGOT);
         GameRegistry.addShapelessRecipe(new ItemStack(merchant_phone), merchant_phone);
+        registerPipeRecipes();
+    }
+
+    private void registerPipeRecipes(){
         GameRegistry.addRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.WOOD), "SLS", "L L", "SLS", 'S', Items.STICK, 'L', Blocks.LADDER);
         GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.STONE), "SLS", "L L", "SLS", 'S', "cobblestone", 'L', Blocks.LADDER));
         GameRegistry.addRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.IRON), "SLS", "L L", "SLS", 'S', Items.IRON_INGOT, 'L', Blocks.RAIL);
