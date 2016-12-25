@@ -25,9 +25,4 @@ public class InvFlowWrapper implements IItemFlowHandler{
         }
         return new FlowItem(stack, item.getVelocity());
     }
-
-    @Override
-    public int insertableMaximumStackSizeAtOnce(){
-        return 64;
-    }
 }

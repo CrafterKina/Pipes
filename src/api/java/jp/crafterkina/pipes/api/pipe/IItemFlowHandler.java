@@ -22,6 +22,4 @@ public interface IItemFlowHandler{
      * @return over-flowed
      */
     FlowItem flow(FlowItem item);
-
-    int insertableMaximumStackSizeAtOnce();
 }
