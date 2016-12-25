@@ -2,10 +2,8 @@
   "forge_marker": 1,
   "defaults": {
     "textures": {
-      "frame": "jp.crafterkina.pipes:blocks/pipe_frame",
       "core_cover": "jp.crafterkina.pipes:blocks/wool_cover_core",
-      "ext_cover": "jp.crafterkina.pipes:blocks/wool_cover",
-      "particle": "jp.crafterkina.pipes:blocks/pipe_frame"
+      "ext_cover": "jp.crafterkina.pipes:blocks/wool_cover"
     },
     "model": "jp.crafterkina.pipes:pipe_core",
     "uvlock": true
@@ -118,6 +116,20 @@
             "x": 270,
             "y": 90
           }
+        }
+      }
+    },
+    "type": {
+      "noise": {
+        "textures": {
+          "frame": "jp.crafterkina.pipes:blocks/noise",
+          "particle": "jp.crafterkina.pipes:blocks/noise"
+        }
+      },
+      "gradation": {
+        "textures": {
+          "frame": "jp.crafterkina.pipes:blocks/gradation",
+          "particle": "jp.crafterkina.pipes:blocks/gradation"
         }
       }
     }

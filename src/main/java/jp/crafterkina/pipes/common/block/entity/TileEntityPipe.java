@@ -7,6 +7,7 @@ import jp.crafterkina.pipes.api.pipe.IStrategy;
 import jp.crafterkina.pipes.common.PacketHandler;
 import jp.crafterkina.pipes.common.capability.wrapper.InvFlowWrapper;
 import jp.crafterkina.pipes.common.network.MessagePipeFlow;
+import jp.crafterkina.pipes.common.pipe.EnumPipeMaterial;
 import jp.crafterkina.pipes.common.pipe.FlowingItem;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyDefault;
 import jp.crafterkina.pipes.util.NBTStreams;
@@ -43,6 +44,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     private final IStrategy DEFAULT_STRATEGY = new StrategyDefault(this::getWorld);
     public Set<FlowingItem> flowingItems = Sets.newConcurrentHashSet();
     public int coverColor = -1;
+    public EnumPipeMaterial material;
     private IStrategy strategy = DEFAULT_STRATEGY;
     private ItemStack processor = ItemStack.EMPTY;
 
@@ -80,6 +82,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         flowingItems.addAll(NBTStreams.nbtListStream(compound.getTagList("flowingItems", Constants.NBT.TAG_COMPOUND)).map(FlowingItem::new).collect(Collectors.toSet()));
         setProcessor(compound.hasKey("processor", Constants.NBT.TAG_COMPOUND) ? new ItemStack(compound.getCompoundTag("processor")) : ItemStack.EMPTY);
         coverColor = compound.hasKey("CoverColor", Constants.NBT.TAG_INT) ? compound.getInteger("CoverColor") : -1;
+        material = EnumPipeMaterial.VALUES.get(compound.getInteger("material"));
         super.readFromNBT(compound);
     }
 
@@ -89,6 +92,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         compound.setTag("flowingItems", flowingItems.stream().filter(Objects::nonNull).map(FlowingItem::serializeNBT).filter(Objects::nonNull).collect(NBTStreams.toNBTList()));
         if(hasProcessor()) compound.setTag("processor", processor.serializeNBT());
         compound.setInteger("CoverColor", coverColor);
+        compound.setInteger("material", material.ordinal());
         return super.writeToNBT(compound);
     }
 
@@ -159,6 +163,10 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         // Turn
         updateFlag |= flowingItems.parallelStream().filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> !i.turned).peek(p -> {
             p.item = strategy.turn(p.item, connectingDirections);
+            //p.item = new FlowItem(p.item.getStack(),p.item.getVelocity().scale(getAccelerationCoefficient()));
+            if(p.item.getSpeed() > getLimitSpeed()){
+                p.item = new FlowItem(p.item.getStack(), p.item.getDirection().scale(getLimitSpeed()));
+            }
             p.tick = world.getTotalWorldTime();
             p.turned = true;
         }).count() > 0;
@@ -214,9 +222,24 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         if(processor != null) InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), processor);
     }
 
-    //TODO Split to Handler
+    public int getFrameColor(){
+        return material.COLOR;
+    }
+
+    public int getStackAcceptanceLimit(){
+        return material.STACK_ACCEPTANCE_LIMIT;
+    }
+
     public double getBaseSpeed(){
-        return 1 / 40d;
+        return material.BASE_SPEED;
+    }
+
+    public double getLimitSpeed(){
+        return material.LIMIT_SPEED;
+    }
+
+    public double getAccelerationCoefficient(){
+        return material.ACCELERATION_COEFFICIENT;
     }
 
     public boolean rotateProcessor(EnumFacing axis){
@@ -246,11 +269,6 @@ public class TileEntityPipe extends TileEntity implements ITickable{
             if(!getWorld().isRemote)
                 PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(TileEntityPipe.this.getPos(), TileEntityPipe.this.flowingItems));
             return FlowItem.EMPTY;
-        }
-
-        @Override
-        public int insertableMaximumStackSizeAtOnce(){
-            return 1;
         }
     }
 
@@ -292,7 +310,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate){
-            ItemStack stack1 = (stack = simulate ? stack.copy() : stack).splitStack(Math.min(stack.getCount(), pipe.insertableMaximumStackSizeAtOnce()));
+            ItemStack stack1 = (stack = simulate ? stack.copy() : stack).splitStack(Math.min(stack.getCount(), TileEntityPipe.this.getStackAcceptanceLimit()));
             if(simulate) return stack;
             pipe.flow(new FlowItem(stack1, facing.scale(-1).scale(TileEntityPipe.this.getBaseSpeed())));
             return stack;

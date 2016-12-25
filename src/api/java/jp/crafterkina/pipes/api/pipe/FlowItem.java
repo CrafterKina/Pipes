@@ -60,7 +60,7 @@ public final class FlowItem{
     }
 
     public Vec3d getDirection(){
-        return velocity.normalize();
+        return new Vec3d(Math.signum(velocity.xCoord), Math.signum(velocity.yCoord), Math.signum(velocity.zCoord));
     }
 
     public EnumFacing getDirectionFace(){

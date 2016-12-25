@@ -1,6 +1,6 @@
 {
   "parent": "jp.crafterkina.pipes:block/pipe_core",
   "textures": {
-    "frame": "jp.crafterkina.pipes:blocks/noise"
+    "frame": "jp.crafterkina.pipes:blocks/gradation"
   }
 }
