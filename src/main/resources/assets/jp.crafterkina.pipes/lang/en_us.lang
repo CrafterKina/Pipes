@@ -13,3 +13,22 @@ mes.item.jp.crafterkina.pipes.merchant_phone.register=Registered a contact
 # Tooltips
 tooltip.item.jp.crafterkina.pipes.merchant_phone.0=Right Click to Villager -> Register Villager
 tooltip.item.jp.crafterkina.pipes.merchant_phone.1=Right Click -> Call Villager
+# Achievements
+achievement.jp.crafterkina.pipes.buildPipe=Pipe Craft?
+achievement.jp.crafterkina.pipes.buildPipe.desc=Craft pipes with ladders and sticks.
+achievement.jp.crafterkina.pipes.buildProcessorBase=Redstone free
+achievement.jp.crafterkina.pipes.buildProcessorBase.desc=Craft a processor board with stones and sticks.
+achievement.jp.crafterkina.pipes.buildAccelerationProcessor=Sweetened!
+achievement.jp.crafterkina.pipes.buildAccelerationProcessor.desc=Craft an accelerator with a processor board and sugars.
+achievement.jp.crafterkina.pipes.buildAccelerationProcessorOver=Too sweet?
+achievement.jp.crafterkina.pipes.buildAccelerationProcessorOver.desc=Craft an accelerator x6.75 or more.
+achievement.jp.crafterkina.pipes.buildAccelerationProcessorUltimate=Sugar made in PRC
+achievement.jp.crafterkina.pipes.buildAccelerationProcessorUltimate.desc=Craft an accelerator x100 or more.
+achievement.jp.crafterkina.pipes.buildExtractionProcessor=Space-save
+achievement.jp.crafterkina.pipes.buildExtractionProcessor.desc=Craft a extractor with a processor board and planks.
+achievement.jp.crafterkina.pipes.buildOnewayProcessor=As documented
+achievement.jp.crafterkina.pipes.buildOnewayProcessor.desc=Craft a One-way processor with a processor board and iron ingots.
+achievement.jp.crafterkina.pipes.buildCoveredPipe=Electric shock prevention
+achievement.jp.crafterkina.pipes.buildCoveredPipe.desc=Cover pipes with wool.
+achievement.jp.crafterkina.pipes.buildMerchantPhone=Portable shop
+achievement.jp.crafterkina.pipes.buildMerchantPhone.desc=Craft a Merchant Phone.

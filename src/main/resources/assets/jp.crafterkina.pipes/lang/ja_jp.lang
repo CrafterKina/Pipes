@@ -13,3 +13,22 @@ mes.item.jp.crafterkina.pipes.merchant_phone.register=連絡先を登録しま�
 # Tooltips
 tooltip.item.jp.crafterkina.pipes.merchant_phone.0=村人を右クリック → 村人を登録
 tooltip.item.jp.crafterkina.pipes.merchant_phone.1=右クリック → 村人を呼び出す
+# Achievements
+achievement.jp.crafterkina.pipes.buildPipe=パイプクラフト？
+achievement.jp.crafterkina.pipes.buildPipe.desc=ハシゴと木の棒からパイプを作る。
+achievement.jp.crafterkina.pipes.buildProcessorBase=赤石無添加
+achievement.jp.crafterkina.pipes.buildProcessorBase.desc=石と木の棒からプロセッサの基板を作る。
+achievement.jp.crafterkina.pipes.buildAccelerationProcessor=砂糖添加
+achievement.jp.crafterkina.pipes.buildAccelerationProcessor.desc=基板と砂糖から加速器を作る。
+achievement.jp.crafterkina.pipes.buildAccelerationProcessorOver=甘すぎ？
+achievement.jp.crafterkina.pipes.buildAccelerationProcessorOver.desc=6.75倍以上の加速器を作る。
+achievement.jp.crafterkina.pipes.buildAccelerationProcessorUltimate=中国製砂糖
+achievement.jp.crafterkina.pipes.buildAccelerationProcessorUltimate.desc=100倍以上の加速器を作る。
+achievement.jp.crafterkina.pipes.buildExtractionProcessor=省スペース
+achievement.jp.crafterkina.pipes.buildExtractionProcessor.desc=基板と木の板から抽出器を作る。
+achievement.jp.crafterkina.pipes.buildOnewayProcessor=マニュアル対応
+achievement.jp.crafterkina.pipes.buildOnewayProcessor.desc=基板と鉄インゴットから一方通行プロセッサを作る。
+achievement.jp.crafterkina.pipes.buildCoveredPipe=感電しないためにも
+achievement.jp.crafterkina.pipes.buildCoveredPipe.desc=パイプを羊毛で覆う。
+achievement.jp.crafterkina.pipes.buildMerchantPhone=携帯型ショップ
+achievement.jp.crafterkina.pipes.buildMerchantPhone.desc=商人の電話を作る。

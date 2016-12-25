@@ -8,14 +8,13 @@ import jp.crafterkina.pipes.common.recipe.ProcessorAccelerationRecipe;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import static jp.crafterkina.pipes.common.RegistryEntries.ITEM.*;
+import static jp.crafterkina.pipes.common.item.ItemPipe.createPipeStack;
 
 public enum CraftManager{
     INSTANCE;
@@ -47,24 +46,5 @@ public enum CraftManager{
         }
         GameRegistry.addRecipe(new CoverPipeRecipe());
         RecipeSorter.register("jp.crafterkina.pipes:pipe_cover", CoverPipeRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped before:minecraft:shapeless");
-    }
-
-    private ItemStack createPipeStack(ItemStack stack, EnumPipeMaterial material, EnumDyeColor color){
-        return createPipeStack(stack, material, true, ItemDye.DYE_COLORS[color.getDyeDamage()]);
-    }
-
-    private ItemStack createPipeStack(ItemStack stack, EnumPipeMaterial material){
-        return createPipeStack(stack, material, false, -1);
-    }
-
-    private ItemStack createPipeStack(ItemStack stack, EnumPipeMaterial material, boolean covered, int color){
-        NBTTagCompound compound = new NBTTagCompound();
-        {
-            stack.setTagCompound(compound);
-            compound.setInteger("material", material.ordinal());
-            compound.setBoolean("covered", covered);
-            compound.setInteger("color", color);
-        }
-        return stack;
     }
 }

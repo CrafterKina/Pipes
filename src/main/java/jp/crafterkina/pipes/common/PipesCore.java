@@ -1,5 +1,6 @@
 package jp.crafterkina.pipes.common;
 
+import jp.crafterkina.pipes.common.achievement.EnumAchievement;
 import jp.crafterkina.pipes.common.capability.CapabilityRegister;
 import jp.crafterkina.pipes.common.recipe.vanilla.CraftManager;
 import lombok.Getter;
@@ -45,5 +46,6 @@ public enum PipesCore {
     private void postInit(FMLPostInitializationEvent event){
         proxy.registerBlockColors();
         proxy.registerItemColors();
+        EnumAchievement.registerPage();
     }
 }
