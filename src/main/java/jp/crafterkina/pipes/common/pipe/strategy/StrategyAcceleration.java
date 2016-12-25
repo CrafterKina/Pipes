@@ -55,6 +55,7 @@ public class StrategyAcceleration extends StrategyDefault implements SpecialRend
     public static class ItemAccelerateProcessor extends ItemProcessor{
         public ItemAccelerateProcessor(){
             setUnlocalizedName("accelerator");
+            setMaxStackSize(1);
         }
 
         public static int getColor(ItemStack stack, int layer){
