@@ -2,6 +2,7 @@ package jp.crafterkina.pipes.common.block;
 
 import jp.crafterkina.pipes.api.pipe.IStrategy;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
+import jp.crafterkina.pipes.common.creativetab.EnumCreativeTab;
 import jp.crafterkina.pipes.common.pipe.EnumPipeMaterial;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -53,7 +54,7 @@ public class BlockPipe extends BlockContainer{
     public BlockPipe(){
         super(Material.GLASS);
         setUnlocalizedName(MOD_ID + ".pipe");
-        setCreativeTab(CreativeTabs.TRANSPORTATION);
+        EnumCreativeTab.PIPE.setCreativeTab(this);
         setHardness(0.2f);
         setResistance(0.1f);
         IBlockState state = getBlockState().getBaseState();

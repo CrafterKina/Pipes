@@ -32,3 +32,7 @@ achievement.jp.crafterkina.pipes.buildCoveredPipe=感電しないためにも
 achievement.jp.crafterkina.pipes.buildCoveredPipe.desc=パイプを羊毛で覆う。
 achievement.jp.crafterkina.pipes.buildMerchantPhone=携帯型ショップ
 achievement.jp.crafterkina.pipes.buildMerchantPhone.desc=商人の電話を作る。
+# Item Groups
+itemGroup.jp.crafterkina.pipes.pipe=パイプ
+itemGroup.jp.crafterkina.pipes.processor=プロセッサ
+itemGroup.jp.crafterkina.pipes.utility=ユーティリティ

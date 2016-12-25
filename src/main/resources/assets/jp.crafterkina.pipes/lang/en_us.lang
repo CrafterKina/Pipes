@@ -32,3 +32,7 @@ achievement.jp.crafterkina.pipes.buildCoveredPipe=Electric shock prevention
 achievement.jp.crafterkina.pipes.buildCoveredPipe.desc=Cover pipes with wool.
 achievement.jp.crafterkina.pipes.buildMerchantPhone=Portable shop
 achievement.jp.crafterkina.pipes.buildMerchantPhone.desc=Craft a Merchant Phone.
+# Item Groups
+itemGroup.jp.crafterkina.pipes.pipe=Pipe
+itemGroup.jp.crafterkina.pipes.processor=Processor
+itemGroup.jp.crafterkina.pipes.utility=Utility

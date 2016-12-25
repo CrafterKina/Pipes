@@ -1,7 +1,7 @@
 package jp.crafterkina.pipes.common.item;
 
+import jp.crafterkina.pipes.common.creativetab.EnumCreativeTab;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,7 +32,7 @@ import static jp.crafterkina.pipes.common.RegistryEntries.ITEM.merchant_phone;
 public class ItemMerchantPhone extends Item{
     public ItemMerchantPhone(){
         setUnlocalizedName(MOD_ID + ".merchant_phone");
-        setCreativeTab(CreativeTabs.MISC);
+        EnumCreativeTab.UTILITY.setCreativeTab(this);
         if(FMLCommonHandler.instance().getSide() == Side.CLIENT){
             addPropertyOverride(new ResourceLocation("registered"), (stack, world, entity) -> stack.getTagCompound() != null && stack.getTagCompound().hasUniqueId("Merchant") ? 1 : 0);
         }

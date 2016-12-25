@@ -1,8 +1,8 @@
 package jp.crafterkina.pipes.common.item;
 
 import jp.crafterkina.pipes.api.pipe.IStrategy;
+import jp.crafterkina.pipes.common.creativetab.EnumCreativeTab;
 import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,7 +24,7 @@ public abstract class ItemProcessor extends Item implements IStrategy.StrategySu
     private String unlocalizedName;
 
     protected ItemProcessor(){
-        setCreativeTab(CreativeTabs.MISC);
+        EnumCreativeTab.PROCESSOR.setCreativeTab(this);
     }
 
     @Override
