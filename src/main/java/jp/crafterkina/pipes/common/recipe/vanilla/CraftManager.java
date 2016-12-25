@@ -1,7 +1,10 @@
 package jp.crafterkina.pipes.common.recipe.vanilla;
 
 import jp.crafterkina.pipes.common.pipe.EnumPipeMaterial;
+import jp.crafterkina.pipes.common.pipe.strategy.StrategyAcceleration;
+import jp.crafterkina.pipes.common.pipe.strategy.StrategyExtraction;
 import jp.crafterkina.pipes.common.recipe.CoverPipeRecipe;
+import jp.crafterkina.pipes.common.recipe.ProcessorAccelerationRecipe;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -12,8 +15,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import static jp.crafterkina.pipes.common.RegistryEntries.ITEM.merchant_phone;
-import static jp.crafterkina.pipes.common.RegistryEntries.ITEM.pipe;
+import static jp.crafterkina.pipes.common.RegistryEntries.ITEM.*;
 
 public enum CraftManager{
     INSTANCE;
@@ -21,6 +23,12 @@ public enum CraftManager{
     public void register(){
         GameRegistry.addRecipe(new ItemStack(merchant_phone), "IRI", "IGI", "IEI", 'G', Items.EMERALD, 'R', Blocks.REDSTONE_TORCH, 'E', Items.ENDER_PEARL, 'I', Items.IRON_INGOT);
         GameRegistry.addShapelessRecipe(new ItemStack(merchant_phone), merchant_phone);
+        GameRegistry.addRecipe(new ItemStack(processor_base), "ISI", "SSS", "ISI", 'I', Items.STICK, 'S', Blocks.STONE);
+        GameRegistry.addRecipe(StrategyAcceleration.ItemAccelerateProcessor.createStack(new ItemStack(strategy_acceleration), 1.25), " S ", "SPS", " S ", 'S', Items.SUGAR, 'P', processor_base);
+        GameRegistry.addRecipe(new ProcessorAccelerationRecipe());
+        RecipeSorter.register("jp.crafterkina.pipes:processor_acceleration", ProcessorAccelerationRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shaped before:minecraft:shapeless");
+        GameRegistry.addRecipe(new ShapedOreRecipe(StrategyExtraction.ItemExtractionProcessor.createStack(new ItemStack(strategy_extraction), 50, 1, 1, 0x9F844D), "W W", "WPW", " W ", 'W', "plankWood", 'P', processor_base));
+        GameRegistry.addRecipe(new ItemStack(strategy_oneway), " I ", "IPI", " I ", 'I', Items.IRON_INGOT, 'P', processor_base);
         registerPipeRecipes();
     }
 

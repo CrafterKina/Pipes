@@ -96,6 +96,16 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
             setMaxStackSize(1);
         }
 
+        public static ItemStack createStack(ItemStack stack, int cycle, int amount, double speed, int color){
+            NBTTagCompound compound = new NBTTagCompound();
+            compound.setInteger("cycle", cycle);
+            compound.setInteger("amount", amount);
+            compound.setDouble("speed", speed);
+            compound.setInteger("color", color);
+            stack.setTagCompound(compound);
+            return stack;
+        }
+
         public static int getColor(ItemStack stack, int layer){
             if(layer != 1) return Color.WHITE.getRGB();
             NBTTagCompound compound = stack.getTagCompound();
@@ -107,10 +117,10 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
         public void getSubItems(@Nonnull Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems){
             ItemStack stack = new ItemStack(itemIn);
             NBTTagCompound compound = new NBTTagCompound();
-            compound.setInteger("cycle", 100);
+            compound.setInteger("cycle", 50);
             compound.setInteger("amount", 1);
             compound.setDouble("speed", 1);
-            compound.setInteger("color", 0x535353);
+            compound.setInteger("color", 0x9F844D/*0x535353*/);
             stack.setTagCompound(compound);
             subItems.add(stack);
         }

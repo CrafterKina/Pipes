@@ -58,6 +58,16 @@ public class StrategyAcceleration extends StrategyDefault implements SpecialRend
             setMaxStackSize(1);
         }
 
+        public static ItemStack createStack(ItemStack stack, double acceleration){
+            NBTTagCompound compound = Optional.ofNullable(stack.getTagCompound()).orElseGet(() -> {
+                NBTTagCompound c = new NBTTagCompound();
+                stack.setTagCompound(c);
+                return c;
+            });
+            compound.setDouble("acceleration", acceleration);
+            return stack;
+        }
+
         public static int getColor(ItemStack stack, int layer){
             if(layer == 1) return Color.WHITE.getRGB();
             float[] hsb = Color.RGBtoHSB(0, 255, 255, null);
@@ -66,6 +76,10 @@ public class StrategyAcceleration extends StrategyDefault implements SpecialRend
                 return Color.WHITE.getRGB();
             hsb[0] -= 0.1d * (compound.getDouble("acceleration") - 1d);
             return Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+        }
+
+        public static double acceleration(ItemStack stack){
+            return stack.getTagCompound() == null || !stack.getTagCompound().hasKey("acceleration", Constants.NBT.TAG_DOUBLE) ? 1 : stack.getTagCompound().getDouble("acceleration");
         }
 
         @Override
@@ -95,10 +109,6 @@ public class StrategyAcceleration extends StrategyDefault implements SpecialRend
         @SuppressWarnings("deprecation")
         public String getItemStackDisplayName(@Nonnull ItemStack stack){
             return I18n.translateToLocalFormatted(getUnlocalizedNameInefficiently(stack) + ".name", acceleration(stack)).trim();
-        }
-
-        private double acceleration(ItemStack stack){
-            return stack.getTagCompound() == null || !stack.getTagCompound().hasKey("acceleration", Constants.NBT.TAG_DOUBLE) ? 1 : stack.getTagCompound().getDouble("acceleration");
         }
     }
 }
