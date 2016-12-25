@@ -47,6 +47,7 @@ public class ClientProxy extends CommonProxy{
             ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.merchant_phone, 0, new ModelResourceLocation(getResourceLocation("merchant_phone"), "inventory"));
             ModelLoader.setCustomMeshDefinition(RegistryEntries.ITEM.pipe, s -> getModelLocation(ItemPipe.getModelName(s)));
             ModelBakery.registerItemVariants(RegistryEntries.ITEM.pipe, getModelLocation("pipe"), getModelLocation("pipe_covered"), getModelLocation("pipe_metallic"), getModelLocation("pipe_covered_metallic"));
+            ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.processor_base, 0, getModelLocation("processor_base"));
             ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.strategy_acceleration, 0, new ModelResourceLocation(getResourceLocation("processor_chipped_arrow"), "inventory"));
             ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.strategy_extraction, 0, new ModelResourceLocation(getResourceLocation("processor_hopper"), "inventory"));
             ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.strategy_oneway, 0, new ModelResourceLocation(getResourceLocation("processor_pentagon"), "inventory"));
