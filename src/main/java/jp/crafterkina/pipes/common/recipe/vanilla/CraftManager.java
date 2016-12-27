@@ -26,7 +26,11 @@ public enum CraftManager{
         GameRegistry.addRecipe(StrategyAcceleration.ItemAccelerateProcessor.createStack(new ItemStack(strategy_acceleration), 1.25), " S ", "SPS", " S ", 'S', Items.SUGAR, 'P', processor_base);
         GameRegistry.addRecipe(new ProcessorAccelerationRecipe());
         RecipeSorter.register("jp.crafterkina.pipes:processor_acceleration", ProcessorAccelerationRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shaped before:minecraft:shapeless");
-        GameRegistry.addRecipe(new ShapedOreRecipe(StrategyExtraction.ItemExtractionProcessor.createStack(new ItemStack(strategy_extraction), 50, 1, 1, 0x9F844D), "W W", "WPW", " W ", 'W', "plankWood", 'P', processor_base));
+        GameRegistry.addRecipe(new ShapedOreRecipe(StrategyExtraction.Material.WOOD.getStack(), "W W", "WPW", " W ", 'W', "plankWood", 'P', processor_base));
+        GameRegistry.addRecipe(new ShapedOreRecipe(StrategyExtraction.Material.STONE.getStack(), "W W", "WPW", " W ", 'W', "cobblestone", 'P', processor_base));
+        GameRegistry.addRecipe(new ShapedOreRecipe(StrategyExtraction.Material.IRON.getStack(), "W W", "WPW", " W ", 'W', "ingotIron", 'P', processor_base));
+        GameRegistry.addRecipe(new ShapedOreRecipe(StrategyExtraction.Material.DIAMOND.getStack(), "W W", "WPW", " W ", 'W', "gemDiamond", 'P', processor_base));
+        GameRegistry.addRecipe(new ShapedOreRecipe(StrategyExtraction.Material.GOLD.getStack(), "W W", "WPW", " W ", 'W', "ingotGold", 'P', processor_base));
         GameRegistry.addRecipe(new ItemStack(strategy_oneway), " I ", "IPI", " I ", 'I', Items.IRON_INGOT, 'P', processor_base);
         registerPipeRecipes();
     }

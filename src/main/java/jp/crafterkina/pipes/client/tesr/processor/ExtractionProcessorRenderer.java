@@ -14,11 +14,13 @@ import net.minecraft.util.EnumFacing;
  */
 public class ExtractionProcessorRenderer extends TileEntitySpecialRenderer<TileEntity>{
     private final EnumFacing facing;
+    private final double speed;
     private ItemStack stack;
 
-    public ExtractionProcessorRenderer(ItemStack stack, EnumFacing facing){
+    public ExtractionProcessorRenderer(ItemStack stack, EnumFacing facing, double speed){
         this.stack = stack;
         this.facing = facing.rotateAround(EnumFacing.Axis.Y).rotateAround(EnumFacing.Axis.Y).rotateAround(EnumFacing.Axis.Y);
+        this.speed = speed;
     }
 
     @Override
@@ -30,7 +32,7 @@ public class ExtractionProcessorRenderer extends TileEntitySpecialRenderer<TileE
         GlStateManager.rotate(90, facing.getFrontOffsetX(), facing.getFrontOffsetY(), facing.getFrontOffsetZ());
         if(facing == EnumFacing.DOWN)
             GlStateManager.rotate(180, 0, 0, 1);
-        GlStateManager.rotate((te.getWorld().getTotalWorldTime() + partialTicks) * 1, 0, 1, 0);
+        GlStateManager.rotate((float) ((te.getWorld().getTotalWorldTime() + partialTicks) * speed), 0, 1, 0);
         bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         renderItemStack(stack);
         GlStateManager.disableRescaleNormal();

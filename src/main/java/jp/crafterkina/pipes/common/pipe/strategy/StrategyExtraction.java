@@ -5,6 +5,7 @@ import jp.crafterkina.pipes.api.pipe.IItemFlowHandler;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
 import jp.crafterkina.pipes.api.render.SpecialRendererSupplier;
 import jp.crafterkina.pipes.client.tesr.processor.ExtractionProcessorRenderer;
+import jp.crafterkina.pipes.common.RegistryEntries;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.item.ItemProcessor;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -52,7 +53,7 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
         this.speed = speed;
         if(FMLCommonHandler.instance().getSide().isClient()){
             //noinspection NewExpressionSideOnly,VariableUseSideOnly
-            RENDER = new ExtractionProcessorRenderer(stack, from);
+            RENDER = new ExtractionProcessorRenderer(stack, from, (200 / cycle) * (speed));
         }
     }
 
@@ -92,6 +93,23 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
         return RENDER;
     }
 
+    public enum Material{
+        WOOD(50, 1, 1, 0x9F844D),
+        STONE(25, 1, 1, 0x9B9B9B),
+        IRON(25, 8, 1, 0x535353),
+        DIAMOND(100, 16, 0.25, 0x69DFDA),
+        GOLD(12, 2, 4, 0xF9D74F);
+        private final ItemStack stack;
+
+        Material(int cycle, int amount, double speed, int color){
+            stack = ItemExtractionProcessor.createStack(new ItemStack(RegistryEntries.ITEM.strategy_extraction), cycle, amount, speed, color);
+        }
+
+        public ItemStack getStack(){
+            return stack.copy();
+        }
+    }
+
     public static class ItemExtractionProcessor extends ItemProcessor{
         public ItemExtractionProcessor(){
             setUnlocalizedName("extraction");
@@ -117,14 +135,9 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
 
         @Override
         public void getSubItems(@Nonnull Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems){
-            ItemStack stack = new ItemStack(itemIn);
-            NBTTagCompound compound = new NBTTagCompound();
-            compound.setInteger("cycle", 50);
-            compound.setInteger("amount", 1);
-            compound.setDouble("speed", 1);
-            compound.setInteger("color", 0x9F844D/*0x535353*/);
-            stack.setTagCompound(compound);
-            subItems.add(stack);
+            for(Material material : Material.values()){
+                subItems.add(material.getStack());
+            }
         }
 
         @Override
