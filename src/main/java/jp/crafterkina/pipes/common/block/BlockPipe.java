@@ -83,6 +83,7 @@ public class BlockPipe extends BlockContainer{
                 stack.setTagCompound(compound);
                 compound.setInteger("material", material.ordinal());
                 compound.setBoolean("covered", false);
+                compound.setInteger("color", -1);
                 subItems.add(stack);
             }
             for(EnumDyeColor color : EnumDyeColor.values()){
