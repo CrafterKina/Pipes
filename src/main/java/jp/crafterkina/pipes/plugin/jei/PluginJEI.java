@@ -17,7 +17,10 @@ import mezz.jei.api.JEIPlugin;
 public class PluginJEI extends BlankModPlugin{
     @Override
     public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry){
-        subtypeRegistry.useNbtForSubtypes(RegistryEntries.ITEM.pipe);
+        subtypeRegistry.useNbtForSubtypes(
+                RegistryEntries.ITEM.pipe,
+                RegistryEntries.ITEM.strategy_extraction
+        );
     }
 
     @Override
