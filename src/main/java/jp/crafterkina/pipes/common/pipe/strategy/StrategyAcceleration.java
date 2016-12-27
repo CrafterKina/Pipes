@@ -37,6 +37,7 @@ public class StrategyAcceleration extends StrategyDefault implements SpecialRend
         super(world);
         this.acceleration = acceleration;
         if(FMLCommonHandler.instance().getSide().isClient()){
+            //noinspection NewExpressionSideOnly,VariableUseSideOnly
             this.render = new AccelerationProcessorRenderer(stack, acceleration);
         }
     }

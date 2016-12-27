@@ -33,6 +33,7 @@ public class StrategyOneway implements IStrategy, SpecialRendererSupplier{
         this.stack = stack;
         this.to = to;
         if(FMLCommonHandler.instance().getSide().isClient()){
+            //noinspection NewExpressionSideOnly,VariableUseSideOnly
             RENDER = new ExtractionProcessorRenderer(stack, to);
         }
     }

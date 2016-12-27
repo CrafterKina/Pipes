@@ -51,6 +51,7 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
         this.amount = amount;
         this.speed = speed;
         if(FMLCommonHandler.instance().getSide().isClient()){
+            //noinspection NewExpressionSideOnly,VariableUseSideOnly
             RENDER = new ExtractionProcessorRenderer(stack, from);
         }
     }
@@ -86,6 +87,7 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public TileEntitySpecialRenderer<TileEntity> getSpecialRenderer(){
         return RENDER;
     }
