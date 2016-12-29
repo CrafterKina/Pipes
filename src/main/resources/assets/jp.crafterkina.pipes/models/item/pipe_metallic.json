@@ -1,5 +1,5 @@
 {
-  "parent": "jp.crafterkina.pipes:block/pipe_core",
+  "parent": "jp.crafterkina.pipes:item/pipe",
   "textures": {
     "frame": "jp.crafterkina.pipes:blocks/gradation"
   }

@@ -1,7 +1,8 @@
 {
-  "parent": "jp.crafterkina.pipes:block/pipe_covered_core",
+  "parent": "jp.crafterkina.pipes:item/pipe_covered",
   "textures": {
     "frame": "jp.crafterkina.pipes:blocks/gradation",
-    "core_cover": "jp.crafterkina.pipes:blocks/wool_cover_core"
+    "core": "jp.crafterkina.pipes:blocks/wool_cover_core",
+    "ext": "jp.crafterkina.pipes:blocks/wool_cover"
   }
 }
