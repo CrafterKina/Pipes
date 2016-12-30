@@ -1,5 +1,6 @@
 package jp.crafterkina.pipes.common.recipe.vanilla;
 
+import jp.crafterkina.pipes.common.RegistryEntries;
 import jp.crafterkina.pipes.common.pipe.EnumPipeMaterial;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyAcceleration;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyExtraction;
@@ -32,6 +33,7 @@ public enum CraftManager{
         GameRegistry.addRecipe(new ShapedOreRecipe(StrategyExtraction.Material.DIAMOND.getStack(), "W W", "WPW", " W ", 'W', "gemDiamond", 'P', processor_base));
         GameRegistry.addRecipe(new ShapedOreRecipe(StrategyExtraction.Material.GOLD.getStack(), "W W", "WPW", " W ", 'W', "ingotGold", 'P', processor_base));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(strategy_oneway), " I ", "IPI", " I ", 'I', "ingotIron", 'P', processor_base));
+        GameRegistry.addRecipe(new ShapedOreRecipe(RegistryEntries.ITEM.fluid_tank, "GSG", "F F", "GSG", 'G', "paneGlassColorless", 'S', "slabWood", 'F', Blocks.OAK_FENCE));
         registerPipeRecipes();
     }
 

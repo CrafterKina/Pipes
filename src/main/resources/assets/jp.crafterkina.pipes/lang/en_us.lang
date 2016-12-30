@@ -4,6 +4,7 @@ item.jp.crafterkina.pipes.merchant_phone.name=Merchant phone
 item.jp.crafterkina.pipes.processor_base.name=Processor board
 # Blocks
 tile.jp.crafterkina.pipes.pipe.name=Pipe
+tile.jp.crafterkina.pipes.fluid_tank.name=Fluid Tank
 # Strategies
 strategy.jp.crafterkina.pipes.accelerator.name=Accelerator x%.3g
 strategy.jp.crafterkina.pipes.extraction.name=Extractor

@@ -1,8 +1,11 @@
 package jp.crafterkina.pipes.common;
 
+import jp.crafterkina.pipes.common.block.BlockFluidTank;
 import jp.crafterkina.pipes.common.block.BlockPipe;
+import jp.crafterkina.pipes.common.block.entity.TileEntityFluidTank;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.creativetab.EnumCreativeTab;
+import jp.crafterkina.pipes.common.item.ItemFluidTank;
 import jp.crafterkina.pipes.common.item.ItemMerchantPhone;
 import jp.crafterkina.pipes.common.item.ItemPipe;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyAcceleration;
@@ -43,6 +46,7 @@ public class CommonProxy{
         register(event,
                 of(new ItemMerchantPhone(), "merchant_phone"),
                 of(new ItemPipe(), "pipe"),
+                of(new ItemFluidTank(), "fluid_tank"),
                 of(new Item().setCreativeTab(EnumCreativeTab.PROCESSOR.tab).setUnlocalizedName(MOD_ID + ".processor_base"), "processor_base"),
                 of(new StrategyAcceleration.ItemAccelerateProcessor(), "strategy_acceleration"),
                 of(new StrategyExtraction.ItemExtractionProcessor(), "strategy_extraction"),
@@ -53,14 +57,16 @@ public class CommonProxy{
     @OverridingMethodsMustInvokeSuper
     protected void registerBlocks(RegistryEvent.Register<Block> event){
         register(event,
-                of(new BlockPipe(), "pipe")
+                of(new BlockPipe(), "pipe"),
+                of(new BlockFluidTank(), "fluid_tank")
         );
     }
 
     @OverridingMethodsMustInvokeSuper
     protected void registerTileEntities(){
         register(
-                TileEntityPipe.class
+                TileEntityPipe.class,
+                TileEntityFluidTank.class
         );
     }
 
