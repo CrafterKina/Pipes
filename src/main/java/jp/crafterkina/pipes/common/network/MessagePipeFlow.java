@@ -78,6 +78,7 @@ public class MessagePipeFlow implements IMessage{
 }
 
 class MessagePipeFlowHandler implements IMessageHandler<MessagePipeFlow, IMessage>{
+    @SuppressWarnings("MethodCallSideOnly")
     @Override
     public IMessage onMessage(MessagePipeFlow mes, MessageContext ctx){
         if(Minecraft.getMinecraft().world == null) return null;
