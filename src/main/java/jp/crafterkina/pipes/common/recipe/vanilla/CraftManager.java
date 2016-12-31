@@ -20,29 +20,29 @@ public enum CraftManager{
     INSTANCE;
 
     public void register(){
-        GameRegistry.addRecipe(new ItemStack(merchant_phone), "IRI", "IGI", "IEI", 'G', Items.EMERALD, 'R', Blocks.REDSTONE_TORCH, 'E', Items.ENDER_PEARL, 'I', Items.IRON_INGOT);
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(merchant_phone), "IRI", "IGI", "IEI", 'G', "gemEmerald", 'R', Blocks.REDSTONE_TORCH, 'E', Items.ENDER_PEARL, 'I', "ingotIron"));
         GameRegistry.addShapelessRecipe(new ItemStack(merchant_phone), merchant_phone);
-        GameRegistry.addRecipe(new ItemStack(processor_base), "ISI", "SSS", "ISI", 'I', Items.STICK, 'S', Blocks.STONE);
-        GameRegistry.addRecipe(StrategyAcceleration.ItemAccelerateProcessor.createStack(new ItemStack(strategy_acceleration), 1.25), " S ", "SPS", " S ", 'S', Items.SUGAR, 'P', processor_base);
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(processor_base), "ISI", "SSS", "ISI", 'I', "stickWood", 'S', "stone"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(StrategyAcceleration.ItemAccelerateProcessor.createStack(new ItemStack(strategy_acceleration), 1.25), " S ", "SPS", " S ", 'S', Items.SUGAR, 'P', processor_base));
         GameRegistry.addRecipe(new ProcessorAccelerationRecipe());
         RecipeSorter.register("jp.crafterkina.pipes:processor_acceleration", ProcessorAccelerationRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shaped before:minecraft:shapeless");
         GameRegistry.addRecipe(new ShapedOreRecipe(StrategyExtraction.ItemExtractionProcessor.createStack(new ItemStack(strategy_extraction), 50, 1, 1, 0x9F844D), "W W", "WPW", " W ", 'W', "plankWood", 'P', processor_base));
-        GameRegistry.addRecipe(new ItemStack(strategy_oneway), " I ", "IPI", " I ", 'I', Items.IRON_INGOT, 'P', processor_base);
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(strategy_oneway), " I ", "IPI", " I ", 'I', "ingotIron", 'P', processor_base));
         registerPipeRecipes();
     }
 
     private void registerPipeRecipes(){
-        GameRegistry.addRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.WOOD), "SLS", "L L", "SLS", 'S', Items.STICK, 'L', Blocks.LADDER);
+        GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.WOOD), "SLS", "L L", "SLS", 'S', "stickWood", 'L', Blocks.LADDER));
         GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.STONE), "SLS", "L L", "SLS", 'S', "cobblestone", 'L', Blocks.LADDER));
-        GameRegistry.addRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.IRON), "SLS", "L L", "SLS", 'S', Items.IRON_INGOT, 'L', Blocks.RAIL);
-        GameRegistry.addRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.DIAMOND), "SLS", "L L", "SLS", 'S', Items.DIAMOND, 'L', Blocks.RAIL);
-        GameRegistry.addRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.GOLD), "SLS", "L L", "SLS", 'S', Items.GOLD_NUGGET, 'L', Blocks.GOLDEN_RAIL);
+        GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.IRON), "SLS", "L L", "SLS", 'S', "ingotIron", 'L', Blocks.RAIL));
+        GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.DIAMOND), "SLS", "L L", "SLS", 'S', "gemDiamond", 'L', Blocks.RAIL));
+        GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.GOLD), "SLS", "L L", "SLS", 'S', "nuggetGold", 'L', Blocks.GOLDEN_RAIL));
         for(EnumDyeColor color : EnumDyeColor.values()){
-            GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.WOOD, color), "SLS", "LWL", "SLS", 'S', Items.STICK, 'L', Blocks.LADDER, 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())));
+            GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.WOOD, color), "SLS", "LWL", "SLS", 'S', "stickWood", 'L', Blocks.LADDER, 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())));
             GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.STONE, color), "SLS", "LWL", "SLS", 'S', "cobblestone", 'L', Blocks.LADDER, 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())));
-            GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.IRON, color), "SLS", "LWL", "SLS", 'S', Items.IRON_INGOT, 'L', Blocks.RAIL, 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())));
-            GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.DIAMOND, color), "SLS", "LWL", "SLS", 'S', Items.DIAMOND, 'L', Blocks.RAIL, 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())));
-            GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.GOLD, color), "SLS", "LWL", "SLS", 'S', Items.GOLD_NUGGET, 'L', Blocks.GOLDEN_RAIL, 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())));
+            GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.IRON, color), "SLS", "LWL", "SLS", 'S', "ingotIron", 'L', Blocks.RAIL, 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())));
+            GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.DIAMOND, color), "SLS", "LWL", "SLS", 'S', "gemDiamond", 'L', Blocks.RAIL, 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())));
+            GameRegistry.addRecipe(new ShapedOreRecipe(createPipeStack(new ItemStack(pipe, 8), EnumPipeMaterial.GOLD, color), "SLS", "LWL", "SLS", 'S', "nuggetGold", 'L', Blocks.GOLDEN_RAIL, 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())));
         }
         GameRegistry.addRecipe(new CoverPipeRecipe());
         RecipeSorter.register("jp.crafterkina.pipes:pipe_cover", CoverPipeRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped before:minecraft:shapeless");
