@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import static jp.crafterkina.pipes.api.PipesConstants.MOD_ID;
 
-@Mod(modid = MOD_ID)
+@Mod(modid = MOD_ID, dependencies = "required-after:forge@[1.11-13.19.1.2189,);after:jei@[4.1.1.208,)", acceptedMinecraftVersions = "[1.11],[1.11.2,)")
 public enum PipesCore {
     INSTANCE;
 
