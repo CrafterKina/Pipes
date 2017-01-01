@@ -3,6 +3,7 @@ package jp.crafterkina.pipes.common.block;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.creativetab.EnumCreativeTab;
+import jp.crafterkina.pipes.common.item.ItemPipe;
 import jp.crafterkina.pipes.common.pipe.EnumPipeMaterial;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -35,6 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -110,6 +112,28 @@ public class BlockPipe extends BlockContainer{
         pipe.coverColor = compound.getBoolean("covered") ? compound.getInteger("color") : -1;
         pipe.material = EnumPipeMaterial.VALUES.get(compound.getInteger("material"));
         worldIn.notifyBlockUpdate(pos, state, state, 8);
+    }
+
+
+    @Override
+    public void harvestBlock(@Nonnull World worldIn, EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nullable TileEntity te, @Nonnull ItemStack stack){
+        if(te instanceof TileEntityPipe){
+            TileEntityPipe pipe = (TileEntityPipe) te;
+            spawnAsEntity(worldIn, pos, ItemPipe.createPipeStack(new ItemStack(this, 1), pipe.material, pipe.covered(), pipe.coverColor));
+        }else{
+            super.harvestBlock(worldIn, player, pos, state, null, stack);
+        }
+    }
+
+    @Nonnull
+    @Override
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, @Nonnull IBlockState state, int fortune){
+        TileEntity te = world.getTileEntity(pos);
+        if(te instanceof TileEntityPipe){
+            TileEntityPipe pipe = (TileEntityPipe) te;
+            return Collections.singletonList(ItemPipe.createPipeStack(new ItemStack(this, 1), pipe.material, pipe.covered(), pipe.coverColor));
+        }
+        return super.getDrops(world, pos, state, fortune);
     }
 
     @Override
