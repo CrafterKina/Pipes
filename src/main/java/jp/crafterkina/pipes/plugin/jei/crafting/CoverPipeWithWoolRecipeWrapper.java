@@ -32,8 +32,8 @@ public class CoverPipeWithWoolRecipeWrapper extends BlankRecipeWrapper implement
         output = covered;
     }
 
-    public static List<CoverPipeWithCarpetRecipeWrapper> getRecipes(){
-        return Arrays.stream(EnumDyeColor.values()).flatMap(c -> EnumPipeMaterial.VALUES.stream().map(m -> new CoverPipeWithCarpetRecipeWrapper(c, m))).collect(Collectors.toList());
+    public static List<CoverPipeWithWoolRecipeWrapper> getRecipes(){
+        return Arrays.stream(EnumDyeColor.values()).flatMap(c -> EnumPipeMaterial.VALUES.stream().map(m -> new CoverPipeWithWoolRecipeWrapper(c, m))).collect(Collectors.toList());
     }
 
     @Override
