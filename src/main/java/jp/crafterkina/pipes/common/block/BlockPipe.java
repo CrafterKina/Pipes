@@ -237,7 +237,12 @@ public class BlockPipe extends BlockContainer{
     @SuppressWarnings("deprecation")
     @Deprecated
     public RayTraceResult collisionRayTrace(IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end){
-        return Arrays.stream(EnumFacing.VALUES).filter(f -> worldIn.getBlockState(pos).getBlock().getActualState(state, worldIn, pos).getValue(CONNECT[f.getIndex()])).map(f -> rayTrace(pos, start, end, PIPE[f.getIndex()])).filter(Objects::nonNull).filter(r -> r.typeOfHit != RayTraceResult.Type.MISS).findFirst().orElseGet(() -> rayTrace(pos, start, end, CORE));
+        return Arrays.stream(EnumFacing.VALUES).filter(f -> worldIn.getBlockState(pos).getBlock().getActualState(state, worldIn, pos).getValue(CONNECT[f.getIndex()])).map(f -> getFacedTraceResult(f, rayTrace(pos, start, end, PIPE[f.getIndex()]))).filter(Objects::nonNull).filter(r -> r.typeOfHit != RayTraceResult.Type.MISS).findFirst().orElseGet(() -> rayTrace(pos, start, end, CORE));
+    }
+
+    @Nullable
+    private RayTraceResult getFacedTraceResult(@Nonnull EnumFacing facing, @Nullable RayTraceResult traceResult){
+        return traceResult == null ? null : new RayTraceResult(traceResult.typeOfHit, traceResult.hitVec, facing, traceResult.getBlockPos());
     }
 
     @Override
