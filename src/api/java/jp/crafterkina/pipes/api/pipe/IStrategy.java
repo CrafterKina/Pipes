@@ -127,6 +127,9 @@ public interface IStrategy{
      * @since 1.0
      */
     interface StrategySupplier{
-        IStrategy getStrategy(TileEntity entity, ItemStack stack);
+        @CapabilityInject(StrategySupplier.class)
+        Capability<StrategySupplier> CAPABILITY = null;
+
+        IStrategy getStrategy(TileEntity entity);
     }
 }

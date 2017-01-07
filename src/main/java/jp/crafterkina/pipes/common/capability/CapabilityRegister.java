@@ -1,6 +1,7 @@
 package jp.crafterkina.pipes.common.capability;
 
 import jp.crafterkina.pipes.api.pipe.IItemFlowHandler;
+import jp.crafterkina.pipes.api.pipe.IStrategy;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -13,6 +14,8 @@ import org.apache.commons.lang3.NotImplementedException;
 public class CapabilityRegister{
     public static void register(){
         register(IItemFlowHandler.class);
+        register(IStrategy.IStrategyHandler.class);
+        register(IStrategy.StrategySupplier.class);
     }
 
     private static <T> void register(Class<T> clazz){

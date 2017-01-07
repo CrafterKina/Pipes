@@ -58,7 +58,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
 
     private boolean setProcessor(@Nonnull ItemStack processor){
         this.processor = processor;
-        strategy = processor.getItem() instanceof IStrategy.StrategySupplier ? ((IStrategy.StrategySupplier) processor.getItem()).getStrategy(this, processor) : DEFAULT_STRATEGY;
+        strategy = processor.hasCapability(IStrategy.StrategySupplier.CAPABILITY, null) ? processor.getCapability(IStrategy.StrategySupplier.CAPABILITY, null).getStrategy(this) : DEFAULT_STRATEGY;
         strategy = strategy == null ? DEFAULT_STRATEGY : strategy;
         return true;
     }

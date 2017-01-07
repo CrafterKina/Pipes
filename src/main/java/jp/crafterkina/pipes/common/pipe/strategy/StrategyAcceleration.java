@@ -23,6 +23,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 /**
@@ -84,8 +85,8 @@ public class StrategyAcceleration extends StrategyDefault implements SpecialRend
         }
 
         @Override
-        public IStrategy getStrategy(TileEntity entity, ItemStack stack){
-            return new StrategyAcceleration(entity::getWorld, stack, acceleration(stack));
+        protected BiFunction<ItemStack, TileEntity, IStrategy> getStrategy(){
+            return (s, t) -> new StrategyAcceleration(t::getWorld, s, acceleration(s));
         }
 
         @Override

@@ -28,6 +28,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.util.function.BiFunction;
 
 /**
  * Created by Kina on 2016/12/22.
@@ -138,15 +139,17 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
         }
 
         @Override
-        public IStrategy getStrategy(TileEntity entity, ItemStack stack){
-            if(!(entity instanceof TileEntityPipe)) return null;
-            NBTTagCompound compound = stack.getTagCompound();
-            if(compound == null) return null;
-            EnumFacing from = EnumFacing.VALUES[compound.getByte("from")];
-            int cycle = compound.getInteger("cycle");
-            int amount = compound.getInteger("amount");
-            double speed = compound.getDouble("speed");
-            return new StrategyExtraction((TileEntityPipe) entity, stack, from, cycle, amount, speed);
+        protected BiFunction<ItemStack, TileEntity, IStrategy> getStrategy(){
+            return (s, t) -> {
+                if(!(t instanceof TileEntityPipe)) return null;
+                NBTTagCompound compound = s.getTagCompound();
+                if(compound == null) return null;
+                EnumFacing from = EnumFacing.VALUES[compound.getByte("from")];
+                int cycle = compound.getInteger("cycle");
+                int amount = compound.getInteger("amount");
+                double speed = compound.getDouble("speed");
+                return new StrategyExtraction((TileEntityPipe) t, s, from, cycle, amount, speed);
+            };
         }
     }
 }

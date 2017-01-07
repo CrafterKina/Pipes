@@ -20,6 +20,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.function.BiFunction;
+
 /**
  * Created by Kina on 2016/12/23.
  */
@@ -78,12 +80,14 @@ public class StrategyOneway implements IStrategy, SpecialRendererSupplier{
         }
 
         @Override
-        public IStrategy getStrategy(TileEntity entity, ItemStack stack){
-            if(!(entity instanceof TileEntityPipe)) return null;
-            NBTTagCompound compound = stack.getTagCompound();
-            if(compound == null) return null;
-            EnumFacing to = EnumFacing.VALUES[compound.getByte("to")];
-            return new StrategyOneway(stack, to);
+        protected BiFunction<ItemStack, TileEntity, IStrategy> getStrategy(){
+            return (s, t) -> {
+                if(!(t instanceof TileEntityPipe)) return null;
+                NBTTagCompound compound = s.getTagCompound();
+                if(compound == null) return null;
+                EnumFacing to = EnumFacing.VALUES[compound.getByte("to")];
+                return new StrategyOneway(s, to);
+            };
         }
     }
 }
