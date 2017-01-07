@@ -48,8 +48,8 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     private IStrategy strategy = DEFAULT_STRATEGY;
     private ItemStack processor = ItemStack.EMPTY;
 
-    public static ItemStack getProcessorStack(TileEntityPipe pipe){
-        return pipe.processor.copy();
+    public ItemStack getProcessor(){
+        return processor;
     }
 
     private boolean hasProcessor(){

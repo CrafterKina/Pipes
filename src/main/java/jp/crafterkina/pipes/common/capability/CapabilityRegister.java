@@ -2,6 +2,7 @@ package jp.crafterkina.pipes.common.capability;
 
 import jp.crafterkina.pipes.api.pipe.IItemFlowHandler;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
+import jp.crafterkina.pipes.api.render.ISpecialRenderer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -16,6 +17,7 @@ public class CapabilityRegister{
         register(IItemFlowHandler.class);
         register(IStrategy.IStrategyHandler.class);
         register(IStrategy.StrategySupplier.class);
+        register(ISpecialRenderer.class);
     }
 
     private static <T> void register(Class<T> clazz){

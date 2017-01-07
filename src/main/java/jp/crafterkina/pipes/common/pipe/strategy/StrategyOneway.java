@@ -2,11 +2,10 @@ package jp.crafterkina.pipes.common.pipe.strategy;
 
 import jp.crafterkina.pipes.api.pipe.FlowItem;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
-import jp.crafterkina.pipes.api.render.SpecialRendererSupplier;
+import jp.crafterkina.pipes.api.render.ISpecialRenderer;
 import jp.crafterkina.pipes.client.tesr.processor.ExtractionProcessorRenderer;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.item.ItemProcessor;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,28 +15,25 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
 /**
  * Created by Kina on 2016/12/23.
  */
-public class StrategyOneway implements IStrategy, SpecialRendererSupplier{
+public class StrategyOneway implements IStrategy{
     private final ItemStack stack;
     private final EnumFacing to;
-    @SideOnly(Side.CLIENT)
-    private TileEntitySpecialRenderer<TileEntity> RENDER;
 
     private StrategyOneway(ItemStack stack, EnumFacing to){
         this.stack = stack;
         this.to = to;
-        if(FMLCommonHandler.instance().getSide().isClient()){
-            //noinspection NewExpressionSideOnly,VariableUseSideOnly
-            RENDER = new ExtractionProcessorRenderer(stack, to);
-        }
     }
 
     @Override
@@ -48,12 +44,6 @@ public class StrategyOneway implements IStrategy, SpecialRendererSupplier{
     @Override
     public IStrategy rotate(EnumFacing axis){
         return new StrategyOneway(stack, to);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public TileEntitySpecialRenderer<TileEntity> getSpecialRenderer(){
-        return RENDER;
     }
 
     public static class ItemOnewayProcessor extends ItemProcessor{
@@ -88,6 +78,34 @@ public class StrategyOneway implements IStrategy, SpecialRendererSupplier{
                 EnumFacing to = EnumFacing.VALUES[compound.getByte("to")];
                 return new StrategyOneway(s, to);
             };
+        }
+
+        @SuppressWarnings("MethodCallSideOnly")
+        @Override
+        protected boolean hasAdditionalCapability(ItemStack stack, @Nonnull Capability<?> capability, @Nullable EnumFacing facing){
+            return FMLCommonHandler.instance().getSide().isClient() && hasCapabilityClient(stack, capability, facing);
+        }
+
+        @SuppressWarnings("MethodCallSideOnly")
+        @Nullable
+        @Override
+        protected <T> T getAdditionalCapability(ItemStack stack, @Nonnull Capability<T> capability, @Nullable EnumFacing facing){
+            if(FMLCommonHandler.instance().getSide().isClient())
+                return getCapabilityClient(stack, capability, facing);
+            return null;
+        }
+
+        @SideOnly(Side.CLIENT)
+        private boolean hasCapabilityClient(@SuppressWarnings("unused") ItemStack stack, @Nonnull Capability<?> capability, @Nullable EnumFacing facing){
+            return capability == ISpecialRenderer.CAPABILITY;
+        }
+
+        @SuppressWarnings("unchecked")
+        @SideOnly(Side.CLIENT)
+        private <T> T getCapabilityClient(ItemStack stack, @Nonnull Capability<T> capability, @Nullable EnumFacing facing){
+            if(capability == ISpecialRenderer.CAPABILITY)
+                return (T) new ExtractionProcessorRenderer(stack, facing, 1);
+            return null;
         }
     }
 }

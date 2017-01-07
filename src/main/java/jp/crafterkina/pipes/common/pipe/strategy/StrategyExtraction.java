@@ -3,11 +3,11 @@ package jp.crafterkina.pipes.common.pipe.strategy;
 import jp.crafterkina.pipes.api.pipe.FlowItem;
 import jp.crafterkina.pipes.api.pipe.IItemFlowHandler;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
-import jp.crafterkina.pipes.api.render.SpecialRendererSupplier;
+import jp.crafterkina.pipes.api.render.ISpecialRenderer;
 import jp.crafterkina.pipes.client.tesr.processor.ExtractionProcessorRenderer;
+import jp.crafterkina.pipes.common.RegistryEntries;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.item.ItemProcessor;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -19,6 +19,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,21 +28,20 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.function.BiFunction;
 
 /**
  * Created by Kina on 2016/12/22.
  */
-public class StrategyExtraction extends StrategyDefault implements SpecialRendererSupplier{
+public class StrategyExtraction extends StrategyDefault{
     private final TileEntityPipe te;
     private final ItemStack stack;
     private final EnumFacing from;
     private final int cycle;
     private final int amount;
     private final double speed;
-    @SideOnly(Side.CLIENT)
-    private ExtractionProcessorRenderer RENDER;
 
     StrategyExtraction(TileEntityPipe te, ItemStack stack, EnumFacing from, int cycle, int amount, double speed){
         super(te::getWorld);
@@ -51,10 +51,6 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
         this.cycle = cycle;
         this.amount = amount;
         this.speed = speed;
-        if(FMLCommonHandler.instance().getSide().isClient()){
-            //noinspection NewExpressionSideOnly,VariableUseSideOnly
-            RENDER = new ExtractionProcessorRenderer(stack, from);
-        }
     }
 
     @Override
@@ -87,10 +83,21 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
         return new StrategyExtraction(te, stack, axis, cycle, amount, speed);
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public TileEntitySpecialRenderer<TileEntity> getSpecialRenderer(){
-        return RENDER;
+    public enum Material{
+        WOOD(50, 1, 1, 0x9F844D),
+        STONE(25, 1, 1, 0x9B9B9B),
+        IRON(25, 8, 1, 0x535353),
+        DIAMOND(100, 16, 0.25, 0x69DFDA),
+        GOLD(12, 2, 4, 0xF9D74F);
+        private final ItemStack stack;
+
+        Material(int cycle, int amount, double speed, int color){
+            stack = ItemExtractionProcessor.createStack(new ItemStack(RegistryEntries.ITEM.strategy_extraction), cycle, amount, speed, color);
+        }
+
+        public ItemStack getStack(){
+            return stack.copy();
+        }
     }
 
     public static class ItemExtractionProcessor extends ItemProcessor{
@@ -118,14 +125,9 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
 
         @Override
         public void getSubItems(@Nonnull Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems){
-            ItemStack stack = new ItemStack(itemIn);
-            NBTTagCompound compound = new NBTTagCompound();
-            compound.setInteger("cycle", 50);
-            compound.setInteger("amount", 1);
-            compound.setDouble("speed", 1);
-            compound.setInteger("color", 0x9F844D/*0x535353*/);
-            stack.setTagCompound(compound);
-            subItems.add(stack);
+            for(Material material : Material.values()){
+                subItems.add(material.getStack());
+            }
         }
 
         @Override
@@ -150,6 +152,34 @@ public class StrategyExtraction extends StrategyDefault implements SpecialRender
                 double speed = compound.getDouble("speed");
                 return new StrategyExtraction((TileEntityPipe) t, s, from, cycle, amount, speed);
             };
+        }
+
+        @SuppressWarnings("MethodCallSideOnly")
+        @Override
+        protected boolean hasAdditionalCapability(ItemStack stack, @Nonnull Capability<?> capability, @Nullable EnumFacing facing){
+            return FMLCommonHandler.instance().getSide().isClient() && hasCapabilityClient(stack, capability, facing);
+        }
+
+        @SuppressWarnings("MethodCallSideOnly")
+        @Nullable
+        @Override
+        protected <T> T getAdditionalCapability(ItemStack stack, @Nonnull Capability<T> capability, @Nullable EnumFacing facing){
+            if(FMLCommonHandler.instance().getSide().isClient())
+                return getCapabilityClient(stack, capability, facing);
+            return null;
+        }
+
+        @SideOnly(Side.CLIENT)
+        private boolean hasCapabilityClient(@SuppressWarnings("unused") ItemStack stack, @Nonnull Capability<?> capability, @Nullable EnumFacing facing){
+            return capability == ISpecialRenderer.CAPABILITY;
+        }
+
+        @SuppressWarnings("unchecked")
+        @SideOnly(Side.CLIENT)
+        private <T> T getCapabilityClient(ItemStack stack, @Nonnull Capability<T> capability, @Nullable EnumFacing facing){
+            if(capability == ISpecialRenderer.CAPABILITY && stack.hasTagCompound())
+                return (T) new ExtractionProcessorRenderer(stack, EnumFacing.VALUES[stack.getTagCompound().getByte("from")], (200 / stack.getTagCompound().getInteger("cycle")) * (stack.getTagCompound().getDouble("speed")));
+            return null;
         }
     }
 }

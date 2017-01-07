@@ -1,6 +1,6 @@
 package jp.crafterkina.pipes.client.tesr;
 
-import jp.crafterkina.pipes.api.render.SpecialRendererSupplier;
+import jp.crafterkina.pipes.api.render.ISpecialRenderer;
 import jp.crafterkina.pipes.client.tesr.processor.DefaultProcessorRenderer;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.pipe.FlowingItem;
@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,15 +22,11 @@ import java.util.Set;
  */
 @SideOnly(Side.CLIENT)
 public class TileEntityPipeRenderer extends TileEntitySpecialRenderer<TileEntityPipe>{
-    @SideOnly(Side.CLIENT)
-    private final TileEntitySpecialRenderer<TileEntity> DEFAULT_PROCESSOR_RENDER = new DefaultProcessorRenderer(TileEntityPipe::getProcessorStack);
-
     @Override
     public void renderTileEntityAt(TileEntityPipe te, double x, double y, double z, float partialTicks, int destroyStage){
         Set<FlowingItem> flowingItem = te.flowingItems;
         float time = te.getWorld().getTotalWorldTime() + partialTicks;
         flowingItem.forEach(i -> {
-            //Vec3d vec3d = item.getVelocity().scale(tick).addVector(x, y, z);
             GlStateManager.pushMatrix();
 
             float v = time - i.tick;
@@ -53,12 +48,11 @@ public class TileEntityPipeRenderer extends TileEntitySpecialRenderer<TileEntity
 
     @SideOnly(Side.CLIENT)
     private void renderProcessor(TileEntityRendererDispatcher dispatcher, TileEntityPipe te, double x, double y, double z, float partialTicks, int destroyStage){
-        TileEntitySpecialRenderer<TileEntity> render;
-        if(te.getStrategy() instanceof SpecialRendererSupplier)
-            render = ((SpecialRendererSupplier) te.getStrategy()).getSpecialRenderer();
-        else render = DEFAULT_PROCESSOR_RENDER;
-        render.setRendererDispatcher(dispatcher);
-        render.renderTileEntityAt(te, x, y, z, partialTicks, destroyStage);
+        ISpecialRenderer render;
+        if(te.getProcessor().hasCapability(ISpecialRenderer.CAPABILITY, null))
+            render = te.getProcessor().getCapability(ISpecialRenderer.CAPABILITY, null);
+        else render = DefaultProcessorRenderer.INSTANCE;
+        render.renderAt(te, x, y, z, partialTicks, dispatcher, destroyStage);
     }
 
     private void renderItemStack(ItemStack stack){

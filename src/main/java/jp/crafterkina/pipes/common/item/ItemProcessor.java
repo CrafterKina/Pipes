@@ -55,11 +55,11 @@ public abstract class ItemProcessor extends Item{
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt){
+    public final ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt){
         return new ICapabilityProvider(){
             @Override
             public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing){
-                return capability == IStrategy.StrategySupplier.CAPABILITY;
+                return capability == IStrategy.StrategySupplier.CAPABILITY || ItemProcessor.this.hasAdditionalCapability(stack, capability, facing);
             }
 
             @Nullable
@@ -68,12 +68,17 @@ public abstract class ItemProcessor extends Item{
             public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing){
                 if(capability == IStrategy.StrategySupplier.CAPABILITY)
                     return (T) ((IStrategy.StrategySupplier) (t) -> getStrategy().apply(stack, t));
-                return null;
+                return ItemProcessor.this.getAdditionalCapability(stack, capability, facing);
             }
         };
     }
 
     protected abstract BiFunction<ItemStack, TileEntity, IStrategy> getStrategy();
+
+    protected abstract boolean hasAdditionalCapability(ItemStack stack, @Nonnull Capability<?> capability, @Nullable EnumFacing facing);
+
+    @Nullable
+    protected abstract <T> T getAdditionalCapability(ItemStack stack, @Nonnull Capability<T> capability, @Nullable EnumFacing facing);
 
     @Override
     @Nonnull

@@ -2,25 +2,27 @@ package jp.crafterkina.pipes.common.pipe.strategy;
 
 import jp.crafterkina.pipes.api.pipe.FlowItem;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
-import jp.crafterkina.pipes.api.render.SpecialRendererSupplier;
+import jp.crafterkina.pipes.api.render.ISpecialRenderer;
 import jp.crafterkina.pipes.client.tesr.processor.AccelerationProcessorRenderer;
 import jp.crafterkina.pipes.common.item.ItemProcessor;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -29,29 +31,17 @@ import java.util.function.Supplier;
 /**
  * Created by Kina on 2016/12/20.
  */
-public class StrategyAcceleration extends StrategyDefault implements SpecialRendererSupplier{
+public class StrategyAcceleration extends StrategyDefault{
     private final double acceleration;
-    @SideOnly(Side.CLIENT)
-    private AccelerationProcessorRenderer render;
 
     StrategyAcceleration(Supplier<World> world, ItemStack stack, double acceleration){
         super(world);
         this.acceleration = acceleration;
-        if(FMLCommonHandler.instance().getSide().isClient()){
-            //noinspection NewExpressionSideOnly,VariableUseSideOnly
-            this.render = new AccelerationProcessorRenderer(stack, acceleration);
-        }
     }
 
     @Override
     public FlowItem turn(FlowItem item, Vec3d... connecting){
         return super.turn(new FlowItem(item.getStack(), item.getVelocity().scale(acceleration)), connecting);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public TileEntitySpecialRenderer<TileEntity> getSpecialRenderer(){
-        return render;
     }
 
     public static class ItemAccelerateProcessor extends ItemProcessor{
@@ -87,6 +77,34 @@ public class StrategyAcceleration extends StrategyDefault implements SpecialRend
         @Override
         protected BiFunction<ItemStack, TileEntity, IStrategy> getStrategy(){
             return (s, t) -> new StrategyAcceleration(t::getWorld, s, acceleration(s));
+        }
+
+        @SuppressWarnings("MethodCallSideOnly")
+        @Override
+        protected boolean hasAdditionalCapability(ItemStack stack, @Nonnull Capability<?> capability, @Nullable EnumFacing facing){
+            return FMLCommonHandler.instance().getSide().isClient() && hasCapabilityClient(stack, capability, facing);
+        }
+
+        @SuppressWarnings("MethodCallSideOnly")
+        @Nullable
+        @Override
+        protected <T> T getAdditionalCapability(ItemStack stack, @Nonnull Capability<T> capability, @Nullable EnumFacing facing){
+            if(FMLCommonHandler.instance().getSide().isClient())
+                return getCapabilityClient(stack, capability, facing);
+            return null;
+        }
+
+        @SideOnly(Side.CLIENT)
+        private boolean hasCapabilityClient(@SuppressWarnings("unused") ItemStack stack, @Nonnull Capability<?> capability, @Nullable EnumFacing facing){
+            return capability == ISpecialRenderer.CAPABILITY;
+        }
+
+        @SuppressWarnings("unchecked")
+        @SideOnly(Side.CLIENT)
+        private <T> T getCapabilityClient(ItemStack stack, @Nonnull Capability<T> capability, @Nullable EnumFacing facing){
+            if(capability == ISpecialRenderer.CAPABILITY)
+                return (T) new AccelerationProcessorRenderer(stack, acceleration(stack));
+            return null;
         }
 
         @Override
