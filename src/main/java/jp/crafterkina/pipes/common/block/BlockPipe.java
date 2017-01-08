@@ -13,6 +13,8 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,6 +32,10 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -50,7 +56,7 @@ public class BlockPipe extends BlockContainer{
     public static final PropertyBool COVERED = PropertyBool.create("covered");
     public static final PropertyEnum<EnumPipeMaterial.TextureType> TEX_TYPE = PropertyEnum.create("type", EnumPipeMaterial.TextureType.class);
     private static final AxisAlignedBB CORE = new AxisAlignedBB(5.5 / 16d, 5.5 / 16d, 5.5 / 16d, 10.5 / 16d, 10.5 / 16d, 10.5 / 16d);
-    private static final AxisAlignedBB[] PIPE = {new AxisAlignedBB(6 / 16d, 0d, 6 / 16d, 10 / 16d, 5.5 / 16d, 10 / 16d), new AxisAlignedBB(6 / 16d, 10.5 / 16d, 6 / 16d, 10 / 16d, 1d, 10 / 16d), new AxisAlignedBB(6 / 16d, 6 / 16d, 0d, 10 / 16d, 10 / 16d, 5.5 / 16d), new AxisAlignedBB(6 / 16d, 6 / 16d, 10.5 / 16d, 10 / 16d, 10 / 16d, 1d), new AxisAlignedBB(0d, 6 / 16d, 6 / 16d, 5.5 / 16d, 10 / 16d, 10 / 16d), new AxisAlignedBB(10.5 / 16d, 6 / 16d, 6 / 16d, 1d, 6 / 16d, 6 / 16d)};
+    private static final AxisAlignedBB[] PIPE = {new AxisAlignedBB(6 / 16d, 0d, 6 / 16d, 10 / 16d, 5.5 / 16d, 10 / 16d), new AxisAlignedBB(6 / 16d, 10.5 / 16d, 6 / 16d, 10 / 16d, 1d, 10 / 16d), new AxisAlignedBB(6 / 16d, 6 / 16d, 0d, 10 / 16d, 10 / 16d, 5.5 / 16d), new AxisAlignedBB(6 / 16d, 6 / 16d, 10.5 / 16d, 10 / 16d, 10 / 16d, 1d), new AxisAlignedBB(0d, 6 / 16d, 6 / 16d, 5.5 / 16d, 10 / 16d, 10 / 16d), new AxisAlignedBB(10.5 / 16d, 10 / 16d, 10 / 16d, 1d, 6 / 16d, 6 / 16d)};
 
     @SuppressWarnings("deprecation")
     public BlockPipe(){
@@ -66,6 +72,8 @@ public class BlockPipe extends BlockContainer{
         state = state.withProperty(COVERED, false);
         state = state.withProperty(TEX_TYPE, EnumPipeMaterial.TextureType.NOISE);
         setDefaultState(state);
+
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public static int getColor(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex){
@@ -203,6 +211,37 @@ public class BlockPipe extends BlockContainer{
         return new TileEntityPipe();
     }
 
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    protected void drawOutlineBox(DrawBlockHighlightEvent event){
+        World world = FMLClientHandler.instance().getWorldClient();
+        if(event.getTarget().typeOfHit != RayTraceResult.Type.BLOCK) return;
+        BlockPos pos = event.getTarget().getBlockPos();
+        IBlockState state = world.getBlockState(pos);
+        if(state.getBlock() != this) return;
+
+        EntityPlayer player = event.getPlayer();
+
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.glLineWidth(2.0F);
+        GlStateManager.disableTexture2D();
+        GlStateManager.depthMask(false);
+
+        float f1 = 0.002f;
+
+        double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
+        double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
+        double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
+
+        //noinspection deprecation
+        Arrays.stream(EnumFacing.VALUES).mapToInt(EnumFacing::getIndex).filter(i -> world.getBlockState(pos).getBlock().getActualState(state, world, pos).getValue(CONNECT[i])).forEach(i -> RenderGlobal.drawSelectionBoundingBox(PIPE[i].offset(pos).expandXyz(f1).offset(-d0, -d1, -d2), 0, 0, 0, 0.4f));
+
+        GlStateManager.depthMask(true);
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+    }
+
     @Nonnull
     @Override
     @Deprecated
@@ -219,9 +258,10 @@ public class BlockPipe extends BlockContainer{
 
     @Nonnull
     @Override
+    @SideOnly(Side.CLIENT)
     @Deprecated
     public AxisAlignedBB getSelectedBoundingBox(IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos){
-        return CORE;
+        return CORE.offset(pos);
     }
 
     @Override
