@@ -104,7 +104,7 @@ public class StrategyOneway implements IStrategy{
         @SideOnly(Side.CLIENT)
         private <T> T getCapabilityClient(ItemStack stack, @Nonnull Capability<T> capability, @Nullable EnumFacing facing){
             if(capability == ISpecialRenderer.CAPABILITY)
-                return (T) new ExtractionProcessorRenderer(stack, facing, 1);
+                return (T) new ExtractionProcessorRenderer(stack, EnumFacing.VALUES[stack.getTagCompound().getByte("to")], 1);
             return null;
         }
     }
