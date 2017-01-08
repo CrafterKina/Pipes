@@ -1,6 +1,7 @@
 package jp.crafterkina.pipes.common.block.entity;
 
 import com.google.common.collect.Maps;
+import jp.crafterkina.pipes.common.capability.wrapper.MultiTankWrapper;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
@@ -8,11 +9,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.TileFluidHandler;
 
-import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
@@ -32,47 +30,7 @@ public class TileEntityFluidTank extends TileFluidHandler{
             fluid = t.getFluid();
             if(fluid != null) break;
         }
-        FluidStack finalFluid = fluid;
-        return new IFluidHandler(){
-            @Override
-            public IFluidTankProperties[] getTankProperties(){
-                return Arrays.stream(tanks).map(IFluidHandler::getTankProperties).toArray(IFluidTankProperties[]::new);
-            }
-
-            @Override
-            public int fill(FluidStack resource, boolean doFill){
-                if(finalFluid != null && !resource.isFluidEqual(finalFluid)){
-                    return 0;
-                }
-                int filled = 0;
-                for(IFluidHandler handler : tanks){
-                    if(filled >= resource.amount) break;
-                    filled += handler.fill(new FluidStack(resource, resource.amount - filled), doFill);
-                }
-                return filled;
-            }
-
-            @Nullable
-            @Override
-            public FluidStack drain(FluidStack resource, boolean doDrain){
-                if(finalFluid != null && !resource.isFluidEqual(finalFluid)){
-                    return null;
-                }
-                return drain(resource.amount, doDrain);
-            }
-
-            @Nullable
-            @Override
-            public FluidStack drain(int maxDrain, boolean doDrain){
-                int drainAmount = Math.min(Arrays.stream(tanks).mapToInt(FluidTank::getCapacity).sum(), maxDrain);
-                if(finalFluid == null) return null;
-                FluidStack drained = finalFluid.copy();
-                drained.amount = drainAmount;
-                if(!doDrain) return drained;
-                Arrays.stream(tanks).forEach(t -> t.drain(drained, true));
-                return drained;
-            }
-        };
+        return new MultiTankWrapper(fluid, tanks);
     }
 
     private FluidTank[] getConnectedTanks(){
