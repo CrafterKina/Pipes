@@ -7,6 +7,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -19,8 +20,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -51,21 +50,12 @@ public class BlockFluidTank extends BlockContainer{
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
-        ItemStack stack = playerIn.getHeldItem(hand);
-        if(!stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) return false;
-        @Nonnull IFluidHandlerItem handler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-        FluidStack drain = handler.drain(Integer.MAX_VALUE, false);
-        IFluidHandler tank = ((TileEntityFluidTank) worldIn.getTileEntity(pos)).getHandler();
-        if(drain == null){
-            FluidStack fluidStack = tank.drain(Integer.MAX_VALUE, false);
-            int filled = handler.fill(fluidStack, true);
-            tank.drain(filled, true);
-        }else{
-            int filled = tank.fill(drain, true);
-            handler.drain(filled, true);
-        }
-        playerIn.setHeldItem(hand, handler.getContainer());
-        return true;
+        return ((TileEntityFluidTank) worldIn.getTileEntity(pos)).onActivated(state, playerIn, hand, facing, hitX, hitY, hitZ);
+    }
+
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack){
+        ((TileEntityFluidTank) worldIn.getTileEntity(pos)).onPlaced(state, placer, stack);
     }
 
     @Nullable

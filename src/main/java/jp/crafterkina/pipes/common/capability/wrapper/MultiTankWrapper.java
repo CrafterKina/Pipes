@@ -8,6 +8,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Created by Kina on 2017/01/09.
@@ -17,6 +18,16 @@ import java.util.Arrays;
 public class MultiTankWrapper implements IFluidHandler{
     private final FluidStack fluid;
     private final IFluidHandler[] tanks;
+
+    public MultiTankWrapper(IFluidHandler... tanks){
+        this.tanks = tanks;
+        FluidStack fluid = null;
+        for(IFluidHandler t : tanks){
+            fluid = t.drain(Integer.MAX_VALUE, false);
+            if(fluid != null) break;
+        }
+        this.fluid = fluid;
+    }
 
     @Override
     public IFluidTankProperties[] getTankProperties(){
@@ -48,12 +59,17 @@ public class MultiTankWrapper implements IFluidHandler{
     @Nullable
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain){
-        int drainAmount = Math.min(Arrays.stream(tanks).mapToInt(t -> t.drain(Integer.MAX_VALUE, false).amount).sum(), maxDrain);
+        int drainAmount = Math.min(Arrays.stream(tanks).map(t -> t.drain(Integer.MAX_VALUE, false)).filter(Objects::nonNull).mapToInt(f -> f.amount).sum(), maxDrain);
         if(fluid == null) return null;
         FluidStack drained = fluid.copy();
         drained.amount = drainAmount;
         if(!doDrain) return drained;
-        Arrays.stream(tanks).forEach(t -> t.drain(drained, true));
+        int drainedAmount = 0;
+        for(IFluidHandler handler : tanks){
+            if(drainedAmount >= drainAmount) break;
+            FluidStack drain = handler.drain(drainAmount - drainedAmount, true);
+            drainedAmount += drain == null ? 0 : drain.amount;
+        }
         return drained;
     }
 }
