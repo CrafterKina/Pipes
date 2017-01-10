@@ -179,8 +179,11 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         updateFlag |= !remove.isEmpty();
 
         strategy.tick();
-        if(updateFlag && !getWorld().isRemote)
-            PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(TileEntityPipe.this.getPos(), TileEntityPipe.this.flowingItems));
+        if(updateFlag){
+            markDirty();
+            if(!getWorld().isRemote)
+                PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(TileEntityPipe.this.getPos(), TileEntityPipe.this.flowingItems));
+        }
     }
 
     @Override
