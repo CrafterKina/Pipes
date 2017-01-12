@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.commons.lang3.NotImplementedException;
 
 /**
@@ -17,6 +18,11 @@ public class CapabilityRegister{
         register(IItemFlowHandler.class);
         register(IStrategy.IStrategyHandler.class);
         register(IStrategy.StrategySupplier.class);
+        if(FMLCommonHandler.instance().getSide().isClient())
+            registerOnClient();
+    }
+
+    private static void registerOnClient(){
         register(ISpecialRenderer.class);
     }
 
