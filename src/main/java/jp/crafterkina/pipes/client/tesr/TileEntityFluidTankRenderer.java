@@ -34,19 +34,15 @@ public class TileEntityFluidTankRenderer extends FastTESR<TileEntityFluidTank>{
             short sky = (short) (combined >> 16 & 65535);   //unsigned
             short block = (short) (combined & 65535);       //unsigned
 
-            this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             buffer.setTranslation(x + 0.5, y, z + 0.5);
 
             renderBlock(buffer, te.amountForRender(partialTicks) / 8000, 0.4f, a, r, g, b, sprite, sky, block, shouldRenderUpFace(te, 8000, te.amountForRender(partialTicks)));
         }
     }
 
-    private boolean shouldRenderUpFace(TileEntityFluidTank tank, int limit, float amount){
-        if(tank.getContainingFluid() == null) return false;
-        if(limit > amount) return true;
+    private boolean shouldRenderUpFace(TileEntityFluidTank tank, @SuppressWarnings("SameParameterValue") int limit, float amount){
         List<IFluidHandler> tanks = tank.getConnectedTanks(EnumFacing.UP);
-        if(tanks.isEmpty()) return false;
-        return new MultiTankWrapper(tanks.toArray(new IFluidHandler[tanks.size()])).drain(Integer.MAX_VALUE, false) == null;
+        return tank.getContainingFluid() != null && (limit > amount || !tanks.isEmpty() && new MultiTankWrapper(tanks.toArray(new IFluidHandler[tanks.size()])).drain(Integer.MAX_VALUE, false) == null);
     }
 
     private void renderBlock(VertexBuffer buffer, float height, @SuppressWarnings("SameParameterValue") float width, float a, float r, float g, float b, TextureAtlasSprite sprite, short sky, short block, boolean renderUpperFace){
