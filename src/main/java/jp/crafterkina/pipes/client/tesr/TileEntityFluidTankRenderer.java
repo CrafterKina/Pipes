@@ -29,10 +29,11 @@ public class TileEntityFluidTankRenderer extends FastTESR<TileEntityFluidTank>{
 
             TextureMap texmap = Minecraft.getMinecraft().getTextureMapBlocks();
             TextureAtlasSprite sprite = texmap.getAtlasSprite(fluid.getFluid().getStill(fluid).toString());
+            if(sprite == null) sprite = texmap.getMissingSprite();
 
             int combined = getWorld().getCombinedLight(te.getPos(), fluid.getFluid().getLuminosity(fluid));
-            short sky = (short) (combined >> 16 & 65535);   //unsigned
-            short block = (short) (combined & 65535);       //unsigned
+            short sky = (short) (combined >> 16 & 0xFFFF);   //unsigned
+            short block = (short) (combined & 0xFFFF);       //unsigned
 
             buffer.setTranslation(x + 0.5, y, z + 0.5);
 
