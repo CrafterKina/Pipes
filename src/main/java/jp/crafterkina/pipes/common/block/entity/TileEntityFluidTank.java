@@ -12,6 +12,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -33,26 +34,11 @@ import java.util.stream.Collectors;
 /**
  * Created by Kina on 2016/12/27.
  */
-public class TileEntityFluidTank extends TileFluidHandler{
+public class TileEntityFluidTank extends TileFluidHandler implements ITickable{
+    private int prevAmount = 0;
 
     public TileEntityFluidTank(){
-        tank = new FluidTank(Fluid.BUCKET_VOLUME * 8)/*{
-            @Override
-            public FluidTank readFromNBT(NBTTagCompound nbt){
-                setFluid(FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("Fluid")));
-                return this;
-            }
-
-            @Override
-            public NBTTagCompound writeToNBT(NBTTagCompound nbt){
-                if (fluid != null){
-                    NBTTagCompound compound = new NBTTagCompound();
-                    fluid.writeToNBT(compound);
-                    nbt.setTag("Fluid", compound);
-                }
-                return nbt;
-            }
-        }*/;
+        tank = new FluidTank(Fluid.BUCKET_VOLUME * 8);
     }
 
     public List<IFluidHandler> getConnectedTanks(EnumFacing facing, Comparator<BlockPos> comparator){
@@ -108,6 +94,16 @@ public class TileEntityFluidTank extends TileFluidHandler{
     }
 
     @Override
+    public void update(){
+        prevAmount = getContainingFluid() == null ? 0 : getContainingFluid().amount;
+    }
+
+    public float amountForRender(float partialTicks){
+        int result = getContainingFluid() == null ? 0 : getContainingFluid().amount;
+        return prevAmount + (result - prevAmount) * partialTicks;
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound tag){
         super.readFromNBT(tag);
     }
@@ -134,5 +130,10 @@ public class TileEntityFluidTank extends TileFluidHandler{
     @SideOnly(Side.CLIENT)
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt){
         readFromNBT(pkt.getNbtCompound());
+    }
+
+    @Override
+    public boolean hasFastRenderer(){
+        return true;
     }
 }
