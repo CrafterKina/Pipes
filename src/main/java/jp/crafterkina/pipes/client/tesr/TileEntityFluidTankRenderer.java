@@ -35,9 +35,12 @@ public class TileEntityFluidTankRenderer extends FastTESR<TileEntityFluidTank>{
             short sky = (short) (combined >> 16 & 0xFFFF);   //unsigned
             short block = (short) (combined & 0xFFFF);       //unsigned
 
-            buffer.setTranslation(x + 0.5, y, z + 0.5);
+            int limit = 8000;
+            float coverHeight = 0.5f / 16;
 
-            renderBlock(buffer, te.amountForRender(partialTicks) / 8000, 0.4f, a, r, g, b, sprite, sky, block, shouldRenderUpFace(te, 8000, te.amountForRender(partialTicks)));
+            buffer.setTranslation(x + 0.5, y + coverHeight, z + 0.5);
+
+            renderBlock(buffer, (te.amountForRender(partialTicks) / limit) - coverHeight, 0.4f, a, r, g, b, sprite, sky, block, shouldRenderUpFace(te, limit, te.amountForRender(partialTicks)));
         }
     }
 
