@@ -2,7 +2,6 @@ package jp.crafterkina.pipes.common.block.entity;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import jp.crafterkina.pipes.common.capability.wrapper.MultiTankWrapper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,6 +20,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.TileFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidHandlerConcatenate;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -68,12 +68,12 @@ public class TileEntityFluidTank extends TileFluidHandler implements ITickable{
         handlers.add(tank);
         handlers.addAll(getConnectedTanks(EnumFacing.UP));
         if(drain == null){
-            IFluidHandler tank = new MultiTankWrapper(Lists.reverse(handlers).toArray(new IFluidHandler[handlers.size()]));
+            IFluidHandler tank = new FluidHandlerConcatenate(Lists.reverse(handlers));
             FluidStack fluidStack = tank.drain(Integer.MAX_VALUE, false);
             int filled = handler.fill(fluidStack, true);
             tank.drain(filled, true);
         }else{
-            IFluidHandler tank = new MultiTankWrapper(handlers.toArray(new IFluidHandler[handlers.size()]));
+            IFluidHandler tank = new FluidHandlerConcatenate(handlers);
             int filled = tank.fill(drain, true);
             handler.drain(filled, true);
         }
@@ -85,10 +85,10 @@ public class TileEntityFluidTank extends TileFluidHandler implements ITickable{
     public void onPlaced(IBlockState state, EntityLivingBase placer, ItemStack stack){
         List<IFluidHandler> tanks = getConnectedTanks(EnumFacing.UP);
         if(tanks.isEmpty()) return;
-        MultiTankWrapper wrapper = new MultiTankWrapper(tanks.toArray(new IFluidHandler[tanks.size()]));
+        FluidHandlerConcatenate wrapper = new FluidHandlerConcatenate(tanks);
         FluidStack drain = wrapper.drain(Integer.MAX_VALUE, true);
         tanks.add(0, tank);
-        wrapper = new MultiTankWrapper(tanks.toArray(new IFluidHandler[tanks.size()]));
+        wrapper = new FluidHandlerConcatenate(tanks);
         wrapper.fill(drain, true);
         markDirty();
     }

@@ -1,7 +1,6 @@
 package jp.crafterkina.pipes.client.tesr;
 
 import jp.crafterkina.pipes.common.block.entity.TileEntityFluidTank;
-import jp.crafterkina.pipes.common.capability.wrapper.MultiTankWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -10,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.animation.FastTESR;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidHandlerConcatenate;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class TileEntityFluidTankRenderer extends FastTESR<TileEntityFluidTank>{
 
     private boolean shouldRenderUpFace(TileEntityFluidTank tank, @SuppressWarnings("SameParameterValue") int limit, float amount){
         List<IFluidHandler> tanks = tank.getConnectedTanks(EnumFacing.UP);
-        return tank.getContainingFluid() != null && (limit > amount || !tanks.isEmpty() && new MultiTankWrapper(tanks.toArray(new IFluidHandler[tanks.size()])).drain(Integer.MAX_VALUE, false) == null);
+        return tank.getContainingFluid() != null && (limit > amount || !tanks.isEmpty() && new FluidHandlerConcatenate(tanks).drain(Integer.MAX_VALUE, false) == null);
     }
 
     private void renderBlock(VertexBuffer buffer, float height, @SuppressWarnings("SameParameterValue") float width, float a, float r, float g, float b, TextureAtlasSprite sprite, short sky, short block, boolean renderUpperFace){
