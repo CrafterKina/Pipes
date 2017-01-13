@@ -1,6 +1,5 @@
 package jp.crafterkina.pipes.common.block.entity;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -13,6 +12,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -41,17 +41,24 @@ public class TileEntityFluidTank extends TileFluidHandler implements ITickable{
         tank = new FluidTank(Fluid.BUCKET_VOLUME * 8);
     }
 
-    public List<IFluidHandler> getConnectedTanks(EnumFacing facing, Comparator<BlockPos> comparator){
+    public List<IFluidHandler> getConnectedTanks(Comparator<BlockPos> comparator, EnumFacing... facings){
         Map<BlockPos, IFluidHandler> result = Maps.newHashMap();
-        for(BlockPos pos = this.pos.offset(facing); ; pos = pos.offset(facing)){
-            if(!world.getBlockState(pos).getBlock().canBeConnectedTo(world, pos, facing.getOpposite())) break;
-            result.put(pos, world.getTileEntity(pos).getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null));
+        for(EnumFacing facing : facings){
+            if(facing == null){
+                result.put(pos, tank);
+                continue;
+            }
+            for(BlockPos pos = this.pos.offset(facing); ; pos = pos.offset(facing)){
+                if(!world.getBlockState(pos).getBlock().canBeConnectedTo(world, pos, facing.getOpposite())) break;
+                result.put(pos, ((TileEntityFluidTank) world.getTileEntity(pos)).tank);
+            }
         }
         return result.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey, comparator)).map(Map.Entry::getValue).collect(Collectors.toList());
+
     }
 
-    public List<IFluidHandler> getConnectedTanks(EnumFacing facing){
-        return getConnectedTanks(facing, Comparator.naturalOrder());
+    public List<IFluidHandler> getConnectedTanks(EnumFacing... facings){
+        return getConnectedTanks(Comparator.naturalOrder(), facings);
     }
 
     public FluidStack getContainingFluid(){
@@ -63,23 +70,25 @@ public class TileEntityFluidTank extends TileFluidHandler implements ITickable{
         if(!stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) return false;
         @Nonnull IFluidHandlerItem handler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         FluidStack drain = handler.drain(Integer.MAX_VALUE, false);
-        List<IFluidHandler> handlers = Lists.newArrayList();
-        handlers.addAll(getConnectedTanks(EnumFacing.DOWN));
-        handlers.add(tank);
-        handlers.addAll(getConnectedTanks(EnumFacing.UP));
+        IFluidHandler tank = new FluidHandlerConcatenate(getConnectedTanks(EnumFacing.UP, null, EnumFacing.DOWN));
+        FluidStack fluidStack = tank.drain(Integer.MAX_VALUE, false);
         if(drain == null){
-            IFluidHandler tank = new FluidHandlerConcatenate(Lists.reverse(handlers));
-            FluidStack fluidStack = tank.drain(Integer.MAX_VALUE, false);
             int filled = handler.fill(fluidStack, true);
             tank.drain(filled, true);
-        }else{
-            IFluidHandler tank = new FluidHandlerConcatenate(handlers);
+        }else if(fluidStack == null || drain.isFluidEqual(fluidStack)){
             int filled = tank.fill(drain, true);
             handler.drain(filled, true);
         }
         playerIn.setHeldItem(hand, handler.getContainer());
+        refill(tank.drain(Integer.MAX_VALUE, false) == null ? new FluidHandlerConcatenate(getConnectedTanks(EnumFacing.UP, null, EnumFacing.DOWN)) : tank);
+        world.notifyBlockUpdate(pos, state, state, 8);
         markDirty();
         return true;
+    }
+
+    private void refill(IFluidHandler handler){
+        FluidStack drain = handler.drain(Integer.MAX_VALUE, true);
+        handler.fill(drain, true);
     }
 
     public void onPlaced(IBlockState state, EntityLivingBase placer, ItemStack stack){
@@ -101,6 +110,15 @@ public class TileEntityFluidTank extends TileFluidHandler implements ITickable{
     public float amountForRender(float partialTicks){
         int result = getContainingFluid() == null ? 0 : getContainingFluid().amount;
         return prevAmount + (result - prevAmount) * partialTicks;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    @Nullable
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing){
+        if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+            return (T) new FluidHandlerConcatenate(getConnectedTanks(EnumFacing.UP, null, EnumFacing.DOWN));
+        return super.getCapability(capability, facing);
     }
 
     @Override

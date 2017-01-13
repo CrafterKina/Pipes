@@ -19,7 +19,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -109,8 +108,8 @@ public class BlockFluidTank extends BlockContainer{
         if(!isTank(world, pos.add(facing.getDirectionVec()))) return false;
         TileEntityFluidTank faced = (TileEntityFluidTank) world.getTileEntity(pos.add(facing.getDirectionVec()));
         TileEntityFluidTank tank = (TileEntityFluidTank) world.getTileEntity(pos);
-        FluidStack c1 = tank.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null).drain(Integer.MAX_VALUE, false);
-        FluidStack c2 = faced.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null).drain(Integer.MAX_VALUE, false);
+        FluidStack c1 = tank.getContainingFluid();
+        FluidStack c2 = faced.getContainingFluid();
         return c1 == null || c2 == null || c1.isFluidEqual(c2);
     }
 
