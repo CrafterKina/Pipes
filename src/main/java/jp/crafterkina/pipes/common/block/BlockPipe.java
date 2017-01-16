@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 import static jp.crafterkina.pipes.api.PipesConstants.MOD_ID;
 
@@ -259,12 +259,7 @@ public class BlockPipe extends BlockContainer{
     @SuppressWarnings("deprecation")
     @Deprecated
     public RayTraceResult collisionRayTrace(IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end){
-        return Arrays.stream(EnumFacing.VALUES).filter(f -> worldIn.getBlockState(pos).getBlock().getActualState(state, worldIn, pos).getValue(CONNECT[f.getIndex()])).map(f -> getFacedTraceResult(f, rayTrace(pos, start, end, PIPE[f.getIndex()]))).filter(Objects::nonNull).filter(r -> r.typeOfHit != RayTraceResult.Type.MISS).findFirst().orElseGet(() -> rayTrace(pos, start, end, CORE));
-    }
-
-    @Nullable
-    private RayTraceResult getFacedTraceResult(@Nonnull EnumFacing facing, @Nullable RayTraceResult traceResult){
-        return traceResult == null ? null : new RayTraceResult(traceResult.typeOfHit, traceResult.hitVec, facing, traceResult.getBlockPos());
+        return Optional.ofNullable(rayTrace(pos, start, end, CORE)).filter(p -> p.typeOfHit != RayTraceResult.Type.MISS).orElse(Arrays.stream(EnumFacing.VALUES).filter(f -> worldIn.getBlockState(pos).getBlock().getActualState(state, worldIn, pos).getValue(CONNECT[f.getIndex()])).map(f -> Optional.ofNullable(rayTrace(pos, start, end, PIPE[f.getIndex()])).map(r -> new RayTraceResult(r.typeOfHit, r.hitVec, f, r.getBlockPos())).filter(r -> r.typeOfHit != RayTraceResult.Type.MISS)).filter(Optional::isPresent).map(Optional::get).findFirst().orElse(null));
     }
 
     @Override
