@@ -1,6 +1,5 @@
-### Changes-Summary
+Purpose
+---
 
-### Reason
-
-[//]:#(If it is WIP, Use "- [ ] xxxx".)
-[//]:#(If it closes any issues, Use "close #<issue number>".)
+Reason
+---
