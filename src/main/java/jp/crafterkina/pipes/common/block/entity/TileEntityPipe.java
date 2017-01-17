@@ -131,6 +131,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     @Override
     public void update(){
         if(world == null) return;
+        if(material == null) return;
         Vec3d[] connectingDirections = connectingDirections();
         boolean updateFlag;
         Set<FlowingItem> remove = Sets.newHashSet();
