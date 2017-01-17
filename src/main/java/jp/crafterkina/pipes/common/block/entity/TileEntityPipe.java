@@ -27,6 +27,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -44,6 +45,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     private final IStrategy DEFAULT_STRATEGY = new StrategyDefault(this::getWorld);
     public Set<FlowingItem> flowingItems = Sets.newConcurrentHashSet();
     public int coverColor = -1;
+    @CheckForNull
     public EnumPipeMaterial material;
     private IStrategy strategy = DEFAULT_STRATEGY;
     private ItemStack processor = ItemStack.EMPTY;
@@ -226,23 +228,23 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     }
 
     public int getFrameColor(){
-        return material.COLOR;
+        return material == null ? 0xFFFFFF : material.COLOR;
     }
 
     public int getStackAcceptanceLimit(){
-        return material.STACK_ACCEPTANCE_LIMIT;
+        return material == null ? 0 : material.STACK_ACCEPTANCE_LIMIT;
     }
 
     public double getBaseSpeed(){
-        return material.BASE_SPEED;
+        return material == null ? 0 : material.BASE_SPEED;
     }
 
     public double getLimitSpeed(){
-        return material.LIMIT_SPEED;
+        return material == null ? 0 : material.LIMIT_SPEED;
     }
 
     public double getAccelerationCoefficient(){
-        return material.ACCELERATION_COEFFICIENT;
+        return material == null ? 0 : material.ACCELERATION_COEFFICIENT;
     }
 
     public boolean rotateProcessor(EnumFacing axis){
