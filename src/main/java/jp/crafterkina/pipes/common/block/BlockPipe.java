@@ -306,7 +306,7 @@ public class BlockPipe extends BlockContainer{
         }
         if(pipe == null) return state;
         state = state.withProperty(COVERED, pipe.covered());
-        if(pipe.getMaterial() == null) return state;
+        if(pipe.isMaterialAvailable()) return state;
         state = state.withProperty(TEX_TYPE, pipe.getMaterial().TYPE);
         return state;
     }

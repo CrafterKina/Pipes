@@ -30,6 +30,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -74,10 +75,14 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         return coverColor != -1;
     }
 
-    public boolean recolor(int color){
+    public boolean recolor(@Nonnegative int color){
         if(!covered()) return false;
         coverColor = color;
         return true;
+    }
+
+    public boolean isMaterialAvailable(){
+        return material != null;
     }
 
 
@@ -113,7 +118,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         compound.setTag("flowingItems", flowingItems.stream().filter(Objects::nonNull).map(FlowingItem::serializeNBT).filter(Objects::nonNull).collect(NBTStreams.toNBTList()));
         if(hasProcessor()) compound.setTag("processor", processor.serializeNBT());
         compound.setInteger("CoverColor", coverColor);
-        compound.setString("material", material.name());
+        if(isMaterialAvailable()) compound.setString("material", material.name());
         return super.writeToNBT(compound);
     }
 
@@ -150,7 +155,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     @Override
     public void update(){
         if(world == null) return;
-        if(material == null) return;
+        if(!isMaterialAvailable()) return;
         Vec3d[] connectingDirections = connectingDirections();
         boolean updateFlag;
         Set<FlowingItem> remove = Sets.newHashSet();
