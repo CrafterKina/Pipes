@@ -12,6 +12,8 @@ import jp.crafterkina.pipes.common.pipe.FlowingItem;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyDefault;
 import jp.crafterkina.pipes.util.NBTStreams;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,8 +47,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     private final IStrategy DEFAULT_STRATEGY = new StrategyDefault(this::getWorld);
     public Set<FlowingItem> flowingItems = Sets.newConcurrentHashSet();
     public int coverColor = -1;
-    @CheckForNull
-    public EnumPipeMaterial material;
+    private EnumPipeMaterial material;
     private IStrategy strategy = DEFAULT_STRATEGY;
     private ItemStack processor = ItemStack.EMPTY;
 
@@ -79,12 +80,30 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         return true;
     }
 
+
+    @CheckForNull
+    public EnumPipeMaterial getMaterial(){
+        return material;
+    }
+
+    public void onBlockPlacedBy(IBlockState state, EntityLivingBase placer, ItemStack stack){
+        NBTTagCompound compound = stack.getTagCompound();
+        if(compound == null) return;
+        coverColor = compound.getBoolean("covered") ? compound.getInteger("color") : -1;
+        material = EnumPipeMaterial.VALUES.get(compound.getInteger("material"));
+        world.notifyBlockUpdate(pos, state, state, 8);
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound compound){
         flowingItems.addAll(NBTStreams.nbtListStream(compound.getTagList("flowingItems", Constants.NBT.TAG_COMPOUND)).map(FlowingItem::new).collect(Collectors.toSet()));
         setProcessor(compound.hasKey("processor", Constants.NBT.TAG_COMPOUND) ? new ItemStack(compound.getCompoundTag("processor")) : ItemStack.EMPTY);
         coverColor = compound.hasKey("CoverColor", Constants.NBT.TAG_INT) ? compound.getInteger("CoverColor") : -1;
-        material = EnumPipeMaterial.VALUES.get(compound.getInteger("material"));
+        if(compound.hasKey("material", Constants.NBT.TAG_INT)){
+            material = EnumPipeMaterial.VALUES.get(compound.getInteger("material"));
+        }else if(compound.hasKey("material", Constants.NBT.TAG_STRING)){
+            material = EnumPipeMaterial.valueOf(compound.getString("material"));
+        }
         super.readFromNBT(compound);
     }
 
@@ -94,7 +113,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         compound.setTag("flowingItems", flowingItems.stream().filter(Objects::nonNull).map(FlowingItem::serializeNBT).filter(Objects::nonNull).collect(NBTStreams.toNBTList()));
         if(hasProcessor()) compound.setTag("processor", processor.serializeNBT());
         compound.setInteger("CoverColor", coverColor);
-        compound.setInteger("material", material.ordinal());
+        compound.setString("material", material.name());
         return super.writeToNBT(compound);
     }
 

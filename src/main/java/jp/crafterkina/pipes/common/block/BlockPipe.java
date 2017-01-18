@@ -86,40 +86,22 @@ public class BlockPipe extends BlockContainer{
 
     @Override
     public void getSubBlocks(@Nonnull Item itemIn, @Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems){
-        ItemStack stack = new ItemStack(itemIn);
         for(EnumPipeMaterial material : EnumPipeMaterial.VALUES){
-            NBTTagCompound compound = new NBTTagCompound();
             {
-                stack.setTagCompound(compound);
-                compound.setInteger("material", material.ordinal());
-                compound.setBoolean("covered", false);
-                compound.setInteger("color", -1);
-                subItems.add(stack);
+                subItems.add(ItemPipe.createPipeStack(new ItemStack(itemIn), material));
             }
             for(EnumDyeColor color : EnumDyeColor.values()){
-                stack = new ItemStack(itemIn);
-                compound = new NBTTagCompound();
-                {
-                    stack.setTagCompound(compound);
-                    compound.setInteger("material", material.ordinal());
-                    compound.setBoolean("covered", true);
-                    compound.setInteger("color", ItemDye.DYE_COLORS[color.getDyeDamage()]);
-                }
-                subItems.add(stack);
+                subItems.add(ItemPipe.createPipeStack(new ItemStack(itemIn), material, color));
             }
         }
     }
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack){
-        NBTTagCompound compound = stack.getTagCompound();
-        if(compound == null) compound = new NBTTagCompound();
         TileEntity te = worldIn.getTileEntity(pos);
         if(!(te instanceof TileEntityPipe)) return;
         TileEntityPipe pipe = (TileEntityPipe) te;
-        pipe.coverColor = compound.getBoolean("covered") ? compound.getInteger("color") : -1;
-        pipe.material = EnumPipeMaterial.VALUES.get(compound.getInteger("material"));
-        worldIn.notifyBlockUpdate(pos, state, state, 8);
+        pipe.onBlockPlacedBy(state, placer, stack);
     }
 
 
@@ -127,7 +109,7 @@ public class BlockPipe extends BlockContainer{
     public void harvestBlock(@Nonnull World worldIn, EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nullable TileEntity te, @Nonnull ItemStack stack){
         if(te instanceof TileEntityPipe){
             TileEntityPipe pipe = (TileEntityPipe) te;
-            spawnAsEntity(worldIn, pos, ItemPipe.createPipeStack(new ItemStack(this, 1), pipe.material, pipe.covered(), pipe.coverColor));
+            spawnAsEntity(worldIn, pos, ItemPipe.createPipeStack(new ItemStack(this), pipe.getMaterial(), pipe.covered(), pipe.coverColor));
         }else{
             super.harvestBlock(worldIn, player, pos, state, null, stack);
         }
@@ -139,7 +121,7 @@ public class BlockPipe extends BlockContainer{
         TileEntity te = world.getTileEntity(pos);
         if(te instanceof TileEntityPipe){
             TileEntityPipe pipe = (TileEntityPipe) te;
-            return Collections.singletonList(ItemPipe.createPipeStack(new ItemStack(this, 1), pipe.material, pipe.covered(), pipe.coverColor));
+            return Collections.singletonList(ItemPipe.createPipeStack(new ItemStack(this), pipe.getMaterial(), pipe.covered(), pipe.coverColor));
         }
         return super.getDrops(world, pos, state, fortune);
     }
@@ -329,7 +311,8 @@ public class BlockPipe extends BlockContainer{
         }
         if(pipe == null) return state;
         state = state.withProperty(COVERED, pipe.covered());
-        state = state.withProperty(TEX_TYPE, pipe.material.TYPE);
+        if(pipe.getMaterial() == null) return state;
+        state = state.withProperty(TEX_TYPE, pipe.getMaterial().TYPE);
         return state;
     }
 
@@ -373,7 +356,7 @@ public class BlockPipe extends BlockContainer{
         NBTTagCompound compound = new NBTTagCompound();
 
         stack.setTagCompound(compound);
-        compound.setInteger("material", pipe.material.ordinal());
+        compound.setString("material", pipe.getMaterial().name());
         compound.setBoolean("covered", pipe.covered());
         compound.setInteger("color", pipe.coverColor);
 

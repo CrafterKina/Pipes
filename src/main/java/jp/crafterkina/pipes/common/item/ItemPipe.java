@@ -44,7 +44,7 @@ public class ItemPipe extends ItemBlock{
         NBTTagCompound compound = new NBTTagCompound();
         {
             stack.setTagCompound(compound);
-            compound.setInteger("material", material.ordinal());
+            compound.setString("material", material.name());
             compound.setBoolean("covered", covered);
             compound.setInteger("color", color);
         }
