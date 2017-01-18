@@ -2,6 +2,7 @@ package jp.crafterkina.pipes.common.item;
 
 import jp.crafterkina.pipes.common.RegistryEntries;
 import jp.crafterkina.pipes.common.pipe.EnumPipeMaterial;
+import lombok.extern.log4j.Log4j2;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemDye;
@@ -11,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 /**
  * Created by Kina on 2016/12/14.
  */
+@Log4j2
 public class ItemPipe extends ItemBlock{
     public ItemPipe(){
         super(RegistryEntries.BLOCK.pipe);
@@ -42,6 +44,10 @@ public class ItemPipe extends ItemBlock{
 
     public static ItemStack createPipeStack(ItemStack stack, EnumPipeMaterial material, boolean covered, int color){
         NBTTagCompound compound = new NBTTagCompound();
+        if(material == null){
+            log.warn("Cannot create pipe stack! Instead it returns an empty stack.", new NullPointerException("Material is null"));
+            return ItemStack.EMPTY;
+        }
         {
             stack.setTagCompound(compound);
             compound.setString("material", material.name());
