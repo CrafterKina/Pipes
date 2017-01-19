@@ -8,6 +8,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants;
 
 /**
  * Created by Kina on 2016/12/14.
@@ -30,7 +31,8 @@ public class ItemPipe extends ItemBlock{
     public static int getColor(ItemStack stack, int layer){
         NBTTagCompound compound = stack.getTagCompound();
         if(compound == null) return 0xffffff;
-        if(layer == 0) return EnumPipeMaterial.VALUES.get(compound.getInteger("material")).COLOR;
+        if(layer == 0)
+            return compound.hasKey("material", Constants.NBT.TAG_STRING) ? EnumPipeMaterial.valueOf(compound.getString("material")).COLOR : compound.hasKey("material", Constants.NBT.TAG_INT) ? EnumPipeMaterial.VALUES.get(compound.getInteger("material")).COLOR : 0xffffff;
         return compound.getInteger("color");
     }
 
