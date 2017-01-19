@@ -12,7 +12,7 @@
 ## Issue
 * [Suggestion](https://github.com/CrafterKina/Pipes/issues/new?title=%5BSuggestion%5D)
 * [Question](https://github.com/CrafterKina/Pipes/issues/new?title=%5BQuestion%5D)
-* [Bug Report](https://github.com/CrafterKina/Pipes/issues/new?title=%5BBug%5D?body=Execution%20environment%0D%0A---%0D%0A%0D%0ASteps%20to%20reproduce%0D%0A---%0D%0A1.%0D%0A%0D%0AExpected%20Behavior%0D%0A---%0D%0A%0D%0AActual%20Behavior%0D%0A---%0D%0A%3Cdetails%3E%0D%0A%20%20%3Csummary%3ECrash%20log%3C%2Fsummary%3E%0D%0A%20%20%60%60%60%0D%0A%0D%0A%20%20%60%60%60%0D%0A%3C%2Fdetails%3E)
+* [Bug Report](https://github.com/CrafterKina/Pipes/issues/new?title=%5BBug%5D&body=Execution%20environment%0D%0A---%0D%0A%0D%0ASteps%20to%20reproduce%0D%0A---%0D%0A1.%0D%0A%0D%0AExpected%20Behavior%0D%0A---%0D%0A%0D%0AActual%20Behavior%0D%0A---%0D%0A%3Cdetails%3E%0D%0A%20%20%20%20%3Csummary%3ECrash%20log%3C%2Fsummary%3E%0D%0A%20%20%20%20%3Ccode%3E%0D%0A%20%20%20%20%2F%2F%20Crash%20log...%0D%0A%20%20%20%20%3C%2Fcode%3E%0D%0A%3C%2Fdetails%3E)
 
 # Note
 * If you send WIP PR, Use Task Lists like:
