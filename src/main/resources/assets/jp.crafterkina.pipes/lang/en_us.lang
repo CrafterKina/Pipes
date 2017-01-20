@@ -10,6 +10,7 @@ strategy.jp.crafterkina.pipes.extraction.name=Extractor
 strategy.jp.crafterkina.pipes.oneway.name=One-way
 # Messages
 mes.item.jp.crafterkina.pipes.merchant_phone.register=Registered a contact
+mes.error.jp.crafterkina.pipes.pipe.null_material=§4§lWrong NBT tag! §rPlace wooden instead...
 # Tooltips
 tooltip.item.jp.crafterkina.pipes.merchant_phone.0=Right Click to Villager -> Register Villager
 tooltip.item.jp.crafterkina.pipes.merchant_phone.1=Right Click -> Call Villager

@@ -23,6 +23,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -95,7 +96,12 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         NBTTagCompound compound = stack.getTagCompound();
         if(compound == null) return;
         coverColor = compound.getBoolean("covered") ? compound.getInteger("color") : -1;
-        material = EnumPipeMaterial.VALUES.get(compound.getInteger("material"));
+        material = compound.hasKey("material", Constants.NBT.TAG_STRING) ? EnumPipeMaterial.valueOf(compound.getString("material")) : compound.hasKey("material", Constants.NBT.TAG_INT) ? EnumPipeMaterial.VALUES.get(compound.getInteger("material")) : null;
+        if(material == null){
+            if(placer != null && !world.isRemote)
+                placer.sendMessage(new TextComponentTranslation("mes.error.jp.crafterkina.pipes.pipe.null_material"));
+            material = EnumPipeMaterial.WOOD;
+        }
         world.notifyBlockUpdate(pos, state, state, 8);
     }
 
