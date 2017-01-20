@@ -94,7 +94,12 @@ public class TileEntityPipe extends TileEntity implements ITickable{
 
     public void onBlockPlacedBy(IBlockState state, EntityLivingBase placer, ItemStack stack){
         NBTTagCompound compound = stack.getTagCompound();
-        if(compound == null) return;
+        if(compound == null){
+            if(placer != null && !world.isRemote)
+                placer.sendMessage(new TextComponentTranslation("mes.error.jp.crafterkina.pipes.pipe.null_compound"));
+            compound = new NBTTagCompound();
+            compound.setString("material", EnumPipeMaterial.WOOD.name());
+        }
         coverColor = compound.getBoolean("covered") ? compound.getInteger("color") : -1;
         material = compound.hasKey("material", Constants.NBT.TAG_STRING) ? EnumPipeMaterial.valueOf(compound.getString("material")) : compound.hasKey("material", Constants.NBT.TAG_INT) ? EnumPipeMaterial.VALUES.get(compound.getInteger("material")) : null;
         if(material == null){
