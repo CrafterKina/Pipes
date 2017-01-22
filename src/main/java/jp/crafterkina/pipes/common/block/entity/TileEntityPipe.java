@@ -242,6 +242,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
             world.markBlockRangeForRenderUpdate(pos, pos);
             world.markAndNotifyBlock(pos, null, state, state, 3);
             world.notifyBlockUpdate(pos, state, state, 3);
+            dirty = false;
         }
     }
 
