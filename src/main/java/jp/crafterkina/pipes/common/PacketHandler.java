@@ -1,6 +1,7 @@
 package jp.crafterkina.pipes.common;
 
 import jp.crafterkina.pipes.common.network.MessagePipeFlow;
+import jp.crafterkina.pipes.common.network.MessagePipeState;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -15,5 +16,6 @@ public class PacketHandler{
 
     static void init(){
         INSTANCE.registerMessage(MessagePipeFlow.getHandler(), MessagePipeFlow.class, 0, Side.CLIENT);
+        INSTANCE.registerMessage(MessagePipeState.getHandler(), MessagePipeState.class, 1, Side.CLIENT);
     }
 }

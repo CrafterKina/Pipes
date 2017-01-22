@@ -7,6 +7,7 @@ import jp.crafterkina.pipes.api.pipe.IStrategy;
 import jp.crafterkina.pipes.common.PacketHandler;
 import jp.crafterkina.pipes.common.capability.wrapper.InvFlowWrapper;
 import jp.crafterkina.pipes.common.network.MessagePipeFlow;
+import jp.crafterkina.pipes.common.network.MessagePipeState;
 import jp.crafterkina.pipes.common.pipe.EnumPipeMaterial;
 import jp.crafterkina.pipes.common.pipe.FlowingItem;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyDefault;
@@ -49,9 +50,10 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     private final IStrategy DEFAULT_STRATEGY = new StrategyDefault(this::getWorld);
     public Set<FlowingItem> flowingItems = Sets.newConcurrentHashSet();
     public int coverColor = -1;
-    private EnumPipeMaterial material;
+    public EnumPipeMaterial material = EnumPipeMaterial.WOOD;
+    public ItemStack processor = ItemStack.EMPTY;
     private IStrategy strategy = DEFAULT_STRATEGY;
-    private ItemStack processor = ItemStack.EMPTY;
+    private boolean dirty = false;
 
     public ItemStack getProcessor(){
         return processor;
@@ -65,6 +67,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         this.processor = processor;
         strategy = processor.hasCapability(IStrategy.StrategySupplier.CAPABILITY, null) ? processor.getCapability(IStrategy.StrategySupplier.CAPABILITY, null).getStrategy(this) : DEFAULT_STRATEGY;
         strategy = strategy == null ? DEFAULT_STRATEGY : strategy;
+        markStateUpdate();
         return true;
     }
 
@@ -79,6 +82,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     public boolean recolor(@Nonnegative int color){
         if(!covered()) return false;
         coverColor = color;
+        markStateUpdate();
         return true;
     }
 
@@ -107,7 +111,12 @@ public class TileEntityPipe extends TileEntity implements ITickable{
                 placer.sendMessage(new TextComponentTranslation("mes.error.jp.crafterkina.pipes.pipe.null_material"));
             material = EnumPipeMaterial.WOOD;
         }
-        world.notifyBlockUpdate(pos, state, state, 8);
+        markDirty();
+        markStateUpdate();
+    }
+
+    private void markStateUpdate(){
+        dirty = true;
     }
 
     @Override
@@ -135,9 +144,12 @@ public class TileEntityPipe extends TileEntity implements ITickable{
 
     @Nullable
     public SPacketUpdateTileEntity getUpdatePacket(){
-        NBTTagCompound nbtTagCompound = new NBTTagCompound();
-        writeToNBT(nbtTagCompound);
-        return new SPacketUpdateTileEntity(pos, 1, nbtTagCompound);
+        return new SPacketUpdateTileEntity(pos, 0, getUpdateTag());
+    }
+
+    @Override
+    public void handleUpdateTag(@Nonnull NBTTagCompound tag){
+        super.handleUpdateTag(tag);
     }
 
     @Nonnull
@@ -221,6 +233,15 @@ public class TileEntityPipe extends TileEntity implements ITickable{
             markDirty();
             if(!getWorld().isRemote)
                 PacketHandler.INSTANCE.sendToAll(new MessagePipeFlow(TileEntityPipe.this.getPos(), TileEntityPipe.this.flowingItems));
+        }
+        if(dirty){
+            markDirty();
+            if(!getWorld().isRemote)
+                PacketHandler.INSTANCE.sendToAll(new MessagePipeState(pos, material, coverColor, processor));
+            IBlockState state = world.getBlockState(pos);
+            world.markBlockRangeForRenderUpdate(pos, pos);
+            world.markAndNotifyBlock(pos, null, state, state, 3);
+            world.notifyBlockUpdate(pos, state, state, 3);
         }
     }
 
