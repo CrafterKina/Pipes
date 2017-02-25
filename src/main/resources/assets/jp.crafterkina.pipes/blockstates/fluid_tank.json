@@ -1,0 +1,35 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "frame": "blocks/planks_oak",
+      "glass": "blocks/glass",
+      "particle": "blocks/glass"
+    },
+    "model": "jp.crafterkina.pipes:fluid_tank",
+    "uvlock": true
+  },
+  "variants": {
+    "top": {
+      "true": {
+        "submodel": {
+          "top_cover": {
+            "model": "jp.crafterkina.pipes:fluid_tank_cover",
+            "x": 180
+          }
+        }
+      },
+      "false": {}
+    },
+    "bottom": {
+      "true": {
+        "submodel": {
+          "bottom_cover": {
+            "model": "jp.crafterkina.pipes:fluid_tank_cover"
+          }
+        }
+      },
+      "false": {}
+    }
+  }
+}

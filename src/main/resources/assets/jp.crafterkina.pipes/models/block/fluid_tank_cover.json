@@ -1,0 +1,29 @@
+{
+  "__createdwith": "opl's Model Creator",
+  "parent": "block/block",
+  "ambientocclusion": false,
+  "elements": [
+    {
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        13,
+        0.5,
+        13
+      ],
+      "faces": {
+        "up": {
+          "texture": "#frame",
+          "tintindex": 0
+        },
+        "down": {
+          "texture": "#frame",
+          "tintindex": 0
+        }
+      }
+    }
+  ]
+}

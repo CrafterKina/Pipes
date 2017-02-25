@@ -1,11 +1,15 @@
 package jp.crafterkina.pipes.client;
 
 import jp.crafterkina.pipes.client.state.PipeStateMapper;
+import jp.crafterkina.pipes.client.tesr.TileEntityFluidTankRenderer;
 import jp.crafterkina.pipes.client.tesr.TileEntityPipeRenderer;
 import jp.crafterkina.pipes.common.CommonProxy;
 import jp.crafterkina.pipes.common.RegistryEntries;
+import jp.crafterkina.pipes.common.block.BlockFluidTank;
 import jp.crafterkina.pipes.common.block.BlockPipe;
+import jp.crafterkina.pipes.common.block.entity.TileEntityFluidTank;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
+import jp.crafterkina.pipes.common.item.ItemFluidTank;
 import jp.crafterkina.pipes.common.item.ItemPipe;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyAcceleration;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyExtraction;
@@ -47,6 +51,7 @@ public class ClientProxy extends CommonProxy{
             ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.merchant_phone, 0, getModelLocation("merchant_phone"));
             ModelLoader.setCustomMeshDefinition(RegistryEntries.ITEM.pipe, s -> getModelLocation(ItemPipe.getModelName(s)));
             ModelBakery.registerItemVariants(RegistryEntries.ITEM.pipe, getModelLocation("pipe"), getModelLocation("pipe_covered"), getModelLocation("pipe_metallic"), getModelLocation("pipe_covered_metallic"));
+            ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.fluid_tank, 0, getModelLocation("fluid_tank"));
             ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.processor_base, 0, getModelLocation("processor_base"));
             ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.strategy_acceleration, 0, getModelLocation("processor_chipped_arrow"));
             ModelLoader.setCustomModelResourceLocation(RegistryEntries.ITEM.strategy_extraction, 0, getModelLocation("processor_hopper"));
@@ -61,16 +66,19 @@ public class ClientProxy extends CommonProxy{
     protected void registerTileEntities(){
         super.registerTileEntities();
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPipe.class, new TileEntityPipeRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityFluidTank.class, new TileEntityFluidTankRenderer());
     }
 
     @Override
     protected void registerBlockColors(){
         FMLClientHandler.instance().getClient().getBlockColors().registerBlockColorHandler(BlockPipe::getColor, RegistryEntries.BLOCK.pipe);
+        FMLClientHandler.instance().getClient().getBlockColors().registerBlockColorHandler(BlockFluidTank::getColor, RegistryEntries.BLOCK.fluid_tank);
     }
 
     @Override
     protected void registerItemColors(){
         FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(ItemPipe::getColor, RegistryEntries.ITEM.pipe);
+        FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(ItemFluidTank::getColor, RegistryEntries.ITEM.fluid_tank);
         FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(StrategyAcceleration.ItemAccelerateProcessor::getColor, RegistryEntries.ITEM.strategy_acceleration);
         FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(StrategyExtraction.ItemExtractionProcessor::getColor, RegistryEntries.ITEM.strategy_extraction);
         FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(StrategyOneway.ItemOnewayProcessor::getColor, RegistryEntries.ITEM.strategy_oneway);

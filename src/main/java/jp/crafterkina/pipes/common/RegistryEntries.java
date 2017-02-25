@@ -11,6 +11,7 @@ public class RegistryEntries {
     public static class ITEM{
         public static final Item merchant_phone = null;
         public static final Item pipe = null;
+        public static final Item fluid_tank = null;
         public static final Item processor_base = null;
         public static final Item strategy_acceleration = null;
         public static final Item strategy_extraction = null;
@@ -20,5 +21,6 @@ public class RegistryEntries {
     @ObjectHolder(MOD_ID)
     public static class BLOCK{
         public static final Block pipe = null;
+        public static final Block fluid_tank = null;
     }
 }

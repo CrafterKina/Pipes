@@ -1,0 +1,7 @@
+{
+  "parent": "jp.crafterkina.pipes:block/fluid_tank",
+  "textures": {
+    "frame": "blocks/planks_oak",
+    "glass": "blocks/glass"
+  }
+}
