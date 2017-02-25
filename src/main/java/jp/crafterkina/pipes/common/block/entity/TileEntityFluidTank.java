@@ -16,6 +16,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -67,20 +68,9 @@ public class TileEntityFluidTank extends TileFluidHandler implements ITickable{
 
     public boolean onActivated(IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
         ItemStack stack = playerIn.getHeldItem(hand);
-        if(!stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) return false;
-        @Nonnull IFluidHandlerItem handler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-        FluidStack drain = handler.drain(Integer.MAX_VALUE, false);
         IFluidHandler tank = new FluidHandlerConcatenate(getConnectedTanks(EnumFacing.UP, null, EnumFacing.DOWN));
-        FluidStack fluidStack = tank.drain(Integer.MAX_VALUE, false);
-        if(drain == null){
-            int filled = handler.fill(fluidStack, true);
-            tank.drain(filled, true);
-        }else if(fluidStack == null || drain.isFluidEqual(fluidStack)){
-            int filled = tank.fill(drain, true);
-            handler.drain(filled, true);
-        }
-        playerIn.setHeldItem(hand, handler.getContainer());
-        refill(tank.drain(Integer.MAX_VALUE, false) == null ? new FluidHandlerConcatenate(getConnectedTanks(EnumFacing.UP, null, EnumFacing.DOWN)) : tank);
+        FluidUtil.interactWithFluidHandler(stack, tank, playerIn);
+        refill(tank);
         world.notifyBlockUpdate(pos, state, state, 8);
         markDirty();
         return true;
