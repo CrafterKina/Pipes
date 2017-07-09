@@ -36,7 +36,6 @@ public enum PipesCore {
 
     @EventHandler
     private void preInit(FMLPreInitializationEvent event){
-        //CraftManager.INSTANCE.register();
         proxy.registerTileEntities();
         PacketHandler.init();
         CapabilityRegister.register();
@@ -51,6 +50,5 @@ public enum PipesCore {
     private void postInit(FMLPostInitializationEvent event){
         proxy.registerBlockColors();
         proxy.registerItemColors();
-        //EnumAchievement.registerPage();
     }
 }
