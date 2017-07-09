@@ -184,7 +184,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         {
 
             Set<FlowItem> overs = Sets.newHashSet();
-            remove.addAll(flowingItems.parallelStream()
+            remove.addAll(flowingItems.stream()
                     .filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> i.turned)
                     .peek(p -> {
                         BlockPos pos = this.pos.add(p.item.getDirection().x, p.item.getDirection().y, p.item.getDirection().z);
@@ -220,7 +220,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
 
 
         remove.addAll(flowingItems.parallelStream().filter(i -> i.item.getStack().isEmpty()).collect(Collectors.toSet()));
-        remove.addAll(flowingItems.parallelStream().filter(i -> Arrays.stream(connectingDirections).noneMatch(d -> i.item.getVelocity().scale(!i.turned ? -1 : 1).dotProduct(d) / Math.sqrt(i.item.getVelocity().scale(!i.turned ? -1 : 1).lengthSquared() * d.lengthSquared()) == 1)).peek(i -> Block.spawnAsEntity(getWorld(), getPos(), i.item.getStack())).collect(Collectors.toSet()));
+        remove.addAll(flowingItems.stream().filter(i -> Arrays.stream(connectingDirections).noneMatch(d -> i.item.getVelocity().scale(!i.turned ? -1 : 1).dotProduct(d) / Math.sqrt(i.item.getVelocity().scale(!i.turned ? -1 : 1).lengthSquared() * d.lengthSquared()) == 1)).peek(i -> Block.spawnAsEntity(getWorld(), getPos(), i.item.getStack())).collect(Collectors.toSet()));
         flowingItems.removeAll(remove);
 
         updateFlag |= !remove.isEmpty();
@@ -278,7 +278,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
     }
 
     public void dropItems(){
-        flowingItems.parallelStream().map(i -> i.item.getStack()).forEach(i -> InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), i));
+        flowingItems.stream().map(i -> i.item.getStack()).forEach(i -> InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), i));
         if(processor != null) InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), processor);
     }
 
