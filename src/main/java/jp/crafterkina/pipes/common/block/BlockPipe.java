@@ -222,14 +222,14 @@ public class BlockPipe extends BlockContainer{
 
     @Nonnull
     @Override
-    @Deprecated
+    @SuppressWarnings("deprecation")
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
         return CORE;
     }
 
     @Nullable
     @Override
-    @Deprecated
+    @SuppressWarnings("deprecation")
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos){
         return CORE;
     }
@@ -237,14 +237,13 @@ public class BlockPipe extends BlockContainer{
     @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
-    @Deprecated
+    @SuppressWarnings("deprecation")
     public AxisAlignedBB getSelectedBoundingBox(IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos){
         return CORE.offset(pos);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    @Deprecated
     public void addCollisionBoxToList(IBlockState stateIn, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_){
         addCollisionBoxToList(pos, entityBox, collidingBoxes, CORE);
         Arrays.stream(EnumFacing.VALUES).filter(f -> worldIn.getBlockState(pos).getBlock().getActualState(stateIn, worldIn, pos).getValue(CONNECT[f.getIndex()])).forEach(f -> addCollisionBoxToList(pos, entityBox, collidingBoxes, PIPE[f.getIndex()]));
@@ -253,25 +252,24 @@ public class BlockPipe extends BlockContainer{
     @Nullable
     @Override
     @SuppressWarnings("deprecation")
-    @Deprecated
     public RayTraceResult collisionRayTrace(IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end){
         return Optional.ofNullable(rayTrace(pos, start, end, CORE)).filter(p -> p.typeOfHit != RayTraceResult.Type.MISS).orElse(Arrays.stream(EnumFacing.VALUES).filter(f -> worldIn.getBlockState(pos).getBlock().getActualState(state, worldIn, pos).getValue(CONNECT[f.getIndex()])).map(f -> Optional.ofNullable(rayTrace(pos, start, end, PIPE[f.getIndex()])).map(r -> new RayTraceResult(r.typeOfHit, r.hitVec, f, r.getBlockPos())).filter(r -> r.typeOfHit != RayTraceResult.Type.MISS)).filter(Optional::isPresent).map(Optional::get).findFirst().orElse(null));
     }
 
     @Override
-    @Deprecated
+    @SuppressWarnings("deprecation")
     public boolean isOpaqueCube(IBlockState state){
         return false;
     }
 
     @Override
-    @Deprecated
+    @SuppressWarnings("deprecation")
     public boolean isFullCube(IBlockState state){
         return false;
     }
 
     @Override
-    @Deprecated
+    @SuppressWarnings("deprecation")
     @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockState blockState, @Nonnull IBlockAccess blockAccess, @Nonnull BlockPos pos, EnumFacing side){
         return true;
@@ -290,10 +288,9 @@ public class BlockPipe extends BlockContainer{
         return EnumBlockRenderType.MODEL;
     }
 
-    @SuppressWarnings("DeprecatedIsStillUsed")
     @Nonnull
     @Override
-    @Deprecated
+    @SuppressWarnings("deprecation")
     public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos){
         TileEntity te = worldIn.getTileEntity(pos);
         TileEntityPipe pipe = te instanceof TileEntityPipe ? (TileEntityPipe) te : null;
@@ -361,7 +358,7 @@ public class BlockPipe extends BlockContainer{
 
     @Nonnull
     @Override
-    @Deprecated
+    @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta){
         return getDefaultState();
     }
