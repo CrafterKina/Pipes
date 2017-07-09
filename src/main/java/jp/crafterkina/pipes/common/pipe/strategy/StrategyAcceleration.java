@@ -6,7 +6,6 @@ import jp.crafterkina.pipes.api.render.ISpecialRenderer;
 import jp.crafterkina.pipes.client.tesr.processor.AccelerationProcessorRenderer;
 import jp.crafterkina.pipes.common.item.ItemProcessor;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -108,7 +107,8 @@ public class StrategyAcceleration extends StrategyDefault{
         }
 
         @Override
-        public void getSubItems(@Nonnull Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems){
+        public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems){
+            if(!isInCreativeTab(tab)) return;
             for(int i = 1; i <= 6; i++){
                 for(int j = 0; 4 > j; j++){
                     double l = i + j / 4d;

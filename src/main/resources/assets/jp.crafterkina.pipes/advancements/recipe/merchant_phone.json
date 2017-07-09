@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "jp.crafterkina.pipes:merchant_phone"
+    ]
+  },
+  "criteria": {
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "jp.crafterkina.pipes:merchant_phone"
+      }
+    },
+    "trade": {
+      "trigger": "minecraft:villager_trade"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "trade"
+    ]
+  ]
+}

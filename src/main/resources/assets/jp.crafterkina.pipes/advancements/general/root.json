@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "jp.crafterkina.pipes:pipe",
+      "data": 0,
+      "nbt": "{material:WOOD, covered: false, color:-1}"
+    },
+    "title": {
+      "translate": "advancement.jp.crafterkina.pipes.general.root.title"
+    },
+    "description": {
+      "translate": "advancement.jp.crafterkina.pipes.general.root.desc"
+    },
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "iron": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "jp.crafterkina.pipes:pipe"
+          }
+        ]
+      }
+    }
+  }
+}

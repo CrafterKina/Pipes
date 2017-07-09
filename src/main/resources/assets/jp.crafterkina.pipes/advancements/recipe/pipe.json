@@ -1,0 +1,28 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "jp.crafterkina.pipes:wood_pipe"
+    ]
+  },
+  "criteria": {
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "jp.crafterkina.pipes:wood_pipe"
+      }
+    },
+    "place_chest": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "block": "minecraft:chest"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "place_chest"
+    ]
+  ]
+}

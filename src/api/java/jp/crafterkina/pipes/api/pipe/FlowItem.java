@@ -1,5 +1,6 @@
 package jp.crafterkina.pipes.api.pipe;
 
+import com.google.common.base.MoreObjects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -35,9 +36,9 @@ public final class FlowItem{
     public static NBTTagCompound toNBT(@Nonnull FlowItem item){
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("stack", item.getStack().serializeNBT());
-        nbt.setDouble("vx", item.getVelocity().xCoord);
-        nbt.setDouble("vy", item.getVelocity().yCoord);
-        nbt.setDouble("vz", item.getVelocity().zCoord);
+        nbt.setDouble("vx", item.getVelocity().x);
+        nbt.setDouble("vy", item.getVelocity().y);
+        nbt.setDouble("vz", item.getVelocity().z);
         return nbt;
     }
 
@@ -60,17 +61,17 @@ public final class FlowItem{
     }
 
     public Vec3d getDirection(){
-        return new Vec3d(Math.signum(velocity.xCoord), Math.signum(velocity.yCoord), Math.signum(velocity.zCoord));
+        return new Vec3d(Math.signum(velocity.x), Math.signum(velocity.y), Math.signum(velocity.z));
     }
 
     public EnumFacing getDirectionFace(){
         if(to != null) return to;
-        return to = EnumFacing.getFacingFromVector((float) velocity.xCoord, (float) velocity.yCoord, (float) velocity.zCoord);
+        return to = EnumFacing.getFacingFromVector((float) velocity.x, (float) velocity.y, (float) velocity.z);
     }
 
     @Override
     public String toString(){
-        return com.google.common.base.Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("stack", stack)
                 .add("velocity", velocity)
                 .toString();

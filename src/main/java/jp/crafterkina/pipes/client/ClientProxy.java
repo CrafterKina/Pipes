@@ -7,6 +7,7 @@ import jp.crafterkina.pipes.common.RegistryEntries;
 import jp.crafterkina.pipes.common.block.BlockPipe;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.item.ItemPipe;
+import jp.crafterkina.pipes.common.item.ItemProcessorBase;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyAcceleration;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyExtraction;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyOneway;
@@ -14,6 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -27,6 +29,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ClientProxy extends CommonProxy{
     private static ModelResourceLocation getModelLocation(String name){
         return new ModelResourceLocation(getResourceLocation(name), "inventory");
+    }
+
+    @Override
+    @SubscribeEvent
+    protected void registerRecipes(RegistryEvent.Register<IRecipe> event){
+        super.registerRecipes(event);
     }
 
     @Override
@@ -74,5 +82,6 @@ public class ClientProxy extends CommonProxy{
         FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(StrategyAcceleration.ItemAccelerateProcessor::getColor, RegistryEntries.ITEM.strategy_acceleration);
         FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(StrategyExtraction.ItemExtractionProcessor::getColor, RegistryEntries.ITEM.strategy_extraction);
         FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(StrategyOneway.ItemOnewayProcessor::getColor, RegistryEntries.ITEM.strategy_oneway);
+        FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(ItemProcessorBase::getColor, RegistryEntries.ITEM.processor_base);
     }
 }

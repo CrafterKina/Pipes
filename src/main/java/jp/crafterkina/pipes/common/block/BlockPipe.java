@@ -20,7 +20,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,7 +41,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,13 +83,13 @@ public class BlockPipe extends BlockContainer{
     }
 
     @Override
-    public void getSubBlocks(@Nonnull Item itemIn, @Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems){
+    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems){
         for(EnumPipeMaterial material : EnumPipeMaterial.VALUES){
             {
-                subItems.add(ItemPipe.createPipeStack(new ItemStack(itemIn), material));
+                subItems.add(ItemPipe.createPipeStack(new ItemStack(this), material));
             }
             for(EnumDyeColor color : EnumDyeColor.values()){
-                subItems.add(ItemPipe.createPipeStack(new ItemStack(itemIn), material, color));
+                subItems.add(ItemPipe.createPipeStack(new ItemStack(this), material, color));
             }
         }
     }
@@ -115,15 +113,13 @@ public class BlockPipe extends BlockContainer{
         }
     }
 
-    @Nonnull
     @Override
-    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, @Nonnull IBlockState state, int fortune){
+    public void getDrops(@Nonnull NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, @Nonnull IBlockState state, int fortune){
         TileEntity te = world.getTileEntity(pos);
         if(te instanceof TileEntityPipe){
             TileEntityPipe pipe = (TileEntityPipe) te;
-            return Collections.singletonList(ItemPipe.createPipeStack(new ItemStack(this), pipe.getMaterial(), pipe.covered(), pipe.coverColor));
+            drops.add(ItemPipe.createPipeStack(new ItemStack(this), pipe.getMaterial(), pipe.covered(), pipe.coverColor));
         }
-        return super.getDrops(world, pos, state, fortune);
     }
 
     @Override
@@ -217,7 +213,7 @@ public class BlockPipe extends BlockContainer{
         double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
 
         //noinspection deprecation
-        Arrays.stream(EnumFacing.VALUES).mapToInt(EnumFacing::getIndex).filter(i -> world.getBlockState(pos).getBlock().getActualState(state, world, pos).getValue(CONNECT[i])).forEach(i -> RenderGlobal.drawSelectionBoundingBox(PIPE[i].offset(pos).expandXyz(f1).offset(-d0, -d1, -d2), 0, 0, 0, 0.4f));
+        Arrays.stream(EnumFacing.VALUES).mapToInt(EnumFacing::getIndex).filter(i -> world.getBlockState(pos).getBlock().getActualState(state, world, pos).getValue(CONNECT[i])).forEach(i -> RenderGlobal.drawSelectionBoundingBox(PIPE[i].offset(pos).grow(f1).offset(-d0, -d1, -d2), 0, 0, 0, 0.4f));
 
         GlStateManager.depthMask(true);
         GlStateManager.enableTexture2D();
@@ -249,7 +245,7 @@ public class BlockPipe extends BlockContainer{
     @Override
     @SuppressWarnings("deprecation")
     @Deprecated
-    public void addCollisionBoxToList(IBlockState stateIn, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn){
+    public void addCollisionBoxToList(IBlockState stateIn, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_){
         addCollisionBoxToList(pos, entityBox, collidingBoxes, CORE);
         Arrays.stream(EnumFacing.VALUES).filter(f -> worldIn.getBlockState(pos).getBlock().getActualState(stateIn, worldIn, pos).getValue(CONNECT[f.getIndex()])).forEach(f -> addCollisionBoxToList(pos, entityBox, collidingBoxes, PIPE[f.getIndex()]));
     }

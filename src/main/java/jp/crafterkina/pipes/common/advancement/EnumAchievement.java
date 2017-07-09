@@ -1,3 +1,4 @@
+/*TODO Moving to json system
 package jp.crafterkina.pipes.common.achievement;
 
 import com.google.common.base.CaseFormat;
@@ -17,9 +18,6 @@ import java.util.Arrays;
 
 import static jp.crafterkina.pipes.api.PipesConstants.MOD_ID;
 
-/**
- * Created by Kina on 2016/12/25.
- */
 public enum EnumAchievement{
     BUILD_PIPE(new Achievement("", "", 0, 0, ItemPipe.createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe), EnumPipeMaterial.WOOD), null).initIndependentStat()),
     BUILD_PROCESSOR_BASE(new Achievement("", "", 3, 1, RegistryEntries.ITEM.processor_base, BUILD_PIPE.achievement)),
@@ -52,3 +50,4 @@ public enum EnumAchievement{
         player.addStat(achievement);
     }
 }
+*/

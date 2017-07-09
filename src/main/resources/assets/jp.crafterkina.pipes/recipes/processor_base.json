@@ -1,0 +1,23 @@
+{
+  "type": "forge:ore_shaped",
+  "group": "",
+  "pattern": [
+    "ISI",
+    "SSS",
+    "ISI"
+  ],
+  "key": {
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "stickWood"
+    },
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "stone"
+    }
+  },
+  "result": {
+    "item": "jp.crafterkina.pipes:processor_base",
+    "count": 6
+  }
+}

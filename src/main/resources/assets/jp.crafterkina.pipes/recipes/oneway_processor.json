@@ -1,0 +1,21 @@
+{
+  "type": "forge:ore_shaped",
+  "group": "",
+  "pattern": [
+    " I ",
+    "IPI",
+    " I "
+  ],
+  "key": {
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "P": {
+      "item": "jp.crafterkina.pipes:processor_base"
+    }
+  },
+  "result": {
+    "item": "jp.crafterkina.pipes:strategy_oneway"
+  }
+}

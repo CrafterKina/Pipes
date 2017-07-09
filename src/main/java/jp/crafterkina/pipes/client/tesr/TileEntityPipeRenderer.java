@@ -23,7 +23,7 @@ import java.util.Set;
 @SideOnly(Side.CLIENT)
 public class TileEntityPipeRenderer extends TileEntitySpecialRenderer<TileEntityPipe>{
     @Override
-    public void renderTileEntityAt(TileEntityPipe te, double x, double y, double z, float partialTicks, int destroyStage){
+    public void render(TileEntityPipe te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
         Set<FlowingItem> flowingItem = te.flowingItems;
         float time = te.getWorld().getTotalWorldTime() + partialTicks;
         flowingItem.forEach(i -> {
@@ -32,7 +32,7 @@ public class TileEntityPipeRenderer extends TileEntitySpecialRenderer<TileEntity
             float v = time - i.tick;
             Vec3d vec = new Vec3d(0.5, 0.5, 0.5).add(!i.turned ? i.item.getDirection().scale(-1).scale(0.5) : Vec3d.ZERO);
 
-            GlStateManager.translate(vec.xCoord + x + i.item.getVelocity().xCoord * v * 0.5, vec.yCoord + y + i.item.getVelocity().yCoord * v * 0.5, vec.zCoord + z + i.item.getVelocity().zCoord * v * 0.5);
+            GlStateManager.translate(vec.x + x + i.item.getVelocity().x * v * 0.5, vec.y + y + i.item.getVelocity().y * v * 0.5, vec.z + z + i.item.getVelocity().z * v * 0.5);
             GlStateManager.enableRescaleNormal();
             GlStateManager.scale(0.132, 0.132, 0.132);
             GlStateManager.rotate(45, 0, 1, 0);

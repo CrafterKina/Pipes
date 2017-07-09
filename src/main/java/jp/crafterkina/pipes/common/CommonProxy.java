@@ -2,25 +2,32 @@ package jp.crafterkina.pipes.common;
 
 import jp.crafterkina.pipes.common.block.BlockPipe;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
-import jp.crafterkina.pipes.common.creativetab.EnumCreativeTab;
 import jp.crafterkina.pipes.common.item.ItemMerchantPhone;
 import jp.crafterkina.pipes.common.item.ItemPipe;
+import jp.crafterkina.pipes.common.item.ItemProcessorBase;
+import jp.crafterkina.pipes.common.pipe.EnumPipeMaterial;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyAcceleration;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyExtraction;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyOneway;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Arrays;
 
 import static jp.crafterkina.pipes.api.PipesConstants.MOD_ID;
+import static jp.crafterkina.pipes.common.item.ItemPipe.createPipeStack;
 import static org.apache.commons.lang3.tuple.Pair.of;
 
 public class CommonProxy{
@@ -39,11 +46,31 @@ public class CommonProxy{
     }
 
     @OverridingMethodsMustInvokeSuper
+    protected void registerRecipes(RegistryEvent.Register<IRecipe> event){
+        event.getRegistry().register(new ShapedOreRecipe(getResourceLocation("wood_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), EnumPipeMaterial.WOOD), "SLS", "L L", "SLS", 'S', "stickWood", 'L', Item.getItemFromBlock(Blocks.LADDER)).setRegistryName(MOD_ID, "wood_pipe"));
+        event.getRegistry().register(new ShapedOreRecipe(getResourceLocation("stone_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), EnumPipeMaterial.STONE), "SLS", "L L", "SLS", 'S', "cobblestone", 'L', Item.getItemFromBlock(Blocks.LADDER)).setRegistryName(MOD_ID, "stone_pipe"));
+        event.getRegistry().register(new ShapedOreRecipe(getResourceLocation("iron_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), EnumPipeMaterial.IRON), "SLS", "L L", "SLS", 'S', "ingotIron", 'L', Item.getItemFromBlock(Blocks.RAIL)).setRegistryName(MOD_ID, "iron_pipe"));
+        event.getRegistry().register(new ShapedOreRecipe(getResourceLocation("diamond_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), EnumPipeMaterial.DIAMOND), "SLS", "L L", "SLS", 'S', "gemDiamond", 'L', Item.getItemFromBlock(Blocks.RAIL)).setRegistryName(MOD_ID, "diamond_pipe"));
+        event.getRegistry().register(new ShapedOreRecipe(getResourceLocation("gold_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), EnumPipeMaterial.GOLD), "SLS", "L L", "SLS", 'S', "nuggetGold", 'L', Item.getItemFromBlock(Blocks.GOLDEN_RAIL)).setRegistryName(MOD_ID, "gold_pipe"));
+        for(EnumDyeColor color : EnumDyeColor.values()){
+            event.getRegistry().register(new ShapedOreRecipe(getResourceLocation("wood_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), EnumPipeMaterial.WOOD, color), "SLS", "LWL", "SLS", 'S', "stickWood", 'L', Item.getItemFromBlock(Blocks.LADDER), 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())).setRegistryName(MOD_ID, "covered_wood_pipe_" + color.getMetadata()));
+            event.getRegistry().register(new ShapedOreRecipe(getResourceLocation("stone_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), EnumPipeMaterial.STONE, color), "SLS", "LWL", "SLS", 'S', "cobblestone", 'L', Item.getItemFromBlock(Blocks.LADDER), 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())).setRegistryName(MOD_ID, "covered_stone_pipe_" + color.getMetadata()));
+            event.getRegistry().register(new ShapedOreRecipe(getResourceLocation("iron_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), EnumPipeMaterial.IRON, color), "SLS", "LWL", "SLS", 'S', "ingotIron", 'L', Item.getItemFromBlock(Blocks.RAIL), 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())).setRegistryName(MOD_ID, "covered_iron_pipe_" + color.getMetadata()));
+            event.getRegistry().register(new ShapedOreRecipe(getResourceLocation("diamond_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), EnumPipeMaterial.DIAMOND, color), "SLS", "LWL", "SLS", 'S', "gemDiamond", 'L', Item.getItemFromBlock(Blocks.RAIL), 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())).setRegistryName(MOD_ID, "covered_diamond_pipe_" + color.getMetadata()));
+            event.getRegistry().register(new ShapedOreRecipe(getResourceLocation("gold_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), EnumPipeMaterial.GOLD, color), "SLS", "LWL", "SLS", 'S', "nuggetGold", 'L', Item.getItemFromBlock(Blocks.GOLDEN_RAIL), 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())).setRegistryName(MOD_ID, "covered_gold_pipe_" + color.getMetadata()));
+            for(EnumPipeMaterial material : EnumPipeMaterial.VALUES){
+                event.getRegistry().register(new ShapedOreRecipe(getResourceLocation(material.name().toLowerCase() + "_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), material, color), "PPP", "PWP", "PPP", 'P', createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe), material), 'W', new ItemStack(Blocks.CARPET, 1, color.getMetadata())).setRegistryName(MOD_ID, "cover_" + material.name() + "_pipe_with_carpet_" + color.getMetadata()));
+                event.getRegistry().register(new ShapedOreRecipe(getResourceLocation(material.name().toLowerCase() + "_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), material, color), "PPP", "PWP", "PPP", 'P', createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe), material), 'W', new ItemStack(Blocks.WOOL, 1, color.getMetadata())).setRegistryName(MOD_ID, "cover_" + material.name() + "_pipe_with_wool_" + color.getMetadata()));
+            }
+        }
+    }
+
+    @OverridingMethodsMustInvokeSuper
     protected void registerItems(RegistryEvent.Register<Item> event){
         register(event,
                 of(new ItemMerchantPhone(), "merchant_phone"),
                 of(new ItemPipe(), "pipe"),
-                of(new Item().setCreativeTab(EnumCreativeTab.PROCESSOR.tab).setUnlocalizedName(MOD_ID + ".processor_base"), "processor_base"),
+                of(new ItemProcessorBase(), "processor_base"),
                 of(new StrategyAcceleration.ItemAccelerateProcessor(), "strategy_acceleration"),
                 of(new StrategyExtraction.ItemExtractionProcessor(), "strategy_extraction"),
                 of(new StrategyOneway.ItemOnewayProcessor(), "strategy_oneway")

@@ -68,9 +68,9 @@ public class MessagePipeFlow implements IMessage{
         pck.writeInt(flowingItems.size());
         for(FlowingItem item : flowingItems){
             pck.writeCompoundTag(item.item.getStack().serializeNBT());
-            pck.writeDouble(item.item.getVelocity().xCoord);
-            pck.writeDouble(item.item.getVelocity().yCoord);
-            pck.writeDouble(item.item.getVelocity().zCoord);
+            pck.writeDouble(item.item.getVelocity().x);
+            pck.writeDouble(item.item.getVelocity().y);
+            pck.writeDouble(item.item.getVelocity().z);
             pck.writeLong(item.tick);
             pck.writeBoolean(item.turned);
         }

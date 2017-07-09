@@ -7,6 +7,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -18,7 +19,7 @@ import static jp.crafterkina.pipes.common.RegistryEntries.ITEM.strategy_accelera
 /**
  * Created by Kina on 2016/12/25.
  */
-public class ProcessorAccelerationRecipe implements IRecipe{
+public class ProcessorAccelerationRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe{
     @Override
     public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World worldIn){
         Set<ItemStack> stacks = IntStream.range(0, inv.getSizeInventory()).mapToObj(inv::getStackInSlot).filter(i -> !i.isEmpty()).collect(Collectors.toSet());
@@ -34,8 +35,8 @@ public class ProcessorAccelerationRecipe implements IRecipe{
     }
 
     @Override
-    public int getRecipeSize(){
-        return 9;
+    public boolean canFit(int width, int height){
+        return width * height >= 2;
     }
 
     @Nonnull

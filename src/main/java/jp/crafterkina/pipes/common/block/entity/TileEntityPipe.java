@@ -190,7 +190,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
             remove.addAll(flowingItems.parallelStream()
                     .filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> i.turned)
                     .peek(p -> {
-                        BlockPos pos = this.pos.add(p.item.getDirection().xCoord, p.item.getDirection().yCoord, p.item.getDirection().zCoord);
+                        BlockPos pos = this.pos.add(p.item.getDirection().x, p.item.getDirection().y, p.item.getDirection().z);
                         TileEntity te = world.getTileEntity(pos);
                         FlowItem over;
                         IItemFlowHandler handler = getFlowHandlerFromTileEntity(te, p.item.getDirectionFace().getOpposite());

@@ -1,0 +1,27 @@
+{
+  "type": "forge:ore_shaped",
+  "group": "",
+  "pattern": [
+    "S S",
+    "SPS",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "cobblestone"
+    },
+    "P": {
+      "item": "jp.crafterkina.pipes:processor_base"
+    }
+  },
+  "result": {
+    "item": "jp.crafterkina.pipes:strategy_extraction",
+    "nbt": {
+      "cycle": 25,
+      "amount": 1,
+      "speed": 1,
+      "color": 10197915
+    }
+  }
+}

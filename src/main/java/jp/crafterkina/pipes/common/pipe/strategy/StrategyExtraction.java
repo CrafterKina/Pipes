@@ -10,7 +10,6 @@ import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.item.ItemProcessor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -124,7 +123,8 @@ public class StrategyExtraction extends StrategyDefault{
         }
 
         @Override
-        public void getSubItems(@Nonnull Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems){
+        public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems){
+            if(!isInCreativeTab(tab)) return;
             for(Material material : Material.values()){
                 subItems.add(material.getStack());
             }

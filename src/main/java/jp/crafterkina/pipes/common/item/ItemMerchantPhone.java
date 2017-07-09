@@ -2,6 +2,7 @@ package jp.crafterkina.pipes.common.item;
 
 import jp.crafterkina.pipes.common.creativetab.EnumCreativeTab;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.player.EntityPlayer;
@@ -78,12 +79,12 @@ public class ItemMerchantPhone extends Item{
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced){
+    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag){
         for(int i = 0; ; i++){
             if(!I18n.hasKey("tooltip." + merchant_phone.getUnlocalizedName() + "." + i)) break;
             tooltip.add(I18n.format("tooltip." + merchant_phone.getUnlocalizedName() + "." + i));
         }
-        if(advanced){
+        if(flag == ITooltipFlag.TooltipFlags.ADVANCED){
             tooltip.add(String.format("Merchant UUID: %s", stack.getTagCompound() == null || !stack.getTagCompound().hasUniqueId("Merchant") ? "Not Registered" : stack.getTagCompound().getUniqueId("Merchant")));
         }
     }
