@@ -74,7 +74,7 @@ public class BlockPipe extends BlockContainer{
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    public static int getColor(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex){
+    public static int getColor(@SuppressWarnings("unused") IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex){
         if(worldIn == null || pos == null) return 0xFFFFFF;
         TileEntity te = worldIn.getTileEntity(pos);
         if(!(te instanceof TileEntityPipe)) return 0xFFFFFF;
@@ -311,7 +311,7 @@ public class BlockPipe extends BlockContainer{
     }
 
     @Override
-    public boolean rotateBlock(World world, @Nonnull BlockPos pos, EnumFacing axis){
+    public boolean rotateBlock(World world, @Nonnull BlockPos pos, @Nonnull EnumFacing axis){
         TileEntity te = world.getTileEntity(pos);
         if(!(te instanceof TileEntityPipe)) return false;
         TileEntityPipe pipe = (TileEntityPipe) te;
@@ -330,8 +330,7 @@ public class BlockPipe extends BlockContainer{
         TileEntity te = world.getTileEntity(pos);
         if(!(te instanceof TileEntityPipe)) return false;
         TileEntityPipe pipe = (TileEntityPipe) te;
-        pipe.recolor(ItemDye.DYE_COLORS[color.getDyeDamage()]);
-        return true;
+        return pipe.recolor(ItemDye.DYE_COLORS[color.getDyeDamage()]);
     }
 
     @Nonnull

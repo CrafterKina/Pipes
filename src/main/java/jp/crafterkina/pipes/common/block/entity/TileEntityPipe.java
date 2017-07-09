@@ -31,7 +31,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -90,8 +89,6 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         return material != null;
     }
 
-
-    @CheckForNull
     public EnumPipeMaterial getMaterial(){
         return material;
     }
