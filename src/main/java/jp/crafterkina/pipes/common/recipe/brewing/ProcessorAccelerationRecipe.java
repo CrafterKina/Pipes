@@ -18,7 +18,7 @@ public enum ProcessorAccelerationRecipe implements IBrewingRecipe{
     INSTANCE;
 
     public static void register(){
-        BrewingRecipeRegistry.addRecipe(new ItemStack(RegistryEntries.ITEM.processor_base, 1, 1), new ItemStack(Items.SUGAR), StrategyAcceleration.ItemAccelerateProcessor.createStack(new ItemStack(RegistryEntries.ITEM.strategy_acceleration), 1.25));
+        BrewingRecipeRegistry.addRecipe(new ItemStack(RegistryEntries.ITEM.processor_base), new ItemStack(Items.SUGAR), StrategyAcceleration.ItemAccelerateProcessor.createStack(new ItemStack(RegistryEntries.ITEM.strategy_acceleration), 1.25));
         BrewingRecipeRegistry.addRecipe(INSTANCE);
     }
 

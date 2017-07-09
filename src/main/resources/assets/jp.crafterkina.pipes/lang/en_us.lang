@@ -2,7 +2,6 @@
 # Items
 item.jp.crafterkina.pipes.merchant_phone.name=Merchant phone
 item.jp.crafterkina.pipes.processor_base.name=Processor board
-item.jp.crafterkina.pipes.processor_base_wet.name=Wet Processor board
 # Blocks
 tile.jp.crafterkina.pipes.pipe.name=Pipe
 # Strategies

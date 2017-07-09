@@ -2,7 +2,6 @@
 # Items
 item.jp.crafterkina.pipes.merchant_phone.name=商人の電話
 item.jp.crafterkina.pipes.processor_base.name=プロセッサの基板
-item.jp.crafterkina.pipes.processor_base_wet.name=濡らせたプロセッサの基板
 # Blocks
 tile.jp.crafterkina.pipes.pipe.name=パイプ
 # Strategies

@@ -7,7 +7,6 @@ import jp.crafterkina.pipes.common.RegistryEntries;
 import jp.crafterkina.pipes.common.block.BlockPipe;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.item.ItemPipe;
-import jp.crafterkina.pipes.common.item.ItemProcessorBase;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyAcceleration;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyExtraction;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyOneway;
@@ -83,6 +82,5 @@ public class ClientProxy extends CommonProxy{
         FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(StrategyAcceleration.ItemAccelerateProcessor::getColor, RegistryEntries.ITEM.strategy_acceleration);
         FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(StrategyExtraction.ItemExtractionProcessor::getColor, RegistryEntries.ITEM.strategy_extraction);
         FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(StrategyOneway.ItemOnewayProcessor::getColor, RegistryEntries.ITEM.strategy_oneway);
-        FMLClientHandler.instance().getClient().getItemColors().registerItemColorHandler(ItemProcessorBase::getColor, RegistryEntries.ITEM.processor_base);
     }
 }
