@@ -10,14 +10,10 @@ import jp.crafterkina.pipes.common.item.ItemPipe;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyAcceleration;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyExtraction;
 import jp.crafterkina.pipes.common.pipe.strategy.StrategyOneway;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -28,24 +24,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ClientProxy extends CommonProxy{
     private static ModelResourceLocation getModelLocation(String name){
         return new ModelResourceLocation(getResourceLocation(name), "inventory");
-    }
-
-    @Override
-    @SubscribeEvent
-    protected void registerRecipes(RegistryEvent.Register<IRecipe> event){
-        super.registerRecipes(event);
-    }
-
-    @Override
-    @SubscribeEvent
-    protected void registerItems(RegistryEvent.Register<Item> event){
-        super.registerItems(event);
-    }
-
-    @Override
-    @SubscribeEvent
-    protected void registerBlocks(RegistryEvent.Register<Block> event){
-        super.registerBlocks(event);
     }
 
     @SubscribeEvent

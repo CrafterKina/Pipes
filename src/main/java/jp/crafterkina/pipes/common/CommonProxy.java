@@ -18,6 +18,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -46,6 +47,7 @@ public class CommonProxy{
     }
 
     @OverridingMethodsMustInvokeSuper
+    @SubscribeEvent
     protected void registerRecipes(RegistryEvent.Register<IRecipe> event){
         event.getRegistry().register(new ShapedOreRecipe(getResourceLocation("wood_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), EnumPipeMaterial.WOOD), "SLS", "L L", "SLS", 'S', "stickWood", 'L', Item.getItemFromBlock(Blocks.LADDER)).setRegistryName(MOD_ID, "wood_pipe"));
         event.getRegistry().register(new ShapedOreRecipe(getResourceLocation("stone_pipe"), createPipeStack(new ItemStack(RegistryEntries.ITEM.pipe, 8), EnumPipeMaterial.STONE), "SLS", "L L", "SLS", 'S', "cobblestone", 'L', Item.getItemFromBlock(Blocks.LADDER)).setRegistryName(MOD_ID, "stone_pipe"));
@@ -66,6 +68,7 @@ public class CommonProxy{
     }
 
     @OverridingMethodsMustInvokeSuper
+    @SubscribeEvent
     protected void registerItems(RegistryEvent.Register<Item> event){
         register(event,
                 of(new ItemMerchantPhone(), "merchant_phone"),
@@ -78,6 +81,7 @@ public class CommonProxy{
     }
 
     @OverridingMethodsMustInvokeSuper
+    @SubscribeEvent
     protected void registerBlocks(RegistryEvent.Register<Block> event){
         register(event,
                 of(new BlockPipe(), "pipe")
