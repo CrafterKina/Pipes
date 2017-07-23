@@ -1,13 +1,14 @@
 package jp.crafterkina.pipes.common.pipe.strategy;
 
+import com.google.common.collect.ImmutableList;
 import jp.crafterkina.pipes.api.pipe.FlowItem;
 import jp.crafterkina.pipes.api.pipe.IItemFlowHandler;
 import jp.crafterkina.pipes.api.pipe.IStrategy;
 import jp.crafterkina.pipes.api.render.ISpecialRenderer;
 import jp.crafterkina.pipes.client.tesr.processor.ExtractionProcessorRenderer;
-import jp.crafterkina.pipes.common.RegistryEntries;
 import jp.crafterkina.pipes.common.block.entity.TileEntityPipe;
 import jp.crafterkina.pipes.common.item.ItemProcessor;
+import lombok.AllArgsConstructor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -19,7 +20,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -82,21 +82,19 @@ public class StrategyExtraction extends StrategyDefault{
         return new StrategyExtraction(te, stack, axis, cycle, amount, speed);
     }
 
+    @AllArgsConstructor
     public enum Material{
         WOOD(50, 1, 1, 0x9F844D),
         STONE(25, 1, 1, 0x9B9B9B),
         IRON(25, 8, 1, 0x535353),
         DIAMOND(100, 16, 0.25, 0x69DFDA),
         GOLD(12, 2, 4, 0xF9D74F);
-        private final ItemStack stack;
+        public static final ImmutableList<Material> VALUES = ImmutableList.copyOf(values());
 
-        Material(int cycle, int amount, double speed, int color){
-            stack = ItemExtractionProcessor.createStack(new ItemStack(RegistryEntries.ITEM.strategy_extraction), cycle, amount, speed, color);
-        }
-
-        public ItemStack getStack(){
-            return stack.copy();
-        }
+        private final int cycle;
+        private final int amount;
+        private final double speed;
+        private final int color;
     }
 
     public static class ItemExtractionProcessor extends ItemProcessor{
@@ -105,12 +103,9 @@ public class StrategyExtraction extends StrategyDefault{
             setMaxStackSize(1);
         }
 
-        public static ItemStack createStack(ItemStack stack, int cycle, int amount, double speed, int color){
+        public static ItemStack createStack(ItemStack stack, Material material){
             NBTTagCompound compound = new NBTTagCompound();
-            compound.setInteger("cycle", cycle);
-            compound.setInteger("amount", amount);
-            compound.setDouble("speed", speed);
-            compound.setInteger("color", color);
+            compound.setInteger("material", material.ordinal());
             stack.setTagCompound(compound);
             return stack;
         }
@@ -118,15 +113,16 @@ public class StrategyExtraction extends StrategyDefault{
         public static int getColor(ItemStack stack, int layer){
             if(layer != 1) return Color.WHITE.getRGB();
             NBTTagCompound compound = stack.getTagCompound();
-            if(compound == null || !compound.hasKey("color", Constants.NBT.TAG_INT)) return Color.WHITE.getRGB();
-            return compound.getInteger("color");
+            if(compound == null) return Color.WHITE.getRGB();
+            Material material = Material.VALUES.get(compound.getInteger("material"));
+            return material.color;
         }
 
         @Override
         public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems){
             if(!isInCreativeTab(tab)) return;
             for(Material material : Material.values()){
-                subItems.add(material.getStack());
+                subItems.add(createStack(new ItemStack(this), material));
             }
         }
 
@@ -147,10 +143,8 @@ public class StrategyExtraction extends StrategyDefault{
                 NBTTagCompound compound = s.getTagCompound();
                 if(compound == null) return null;
                 EnumFacing from = EnumFacing.VALUES[compound.getByte("from")];
-                int cycle = compound.getInteger("cycle");
-                int amount = compound.getInteger("amount");
-                double speed = compound.getDouble("speed");
-                return new StrategyExtraction((TileEntityPipe) t, s, from, cycle, amount, speed);
+                Material material = Material.VALUES.get(compound.getInteger("material"));
+                return new StrategyExtraction((TileEntityPipe) t, s, from, material.cycle, material.amount, material.speed);
             };
         }
 
