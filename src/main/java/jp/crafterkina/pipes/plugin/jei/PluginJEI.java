@@ -15,7 +15,11 @@ import javax.annotation.Nonnull;
 public class PluginJEI implements IModPlugin{
     @Override
     public void registerItemSubtypes(@Nonnull ISubtypeRegistry subtypeRegistry){
-        subtypeRegistry.useNbtForSubtypes(RegistryEntries.ITEM.pipe);
+        subtypeRegistry.useNbtForSubtypes(
+                RegistryEntries.ITEM.pipe,
+                RegistryEntries.ITEM.strategy_acceleration,
+                RegistryEntries.ITEM.strategy_extraction
+        );
     }
 
     @Override
