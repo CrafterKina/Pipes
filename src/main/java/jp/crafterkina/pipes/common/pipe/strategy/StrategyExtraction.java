@@ -171,8 +171,10 @@ public class StrategyExtraction extends StrategyDefault{
         @SuppressWarnings("unchecked")
         @SideOnly(Side.CLIENT)
         private <T> T getCapabilityClient(ItemStack stack, @Nonnull Capability<T> capability, @Nullable EnumFacing facing){
-            if(capability == ISpecialRenderer.CAPABILITY && stack.hasTagCompound())
-                return (T) new ExtractionProcessorRenderer(stack, EnumFacing.VALUES[stack.getTagCompound().getByte("from")], (200 / stack.getTagCompound().getInteger("cycle")) * (stack.getTagCompound().getDouble("speed")));
+            if(capability == ISpecialRenderer.CAPABILITY && stack.hasTagCompound()){
+                Material material = Material.VALUES.get(stack.getTagCompound().getInteger("material"));
+                return (T) new ExtractionProcessorRenderer(stack, EnumFacing.VALUES[stack.getTagCompound().getByte("from")], (200 / material.cycle) * material.speed);
+            }
             return null;
         }
     }
