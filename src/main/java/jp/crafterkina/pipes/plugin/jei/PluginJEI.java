@@ -20,7 +20,6 @@ public class PluginJEI implements IModPlugin{
     public void registerItemSubtypes(@Nonnull ISubtypeRegistry subtypeRegistry){
         subtypeRegistry.useNbtForSubtypes(
                 RegistryEntries.ITEM.pipe,
-                RegistryEntries.ITEM.strategy_acceleration,
                 RegistryEntries.ITEM.strategy_extraction
         );
     }
