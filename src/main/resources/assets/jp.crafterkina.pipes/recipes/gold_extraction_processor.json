@@ -1,0 +1,24 @@
+{
+  "type": "forge:ore_shaped",
+  "group": "",
+  "pattern": [
+    "S S",
+    "SPS",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "ingotGold"
+    },
+    "P": {
+      "item": "jp.crafterkina.pipes:processor_base"
+    }
+  },
+  "result": {
+    "item": "jp.crafterkina.pipes:strategy_extraction",
+    "nbt": {
+      "material": 4
+    }
+  }
+}

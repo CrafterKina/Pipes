@@ -1,7 +1,6 @@
 package jp.crafterkina.pipes.common;
 
 import jp.crafterkina.pipes.common.capability.CapabilityRegister;
-import jp.crafterkina.pipes.common.recipe.anvil.AnvilUpdateEventHandler;
 import jp.crafterkina.pipes.common.recipe.brewing.ProcessorAccelerationRecipe;
 import lombok.Getter;
 import net.minecraftforge.common.MinecraftForge;
@@ -45,7 +44,7 @@ public enum PipesCore {
     @EventHandler
     private void init(FMLInitializationEvent event){
         ProcessorAccelerationRecipe.register();
-        MinecraftForge.EVENT_BUS.register(AnvilUpdateEventHandler.INSTANCE);
+        //MinecraftForge.EVENT_BUS.register(AnvilUpdateEventHandler.INSTANCE);
     }
 
     @EventHandler
