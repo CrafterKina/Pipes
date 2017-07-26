@@ -40,3 +40,5 @@ advancement.jp.crafterkina.pipes.general.buildMerchantPhone.desc=Craft a Merchan
 itemGroup.jp.crafterkina.pipes.pipe=Pipe
 itemGroup.jp.crafterkina.pipes.processor=Processor
 itemGroup.jp.crafterkina.pipes.utility=Utility
+# Description
+desc.jp.crafterkina.pipes.accelerator=Increase flow speed\nYou can upgrade by brewing with glowstone Dust.

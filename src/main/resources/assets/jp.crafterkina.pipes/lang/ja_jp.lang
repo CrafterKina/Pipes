@@ -40,3 +40,5 @@ advancement.jp.crafterkina.pipes.general.buildMerchantPhone.desc=商人の電話
 itemGroup.jp.crafterkina.pipes.pipe=パイプ
 itemGroup.jp.crafterkina.pipes.processor=プロセッサ
 itemGroup.jp.crafterkina.pipes.utility=ユーティリティ
+# Description
+desc.jp.crafterkina.pipes.accelerator=流速を上げます\nグロウストーンダストとの醸造でアップグレードが可能です。
