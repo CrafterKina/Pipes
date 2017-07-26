@@ -179,12 +179,13 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         Vec3d[] connectingDirections = connectingDirections();
         boolean updateFlag;
         Set<FlowingItem> remove = Sets.newHashSet();
+        Set<ItemStack> drop = Sets.newHashSet();
 
         // Extract
         {
 
             Set<FlowItem> overs = Sets.newHashSet();
-            remove.addAll(flowingItems.stream()
+            remove.addAll(flowingItems.parallelStream()
                     .filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> i.turned)
                     .peek(p -> {
                         BlockPos pos = this.pos.add(p.item.getDirection().x, p.item.getDirection().y, p.item.getDirection().z);
@@ -192,7 +193,7 @@ public class TileEntityPipe extends TileEntity implements ITickable{
                         FlowItem over;
                         IItemFlowHandler handler = getFlowHandlerFromTileEntity(te, p.item.getDirectionFace().getOpposite());
                         if(handler == null){
-                            Block.spawnAsEntity(getWorld(), getPos(), p.item.getStack());
+                            drop.add(p.item.getStack());
                             return;
                         }
 
@@ -220,8 +221,9 @@ public class TileEntityPipe extends TileEntity implements ITickable{
 
 
         remove.addAll(flowingItems.parallelStream().filter(i -> i.item.getStack().isEmpty()).collect(Collectors.toSet()));
-        remove.addAll(flowingItems.stream().filter(i -> Arrays.stream(connectingDirections).noneMatch(d -> i.item.getVelocity().scale(!i.turned ? -1 : 1).dotProduct(d) / Math.sqrt(i.item.getVelocity().scale(!i.turned ? -1 : 1).lengthSquared() * d.lengthSquared()) == 1)).peek(i -> Block.spawnAsEntity(getWorld(), getPos(), i.item.getStack())).collect(Collectors.toSet()));
+        remove.addAll(flowingItems.parallelStream().filter(i -> Arrays.stream(connectingDirections).noneMatch(d -> i.item.getVelocity().scale(!i.turned ? -1 : 1).dotProduct(d) / Math.sqrt(i.item.getVelocity().scale(!i.turned ? -1 : 1).lengthSquared() * d.lengthSquared()) == 1)).peek(i -> drop.add(i.item.getStack())).collect(Collectors.toSet()));
         flowingItems.removeAll(remove);
+        drop.forEach(i -> Block.spawnAsEntity(getWorld(), getPos(), i));
 
         updateFlag |= !remove.isEmpty();
 
