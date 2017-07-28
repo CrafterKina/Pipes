@@ -1,0 +1,44 @@
+# 简体中文（中国）
+# Items
+item.jp.crafterkina.pipes.merchant_phone.name=商人电话
+item.jp.crafterkina.pipes.processor_base.name=处理器板
+# Blocks
+tile.jp.crafterkina.pipes.pipe.name=管道
+# Strategies
+strategy.jp.crafterkina.pipes.accelerator.name=加速器 x%.3g
+strategy.jp.crafterkina.pipes.extraction.name=提取器
+strategy.jp.crafterkina.pipes.oneway.name=单向
+# Messages
+mes.item.jp.crafterkina.pipes.merchant_phone.register=联系已注册
+mes.error.jp.crafterkina.pipes.pipe.null_material=§4§l错误的NBT标签！ §r替换为木制管道……
+mes.error.jp.crafterkina.pipes.pipe.null_compound=§4§l空的NBT标签！ §r替换为木制管道……
+# Tooltips
+tooltip.item.jp.crafterkina.pipes.merchant_phone.0=对村民右键 -> 注册村民
+tooltip.item.jp.crafterkina.pipes.merchant_phone.1=右键 -> 呼叫村民
+# Advancements
+advancement.jp.crafterkina.pipes.general.root.title=管道
+advancement.jp.crafterkina.pipes.general.root.desc=使用管道建立物流系统
+advancement.jp.crafterkina.pipes.general.buildPipe.title=管道工艺？
+advancement.jp.crafterkina.pipes.general.buildPipe.desc=用木梯子和木棍制作管道
+advancement.jp.crafterkina.pipes.general.buildProcessorBase.title=无需红石
+advancement.jp.crafterkina.pipes.general.buildProcessorBase.desc=用石头和木棍制作一枚处理器板
+advancement.jp.crafterkina.pipes.general.buildAccelerationProcessor.title=加点糖！
+advancement.jp.crafterkina.pipes.general.buildAccelerationProcessor.desc=用处理器板和糖制作一枚加速器
+advancement.jp.crafterkina.pipes.general.buildAccelerationProcessorOver.title=太甜了？
+advancement.jp.crafterkina.pipes.general.buildAccelerationProcessorOver.desc=制作一枚x6.75以上的加速器
+advancement.jp.crafterkina.pipes.general.buildAccelerationProcessorUltimate.title=霓虹制糖厂
+advancement.jp.crafterkina.pipes.general.buildAccelerationProcessorUltimate.desc=制作一枚x100以上的加速器
+advancement.jp.crafterkina.pipes.general.buildExtractionProcessor.title=节省空间
+advancement.jp.crafterkina.pipes.general.buildExtractionProcessor.desc=用处理器板和木板制作一枚加速器
+advancement.jp.crafterkina.pipes.general.buildOnewayProcessor.title=记录支持
+advancement.jp.crafterkina.pipes.general.buildOnewayProcessor.desc=用处理器板和铁锭制作一枚加速器
+advancement.jp.crafterkina.pipes.general.buildCoveredPipe.title=避免触电
+advancement.jp.crafterkina.pipes.general.buildCoveredPipe.desc=用羊毛覆盖管道
+advancement.jp.crafterkina.pipes.general.buildMerchantPhone.title=移动商店
+advancement.jp.crafterkina.pipes.general.buildMerchantPhone.desc=制作一个商人电话。
+# Item Groups
+itemGroup.jp.crafterkina.pipes.pipe=管道
+itemGroup.jp.crafterkina.pipes.processor=处理器
+itemGroup.jp.crafterkina.pipes.utility=工具
+# Description
+desc.jp.crafterkina.pipes.accelerator=提高流动速度\n你可以用萤石粉酿造提高等级。
