@@ -178,14 +178,14 @@ public class TileEntityPipe extends TileEntity implements ITickable{
         if(!isMaterialAvailable()) return;
         Vec3d[] connectingDirections = connectingDirections();
         boolean updateFlag;
-        Set<FlowingItem> remove = Sets.newHashSet();
-        Set<ItemStack> drop = Sets.newHashSet();
+        Set<FlowingItem> remove = Sets.newConcurrentHashSet();
+        Set<ItemStack> drop = Sets.newConcurrentHashSet();
 
         // Extract
         {
 
             Set<FlowItem> overs = Sets.newHashSet();
-            remove.addAll(flowingItems.parallelStream()
+            remove.addAll(flowingItems.stream()
                     .filter(i -> (world.getTotalWorldTime() - i.tick) * i.item.getSpeed() >= 1).filter(i -> i.turned)
                     .peek(p -> {
                         BlockPos pos = this.pos.add(p.item.getDirection().x, p.item.getDirection().y, p.item.getDirection().z);
