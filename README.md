@@ -1,11 +1,10 @@
 # Pipes
-
 ## Abstract
-
-A Simple Minecraft Mod which adds standard pipes.
+A simple Minecraft Mod that adds item transport pipes.
 
 ## Contribution
 See details in [CONTRIBUTING.md](/.github/CONTRIBUTING.md)
+
 ### Issue templates
 * [Suggestion](https://github.com/CrafterKina/Pipes/issues/new?title=%5BSuggestion%5D)
 * [Question](https://github.com/CrafterKina/Pipes/issues/new?title=%5BQuestion%5D)
@@ -13,15 +12,12 @@ See details in [CONTRIBUTING.md](/.github/CONTRIBUTING.md)
 
 ## License
 ### The License of Codes
-
-Codes are licensed under the Mozilla Public License 2.0.  
+Codes are licensed under the Mozilla Public License 2.0.
 You can check the detail in the [LICENSE](/LICENSE) of this repository.
 
 ### The License of Resources
-
-[![Creative Commons License][cc-by-nc-sa-img]][cc-by-nc-sa]  
+[![Creative Commons License][cc-by-nc-sa-img]][cc-by-nc-sa]
 This work is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
 
-[cc-by-nc-sa]:http://creativecommons.org/licenses/by-nc-sa/4.0/
-
+[cc-by-nc-sa]:https://creativecommons.org/licenses/by-nc-sa/4.0
 [cc-by-nc-sa-img]:https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
